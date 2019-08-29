@@ -10,4 +10,16 @@
 // Read Sprockets README (https://github.com/sstephenson/sprockets#sprockets-directives) for details
 // about supported directives.
 //
-//= require_tree .
+// require_tree .
+
+//= require ./vendor/jquery-1.7.min
+//= require ./vendor/jquery-ui.min
+
+//= require ./vendor/annotator-full.min.1.2.5.modified
+// NOTE: All occurrences of "window.pageYOffset" were replaced with "0" as otherwise the Annotator popover is positioned
+//   incorrectly when the page is scrolled down.
+//= require ./vendor/annotorious.okfn.0.3.modified
+
+//= require ./vendor/video.4.2.2.min
+//= require ./vendor/rangeslider.min
+//= require ./vendor/ova.min.modified
