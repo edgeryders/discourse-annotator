@@ -6,7 +6,7 @@ class Annotator::TopicsController < Annotator::ApplicationController
   # def index
   #   search_term = params[:search].to_s.strip
   #   resources = Administrate::Search.new(scoped_resource, dashboard_class, search_term).run
-  #   resources = apply_resource_includes(resources)
+  #   resources = apply_collection_includes(resources)
   #   resources = order.apply(resources)
   #   resources = resources.page(params[:page]).per(records_per_page)
   #   page = Administrate::Page::Collection.new(dashboard, order: order)

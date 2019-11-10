@@ -18,7 +18,7 @@ class Annotator::AnnotatorStore::TagsController < Annotator::ApplicationControll
 
     search_term = ''# params[:search].to_s.strip
     resources = Administrate::Search.new(scope, dashboard_class, search_term).run
-    resources = apply_resource_includes(resources)
+    resources = apply_collection_includes(resources)
     resources = params[:search].present? ? order.apply(resources) : resources.order(updated_at: :desc)
     resources = resources.page(params[:page]).per(records_per_page)
     page = Administrate::Page::Collection.new(dashboard)
