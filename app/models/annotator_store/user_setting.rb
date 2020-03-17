@@ -12,7 +12,8 @@ module AnnotatorStore
 
 
     def self.language_for_user(user)
-      AnnotatorStore::UserSetting.find_by(discourse_user_id: user.id)&.language
+      AnnotatorStore::UserSetting.find_by(discourse_user_id: user.id)&.language ||
+          AnnotatorStore::UserSetting.create!(discourse_user_id: user.id, language_id: AnnotatorStore::Language.english.id)
     end
 
 
