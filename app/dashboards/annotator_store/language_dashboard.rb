@@ -11,7 +11,7 @@ class AnnotatorStore::LanguageDashboard < Administrate::BaseDashboard
     tag_names: Field::HasMany,
     id: Field::Number,
     name: Field::String,
-    locale: Field::String,
+    locale: Annotator::LocaleField,
     created_at: Field::DateTime,
     updated_at: Field::DateTime,
   }.freeze
@@ -23,8 +23,8 @@ class AnnotatorStore::LanguageDashboard < Administrate::BaseDashboard
   # Feel free to add, remove, or rearrange items.
   COLLECTION_ATTRIBUTES = [
     # :tag_names,
+    # :id,
     :name,
-    :id,
     :locale,
   ].freeze
 
