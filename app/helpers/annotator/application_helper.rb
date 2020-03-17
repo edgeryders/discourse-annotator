@@ -24,6 +24,20 @@ module Annotator
     end
 
 
+    def annotation_type_view(type)
+      case type
+      when 'TextAnnotation' then
+        'Text'
+      when 'ImageAnnotation' then
+        'Image'
+      when 'VideoAnnotation' then
+        'Video'
+      else
+        type
+      end
+    end
+
+
     # # http://stackoverflow.com/questions/7674754/how-to-arrange-entries-from-ancestry-tree-in-dropdown-list-in-rails-3
     # def nested_dropdown(items)
     #   result = []
