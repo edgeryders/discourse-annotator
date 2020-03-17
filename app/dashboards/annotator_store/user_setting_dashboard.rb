@@ -10,7 +10,7 @@ module AnnotatorStore
     # which determines how the attribute is displayed
     # on pages throughout the dashboard.
     ATTRIBUTE_TYPES = {
-      discourse_user: Field::BelongsTo.with_options(class_name: '::User'),
+      discourse_user: Field::BelongsTo.with_options(class_name: '::User', order: 'username ASC', scope: -> { ::User.annotators }),
       language: Field::BelongsTo.with_options(class_name: 'AnnotatorStore::Language'),
       id: Field::Number,
     }.freeze

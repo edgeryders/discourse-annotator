@@ -7,6 +7,7 @@ module AnnotatorStore
     config.to_prepare do
       Topic.send :include, TopicAnnotatable
       Post.send :include, PostAnnotatable
+      User.send :include, UserAnnotatable
     end
 
 
