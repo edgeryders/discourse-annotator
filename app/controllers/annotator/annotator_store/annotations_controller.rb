@@ -34,10 +34,10 @@ class Annotator::AnnotatorStore::AnnotationsController < Annotator::ApplicationC
     respond_to do |format|
       format.html {
         render locals: {
-          resources: resources,
-          search_term: search_term,
-          page: page,
-          show_search_bar: show_search_bar?
+            resources: resources,
+            search_term: search_term,
+            page: page,
+            show_search_bar: show_search_bar?
         }
       }
       format.json {
@@ -78,7 +78,7 @@ class Annotator::AnnotatorStore::AnnotationsController < Annotator::ApplicationC
   # GET /annotations/1
   def show
     respond_to do |format|
-      format.html {render locals: { page: Administrate::Page::Show.new(dashboard, requested_resource) } }
+      format.html {render locals: {page: Administrate::Page::Show.new(dashboard, requested_resource)}}
       format.json {render :show}
     end
   end
@@ -183,7 +183,7 @@ class Annotator::AnnotatorStore::AnnotationsController < Annotator::ApplicationC
 
     # TextAnnotation
     params[:annotation][:version] = params[:annotator_schema_version] unless params[:annotator_schema_version].blank?
-    params[:annotation][:text] = params[:text] #unless params[:text].blank?
+    params[:annotation][:text] = params[:text] # unless params[:text].blank?
     params[:annotation][:quote] = params[:quote] unless params[:quote].blank?
     params[:annotation][:uri] = params[:uri] unless params[:uri].blank?
     params[:annotation][:post_id] = params[:uri].split('/').last unless params[:uri].blank?
@@ -206,13 +206,13 @@ class Annotator::AnnotatorStore::AnnotationsController < Annotator::ApplicationC
   # Only allow a trusted parameter 'white list' through.
   def annotation_params
     params.require(:annotation).permit(
-      :tag_id, :uri,
-      # VideoAnnotation
-      :container, :src, :ext, :start, :end,
-      # Image Annotation
-      :src, :shape, :units, :geometry,
-      # TextAnnotation
-      :text, :quote, :version, :post_id, ranges_attributes: [:start, :end, :start_offset, :end_offset]
+        :tag_id, :uri,
+        # VideoAnnotation
+        :container, :src, :ext, :start, :end,
+        # Image Annotation
+        :src, :shape, :units, :geometry,
+        # TextAnnotation
+        :text, :quote, :version, :post_id, ranges_attributes: [:start, :end, :start_offset, :end_offset]
     )
   end
 
@@ -221,16 +221,10 @@ class Annotator::AnnotatorStore::AnnotationsController < Annotator::ApplicationC
     language = AnnotatorStore::UserSetting.language_for_user(current_user)
     tag_names = AnnotatorStore::TagName.joins(:tag).where(name: path.last, annotator_store_tags: {creator_id: current_user.id}).all
 
-    if tag_names.blank?
-      tag = AnnotatorStore::Tag.new(creator: current_user)
-      tag.names.build(name: path.last, language: language)
-      tag.save!
-      return tag.id
-    else
-      tag_names.each do |tag_name|
-        return tag_name.tag_id if path_matches?(tag_name.tag, path)
-      end
+    tag_names.each do |tag_name|
+      return tag_name.tag_id if path_matches?(tag_name.tag, path)
     end
+    create_tag!(name: path.last, language: language).id
   end
 
   # If the path of the tag matches the given path.
@@ -255,6 +249,17 @@ class Annotator::AnnotatorStore::AnnotationsController < Annotator::ApplicationC
     %w[edit destroy].exclude?(name.to_s) && super
   end
 
+
+  private
+
+  # name:
+  # language:
+  def create_tag!(args = {})
+    tag = AnnotatorStore::Tag.new(creator: current_user)
+    tag.names.build(name: args[:name], language: args[:language])
+    tag.save!
+    tag
+  end
 
 
 end
