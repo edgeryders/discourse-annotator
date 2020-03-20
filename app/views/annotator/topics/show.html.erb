@@ -25,6 +25,7 @@
 <section class="main-content__body">
 
   <% @topic_view.posts.each do |post| %>
+    <a id="post-number-<%= post.post_number %>"></a>
     <div id="post-<%= post.id %>">
       <% if (u = post.user) %>
         <div class='creator'>

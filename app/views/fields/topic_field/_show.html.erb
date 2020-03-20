@@ -1,1 +1,2 @@
-<%= link_to field.data.title, annotator_topic_path(field.data.id) if field.data.present? %>
+<%= link_to  "#{field.data.title}#{": Post #{field.resource.post.post_number}" if field.resource.post.present? }",
+             annotator_topic_path(field.data.id, anchor: "post-number-#{field.resource.post&.post_number}") if field.data.present? %>

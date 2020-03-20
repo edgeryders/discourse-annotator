@@ -14,4 +14,5 @@ gemspec
 # gem 'debugger'
 
 
+
 gem "administrate-field-nested_has_many", git: 'https://github.com/edgeryders/administrate-field-nested_has_many.git', branch: 'master'
