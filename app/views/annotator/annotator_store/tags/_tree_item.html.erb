@@ -3,8 +3,8 @@
     <% if tag.children.any? %>
         <i class="fa fa-minus-circle" style="color:#aaa;"></i>
     <% end %>
-
-    <strong class="item" title="<%= tag.annotations_count %> annotations use this code"><%= "#{tag.translated_name} (#{tag.annotations_count})" %></strong>
+    <% language = AnnotatorStore::UserSetting.language_for_user(current_user) %>
+    <strong class="item" title="<%= tag.annotations_count %> annotations use this code"><%= "#{tag.translated_name(language)} (#{tag.annotations_count})" %></strong>
   </span>
   <% unless params[:creator_id].present? %>
     by <%= tag.creator.username %>&nbsp;&nbsp;
