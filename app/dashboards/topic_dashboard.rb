@@ -12,7 +12,7 @@ class TopicDashboard < Administrate::BaseDashboard
   # on pages throughout the dashboard.
   ATTRIBUTE_TYPES = {
     id: Field::Number,
-    title: Annotator::TopicField,
+    title: Field::String,
     created_at: Field::DateTime,
     updated_at: Field::DateTime,
   }.freeze
