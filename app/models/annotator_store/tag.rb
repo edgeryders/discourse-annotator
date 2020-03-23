@@ -38,18 +38,23 @@ module AnnotatorStore
     # --- Class Finder Methods --- #
 
     def self.with_annotations_count
-      select('annotator_store_tags.*, count(annotator_store_annotations.id) AS annotations_count').
-        joins('LEFT OUTER JOIN annotator_store_annotations on annotator_store_annotations.tag_id = annotator_store_tags.id').
-        group('annotator_store_tags.id')
+      select('annotator_store_tags.*, count(annotator_store_annotations.id) AS annotations_count')
+          .joins('LEFT OUTER JOIN annotator_store_annotations on annotator_store_annotations.tag_id = annotator_store_tags.id')
+          .group('annotator_store_tags.id')
     end
 
 
     # --- Instance Methods --- #
 
-    def translated_name(language=nil)
+    def translated_name(language = nil)
       (language.present? ? names.find_by(language_id: language.id)&.name : nil) ||
-        names.find_by(language_id: AnnotatorStore::Language.english.id)&.name ||
-        names.order(created_at: :asc).first&.name
+          names.find_by(language_id: AnnotatorStore::Language.english.id)&.name ||
+          names.order(created_at: :asc).first&.name
+    end
+
+
+    def descendants_annotations_count
+      AnnotatorStore::Tag.with_annotations_count.where(id: descendant_ids).sum(&:annotations_count)
     end
 
 

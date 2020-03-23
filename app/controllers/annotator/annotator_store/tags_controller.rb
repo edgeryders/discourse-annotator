@@ -98,7 +98,7 @@ class Annotator::AnnotatorStore::TagsController < Annotator::ApplicationControll
 
 
   def records_per_page
-    params[:per_page] || 100
+    params[:per_page] || 50
   end
 
   private
