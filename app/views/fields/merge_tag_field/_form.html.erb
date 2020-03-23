@@ -10,8 +10,8 @@
               end
     %>
 
-    <%= f.select :merge_tag_id, nested_dropdown_with_counts(
-        tags.with_annotations_count.arrange(order: 'created_at')
+    <%= f.select :merge_tag_id, nested_dropdown_tags(
+        tags: tags.with_annotations_count.arrange(order: 'created_at')
     ), include_blank: true %>
     <div>
       <span style="color:#f04855; margin-bottom:4px;">Warning! This action cannot be undone.</span>
