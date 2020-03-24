@@ -1,0 +1,15 @@
+<div class="dropdown">
+  <div class="dropdown-btn" aria-haspopup="true" role="button" tabindex="0">
+    <div class="dropdown-btn-text">
+      Include sub-codes: <%= params[:include_sub_codes].present? ? 'Yes' : 'No' %>
+    </div>
+    <span class="dropdown-arrow"></span>
+  </div>
+
+  <div class="dropdown-content">
+    <%= link_to 'Yes', request.query_parameters.except(:page).merge('include_sub_codes' => '1'),
+                class: (params[:include_sub_codes].present? ? 'active' : '') %>
+      <%= link_to 'No', request.query_parameters.except(:page).merge('include_sub_codes' => nil),
+                  class: (params[:include_sub_codes].blank? ? 'active' : '') %>
+  </div>
+</div>

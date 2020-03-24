@@ -21,8 +21,11 @@ class Annotator::AnnotatorStore::AnnotationsController < Annotator::ApplicationC
       end
     end
 
-    # Only annotations that are tagged with the given Open Ethnographer tag.
-    scope = scope.where(tag_id: params[:code_id]) if params[:code_id].present?
+    # Only annotations that are tagged with the given Open Ethnographer tag(s).
+    if params[:code_id].present?
+      tag_ids = params[:include_sub_codes].present? ? AnnotatorStore::Tag.find(params[:code_id]).subtree_ids : params[:code_id]
+      scope = scope.where(tag_id: tag_ids)
+    end
 
     search_term = params[:search].to_s.strip
     resources = Administrate::Search.new(scope, dashboard_class, search_term).run

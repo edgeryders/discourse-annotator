@@ -34,6 +34,10 @@ module AnnotatorStore
       translated_name
     end
 
+    def name_with_path
+      path.map(&:name).join(' → ')
+    end
+
 
     # --- Class Finder Methods --- #
 
