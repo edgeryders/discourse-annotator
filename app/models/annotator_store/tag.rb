@@ -29,16 +29,6 @@ module AnnotatorStore
     end
 
 
-    # Alias. Used by administrate
-    def name
-      translated_name
-    end
-
-    def name_with_path
-      path.map(&:name).join(' → ')
-    end
-
-
     # --- Class Finder Methods --- #
 
     def self.with_annotations_count
@@ -56,6 +46,14 @@ module AnnotatorStore
           names.order(created_at: :asc).first&.name
     end
 
+    # Alias. Used by administrate
+    def name
+      translated_name
+    end
+
+    def translated_name_with_path(language = nil)
+      path.map {|t| t.translated_name(language)}.join(' → ')
+    end
 
     def descendants_annotations_count
       AnnotatorStore::Tag.with_annotations_count.where(id: descendant_ids).sum(&:annotations_count)
