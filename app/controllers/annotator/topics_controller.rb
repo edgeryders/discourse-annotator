@@ -51,31 +51,51 @@ class Annotator::TopicsController < Annotator::ApplicationController
   # Override this if you have certain roles that require a subset
   # this will be used to set the records shown on the `index` action.
   def scoped_resource
-    resources = Topic.select("topics.*, SUM(posts_with_counts.annotations_count)::bigint AS annotations_count")
-                    .joins("LEFT OUTER JOIN (#{Post.with_annotations_count.to_sql}) posts_with_counts ON topics.id = posts_with_counts.topic_id")
-                    .group('topics.id')
+    user_counts = topics_with_annotations_count(
+        posts: Post.with_annotations_count.where(annotator_store_annotations: {creator_id: current_user.id})
+    )
+    total_counts = topics_with_annotations_count(posts: Post.with_annotations_count)
+
+    resources = Topic.select("topics.*, tu.annotations_count AS user_annotations_count, tc.annotations_count AS annotations_count")
+                    .joins("LEFT OUTER JOIN (#{user_counts.to_sql}) tu ON topics.id = tu.id")
+                    .joins("LEFT OUTER JOIN (#{total_counts.to_sql}) tc ON topics.id = tc.id")
 
     if params[:annotator_id].present?
-      resources = resources.where(id: Post.select(:topic_id).with_annotations.where(annotator_store_annotations: {creator_id: params[:annotator_id]}) )
+      resources = resources.where(id: Post.select(:topic_id).with_annotations.where(annotator_store_annotations: {creator_id: params[:annotator_id]}))
     end
 
-    resources = if params.dig(:topic, :order) == 'annotations_count'
-                  resources.order("annotations_count #{params[:topic][:direction] || 'DESC'}")
+    resources = if params.dig(:topic, :order).blank?
+                  resources.order("annotations_count DESC")
+                elsif params.dig(:topic, :order) == 'user_annotations_count'
+                  resources.order("user_annotations_count #{params[:topic][:direction]}")
+                elsif params.dig(:topic, :order) == 'annotations_count'
+                  resources.order("annotations_count #{params[:topic][:direction]}")
                 else
-                  resources #order.apply(resources)
+                  order.apply(resources)
                 end
     resources
   end
+
 
   def records_per_page
     params[:per_page] || 50
   end
 
 
+  private
+
+  # posts:
+  def topics_with_annotations_count(args = {})
+    Topic.select("topics.id, SUM(COALESCE(posts_with_counts.annotations_count,0))::bigint AS annotations_count")
+        .joins("LEFT OUTER JOIN (#{args[:posts].to_sql}) posts_with_counts ON topics.id = posts_with_counts.topic_id")
+        .group('topics.id')
+  end
+
+
 end
 
 
-                    # .joins("LEFT OUTER JOIN annotator_store_annotations ON annotator_store_annotations.post_id = posts_with_counts.id")
+# .joins("LEFT OUTER JOIN annotator_store_annotations ON annotator_store_annotations.post_id = posts_with_counts.id")
 # scope = Topic.select("topics.*, count(posts_with_counts.id) AS annotations_count")
 #             .joins("LEFT OUTER JOIN (#{Post.with_annotations_count.to_sql}) posts_with_counts ON topics.id = posts_with_counts.topic_id")
 #             .joins("LEFT OUTER JOIN annotator_store_annotations ON annotator_store_annotations.post_id = posts_with_counts.id")

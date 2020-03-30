@@ -15,6 +15,7 @@ class TopicDashboard < Administrate::BaseDashboard
     title: Field::String,
     created_at: Field::DateTime,
     updated_at: Field::DateTime,
+    user_annotations_count: Field::Number,
     annotations_count: Field::Number
   }.freeze
 
@@ -26,8 +27,8 @@ class TopicDashboard < Administrate::BaseDashboard
   COLLECTION_ATTRIBUTES = [
     :id,
     :title,
+    :user_annotations_count,
     :annotations_count
-    #:language,
   ].freeze
 
   # SHOW_PAGE_ATTRIBUTES

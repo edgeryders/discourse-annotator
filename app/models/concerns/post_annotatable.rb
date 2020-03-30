@@ -7,13 +7,9 @@ module PostAnnotatable
 
     scope :with_annotations, -> {joins(:annotations)}
     scope :without_annotations, -> {left_outer_joins(:annotations).where(annotations: {id: nil})}
-
-
-    def self.with_annotations_count
-      select('posts.*, count(annotator_store_annotations.id) AS annotations_count')
-          .left_joins(:annotations)
-          .group('posts.id')
-    end
+    scope :with_annotations_count, -> {
+      select('posts.*, count(annotator_store_annotations.id) AS annotations_count').left_joins(:annotations).group('posts.id')
+    }
 
 
   end

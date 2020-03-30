@@ -16,6 +16,9 @@ en:
       more_pages:
         display_entries: "Displaying %{entry_name} <b>%{first}&nbsp;-&nbsp;%{last}</b> of <b>%{total}</b> in total"
     label:
+      topic:
+        user_annotations_count: Your Annotations
+        annotations_count: Total Annotations
       annotator_store/annotation:
         tag: Code
         type: Content type
