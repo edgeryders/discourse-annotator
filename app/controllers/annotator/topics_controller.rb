@@ -48,12 +48,26 @@ class Annotator::TopicsController < Annotator::ApplicationController
     true
   end
 
-  # # Override this if you have certain roles that require a subset
-  # # this will be used to set the records shown on the `index` action.
+  # Override this if you have certain roles that require a subset
+  # this will be used to set the records shown on the `index` action.
   def scoped_resource
-    scope = Topic.all_with_annotations
-    scope = scope.where(annotator_store_annotations: {creator_id: params[:annotator_id]}) if params[:annotator_id].present?
-    scope
+    resources = Topic
+    resources = resources.select("topics.*, SUM(posts_with_counts.annotations_count)::bigint AS annotations_count")
+                    .joins("LEFT OUTER JOIN (#{Post.with_annotations_count.to_sql}) posts_with_counts ON topics.id = posts_with_counts.topic_id")
+                    .group('topics.id')
+
+
+    if params[:annotator_id].present?
+      resources = resources.where(id: Post.select(:topic_id).with_annotations.where(annotator_store_annotations: {creator_id: params[:annotator_id]}) )
+    end
+
+
+    resources = if params.dig(:topic, :order) == 'annotations_count'
+                  resources.order("annotations_count #{params[:topic][:direction] || 'DESC'}")
+                else
+                  order.apply(resources)
+                end
+    resources
   end
 
   def records_per_page
@@ -62,3 +76,13 @@ class Annotator::TopicsController < Annotator::ApplicationController
 
 
 end
+
+
+                    # .joins("LEFT OUTER JOIN annotator_store_annotations ON annotator_store_annotations.post_id = posts_with_counts.id")
+# scope = Topic.select("topics.*, count(posts_with_counts.id) AS annotations_count")
+#             .joins("LEFT OUTER JOIN (#{Post.with_annotations_count.to_sql}) posts_with_counts ON topics.id = posts_with_counts.topic_id")
+#             .joins("LEFT OUTER JOIN annotator_store_annotations ON annotator_store_annotations.post_id = posts_with_counts.id")
+#             .group('topics.id')
+#             .order("annotations_count DESC")
+# scope = scope.where(annotator_store_annotations: {creator_id: 3})
+# scope.to_sql

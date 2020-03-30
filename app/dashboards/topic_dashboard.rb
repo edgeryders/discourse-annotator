@@ -15,6 +15,7 @@ class TopicDashboard < Administrate::BaseDashboard
     title: Field::String,
     created_at: Field::DateTime,
     updated_at: Field::DateTime,
+    annotations_count: Field::Number
   }.freeze
 
   # COLLECTION_ATTRIBUTES
@@ -25,6 +26,7 @@ class TopicDashboard < Administrate::BaseDashboard
   COLLECTION_ATTRIBUTES = [
     :id,
     :title,
+    :annotations_count
     #:language,
   ].freeze
 
