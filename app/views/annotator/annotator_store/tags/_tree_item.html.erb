@@ -3,42 +3,17 @@
     <% if tag.children.any? %>
         <i class="fa fa-minus-circle" style="color:#aaa;"></i>
     <% end %>
-    <% language = AnnotatorStore::UserSetting.language_for_user(current_user) %>
-    <% dc = tag.descendants_annotations_count  %>
-
+    <% dc = tag.descendants_annotations_count %>
     <strong class="item" title="<%= "#{tag.annotations_count} annotations use this code#{" + #{dc} descendant annotations use this code" if dc > 0}." %>">
-      <%= tag.translated_name(language) %>
+      <%= tag.name %>
       <%= "(#{tag.annotations_count}#{" + #{dc}" if dc > 0 })" %>
     </strong>
   </span>
-  <% unless params[:creator_id].present? %>
-    by <%= tag.creator.username %>&nbsp;&nbsp;
-  <% end %>
-  <%= link_to(
-        'Show',
-        [namespace, tag],
-        class: "action-edit",
-        ) %> |
-
-  <%= link_to(
-        'Edit',
-        [:edit, namespace, tag],
-        class: "action-edit",
-        ) %> |
-
-  <%= link_to(
-        'Annotations',
-        annotator_annotator_store_annotations_path(code_id: tag.id),
-        class: "action-edit",
-        ) %>
-
-  |
-  <%= link_to(
-        'Merge',
-        edit_annotator_annotator_store_tag_path(tag.id, merge: true),
-        class: "action-edit",
-        ) %>
-
+  <%= "by #{tag.creator.username}" unless params[:creator_id].present? %>
+  <%= link_to('Show', [namespace, tag], class: "action-edit",) %> |
+  <%= link_to('Edit', [:edit, namespace, tag], class: "action-edit",) %> |
+  <%= link_to('Annotations', annotator_annotator_store_annotations_path(code_id: tag.id), class: "action-edit",) %> |
+  <%= link_to('Merge', edit_annotator_annotator_store_tag_path(tag.id, merge: true), class: "action-edit") %>
   <% if tag.is_childless? %>
     |
     <%= link_to(
@@ -52,7 +27,7 @@
 
   <% if tag.children.any? %>
     <ul>
-      <% tag.children.with_annotations_count.order(updated_at: :desc).each do |tag| %>
+      <% tag.children.with_localized_tags(language: AnnotatorStore::UserSetting.language_for_user(current_user)).each do |tag| %>
         <%= render 'tree_item', tag: tag %>
       <% end %>
     </ul>

@@ -2,12 +2,14 @@ module AnnotatorStore
   class Annotation < ActiveRecord::Base
 
     # Associations
-    belongs_to :tag
+    belongs_to :tag, counter_cache: true
     belongs_to :creator, class_name: '::User'
     belongs_to :post
 
     # Validations
-    validates :type, presence: true, inclusion: {in: %w(AnnotatorStore::TextAnnotation AnnotatorStore::ImageAnnotation AnnotatorStore::VideoAnnotation) }
+    validates :type, presence: true, inclusion: {
+        in: %w(AnnotatorStore::TextAnnotation AnnotatorStore::ImageAnnotation AnnotatorStore::VideoAnnotation)
+    }
     validates :creator, presence: true
     validates :tag, presence: true
 

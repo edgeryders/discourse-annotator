@@ -6,33 +6,37 @@ class Annotator::AnnotatorStore::TagsController < Annotator::ApplicationControll
 
 
   def index
-    scope = if api_request?
-              scoped_resource
-            else
-              # Search or Tree view
-              params[:search].present? ? scoped_resource.with_annotations_count : scoped_resource.with_annotations_count.where(ancestry: nil)
-            end
-
-    scope = scope.where(creator_id: params[:creator_id]) if params[:creator_id].present?
-    scope = scope.joins(:names).where(annotator_store_tag_names: {name: params[:search] }) if params[:search].present?
-
-    search_term = ''# params[:search].to_s.strip
-    resources = Administrate::Search.new(scope, dashboard_class, search_term).run
-    resources = apply_collection_includes(resources)
-    resources = params[:search].present? ? order.apply(resources) : resources.order(updated_at: :desc)
+    resources = if api_request?
+                  scoped_resource
+                else
+                  # Search or Tree view
+                  params[:search].present? ? scoped_resource : scoped_resource.where(ancestry: nil)
+                end
+    resources = resources.with_localized_tags(language: AnnotatorStore::UserSetting.language_for_user(current_user))
+    resources = resources.where(annotator_store_localized_tags: {name: params[:search] }) if params[:search].present?
+    resources = resources.where(creator_id: params[:creator_id]) if params[:creator_id].present?
+    resources = case params[:order]
+                when 'created_at'
+                  resources.order('annotator_store_tags.created_at DESC')
+                when 'updated_at'
+                  resources.order('annotator_store_tags.updated_at DESC')
+                else
+                  resources.order('annotator_store_localized_tags.name ASC')
+                end
     resources = resources.page(params[:page]).per(records_per_page)
-    page = Administrate::Page::Collection.new(dashboard)
 
+    search_term = params[:search].to_s.strip
+    page = Administrate::Page::Collection.new(dashboard)
 
     respond_to do |format|
       format.html {render locals: {resources: resources, search_term: search_term, page: page, show_search_bar: show_search_bar?}}
       format.json {
         render json: JSON.pretty_generate(
-          JSON.parse(
-            resources.to_json(
-              except: [:name_legacy], include: {names: {only: [:name], methods: [:locale]}}
+            JSON.parse(
+                resources.to_json(
+                    except: [:name_legacy], include: {names: {only: [:name], methods: [:locale]}}
+                )
             )
-          )
         )
       }
     end
@@ -108,3 +112,9 @@ class Annotator::AnnotatorStore::TagsController < Annotator::ApplicationControll
   end
 
 end
+
+
+#scope = scope.joins(:names).where(annotator_store_tag_names: {name: params[:search] }) if params[:search].present?
+#resources = Administrate::Search.new(scope, dashboard_class, search_term).run
+#resources = apply_collection_includes(resources)
+#resources = params[:search].present? ? order.apply(resources) : resources.order(updated_at: :desc)

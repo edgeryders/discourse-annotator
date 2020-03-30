@@ -10,6 +10,7 @@ module AnnotatorStore
     belongs_to :creator, class_name: '::User'
     has_many :annotations, dependent: :destroy
     has_many :names, dependent: :destroy, class_name: 'TagName'
+    has_many :localized_tags, dependent: :delete_all
 
     accepts_nested_attributes_for :names
 
@@ -28,13 +29,17 @@ module AnnotatorStore
       end
     end
 
+    after_save :update_localized_tags
+    after_destroy :update_localized_tags
+
 
     # --- Class Finder Methods --- #
 
-    def self.with_annotations_count
-      select('annotator_store_tags.*, count(annotator_store_annotations.id) AS annotations_count')
-          .joins('LEFT OUTER JOIN annotator_store_annotations on annotator_store_annotations.tag_id = annotator_store_tags.id')
-          .group('annotator_store_tags.id')
+    # language:
+    def self.with_localized_tags(args = {})
+      select("annotator_store_tags.*, annotator_store_localized_tags.name, annotator_store_localized_tags.path")
+          .joins(:localized_tags)
+          .where(annotator_store_localized_tags: {language_id: args[:language]})
     end
 
 
@@ -56,9 +61,26 @@ module AnnotatorStore
     end
 
     def descendants_annotations_count
-      AnnotatorStore::Tag.with_annotations_count.where(id: descendant_ids).sum(&:annotations_count)
+      AnnotatorStore::Tag.where(id: descendant_ids).sum(&:annotations_count)
+    end
+
+    def update_localized_tags
+      localized_tags.each do |lt|
+        lt.save!
+        lt.tag.descendants.each(&:save!)
+      end
     end
 
 
   end
 end
+
+
+# NOTE: No longer in use. A counter_cache column is now used instead.
+# def self.with_annotations_count
+#   select('annotator_store_tags.*, count(annotator_store_annotations.id) AS annotations_count')
+#       .joins('LEFT OUTER JOIN annotator_store_annotations on annotator_store_annotations.tag_id = annotator_store_tags.id')
+#       .group('annotator_store_tags.id')
+# end
+
+

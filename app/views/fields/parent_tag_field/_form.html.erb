@@ -3,10 +3,11 @@
 </div>
 <div class="field-unit__field">
   <% tags = if current_user.admin?
-              AnnotatorStore::Tag.all
+              nested_dropdown_tags
             else
-              AnnotatorStore::Tag.where(creator_id: field.resource.persisted? ? field.resource.creator_id : current_user.id)
+              nested_dropdown_tags(created_by: field.resource.persisted? ? field.resource.creator : current_user)
             end
   %>
-  <%= f.select :parent_id, nested_dropdown_tags(tags: tags.with_annotations_count.arrange(order: 'created_at')), include_blank: true %>
+
+  <%= f.select :parent_id, tags, include_blank: true %>
 </div>

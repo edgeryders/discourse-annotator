@@ -1,0 +1,16 @@
+<div class="dropdown">
+  <div class="dropdown-btn" aria-haspopup="true" role="button" tabindex="0">
+    <div class="dropdown-btn-text">
+      Sort by: <%= params[:order].blank? ? options.first.last : options[params[:order].to_sym] %>
+    </div>
+    <span class="dropdown-arrow"></span>
+  </div>
+
+  <div class="dropdown-content">
+    <% options.each do |key, label| %>
+      <%= link_to label,
+                  request.query_parameters.except(:page).merge(order: key),
+                  class: ((params[:order].blank? && key == options.first.first) || params[:order]&.to_sym == key ? 'active' : nil) %>
+    <% end %>
+  </div>
+</div>
