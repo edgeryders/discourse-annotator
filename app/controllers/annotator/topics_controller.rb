@@ -51,21 +51,18 @@ class Annotator::TopicsController < Annotator::ApplicationController
   # Override this if you have certain roles that require a subset
   # this will be used to set the records shown on the `index` action.
   def scoped_resource
-    resources = Topic
-    resources = resources.select("topics.*, SUM(posts_with_counts.annotations_count)::bigint AS annotations_count")
+    resources = Topic.select("topics.*, SUM(posts_with_counts.annotations_count)::bigint AS annotations_count")
                     .joins("LEFT OUTER JOIN (#{Post.with_annotations_count.to_sql}) posts_with_counts ON topics.id = posts_with_counts.topic_id")
                     .group('topics.id')
-
 
     if params[:annotator_id].present?
       resources = resources.where(id: Post.select(:topic_id).with_annotations.where(annotator_store_annotations: {creator_id: params[:annotator_id]}) )
     end
 
-
     resources = if params.dig(:topic, :order) == 'annotations_count'
                   resources.order("annotations_count #{params[:topic][:direction] || 'DESC'}")
                 else
-                  order.apply(resources)
+                  resources #order.apply(resources)
                 end
     resources
   end

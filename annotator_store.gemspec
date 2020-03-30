@@ -39,6 +39,7 @@ Gem::Specification.new do |spec|
 
   # https://github.com/thoughtbot/administrate
   spec.add_runtime_dependency 'administrate', '0.12.0'
+  spec.add_runtime_dependency 'kaminari', '1.1.1'
   # @todo It is not possible to have a git branch dependency:
   #   https://stackoverflow.com/questions/6499410/ruby-gemspec-dependency-is-possible-have-a-git-branch-dependency
   #   Right now we specify the dependency in the Gemfile.
