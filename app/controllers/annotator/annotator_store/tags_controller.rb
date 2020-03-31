@@ -46,7 +46,15 @@ class Annotator::AnnotatorStore::TagsController < Annotator::ApplicationControll
   def show
     respond_to do |format|
       format.html {render locals: {page: Administrate::Page::Show.new(dashboard, requested_resource)}}
-      format.json {render json: JSON.pretty_generate(JSON.parse(requested_resource.to_json))}
+      format.json {
+        render json: JSON.pretty_generate(
+            JSON.parse(
+                requested_resource.to_json(
+                    except: [:name_legacy], include: {names: {only: [:name], methods: [:locale]}}
+                )
+            )
+        )
+      }
     end
   end
 
