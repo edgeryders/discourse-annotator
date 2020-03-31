@@ -21,7 +21,7 @@ class Annotator::AnnotatorStore::TagsController < Annotator::ApplicationControll
                 when 'updated_at'
                   resources.order('annotator_store_tags.updated_at DESC')
                 else
-                  resources.order('annotator_store_localized_tags.name ASC')
+                  resources.order('LOWER(annotator_store_localized_tags.name) ASC')
                 end
     resources = resources.page(params[:page]).per(records_per_page)
 

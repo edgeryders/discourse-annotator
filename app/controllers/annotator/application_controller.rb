@@ -18,6 +18,13 @@ class Annotator::ApplicationController < Administrate::ApplicationController
     'annotator_annotator_store'
   end
 
+  # See: https://github.com/thoughtbot/administrate/issues/442
+  def order
+    @order ||= Administrate::Order.new(
+        params.fetch(resource_name, {}).fetch(:order, 'created_at'),
+        params.fetch(resource_name, {}).fetch(:direction, 'desc'),
+        )
+  end
 
 
   private

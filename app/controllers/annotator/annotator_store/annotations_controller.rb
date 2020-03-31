@@ -261,9 +261,6 @@ class Annotator::AnnotatorStore::AnnotationsController < Annotator::ApplicationC
     %w[edit destroy].exclude?(name.to_s) && super
   end
 
-
-  private
-
   # name:
   # language:
   def create_tag!(args = {})
