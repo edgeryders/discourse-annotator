@@ -13,7 +13,6 @@ Rails.application.routes.draw do
       resources :tags, path: 'codes'
       match 'localized_codes', to: 'localized_tags#search', via: [:get], defaults: {format: :json}, constraints: {format: :json}
       resources :tag_names
-      resources :collections
       resources :languages
       resources :user_settings
       # Search
