@@ -45,19 +45,17 @@ module AnnotatorStore
 
     # --- Instance Methods --- #
 
-    def translated_name(language = nil)
-      (language.present? ? names.find_by(language_id: language.id)&.name : nil) ||
-          names.find_by(language_id: AnnotatorStore::Language.english.id)&.name ||
-          names.order(created_at: :asc).first&.name
-    end
-
     # Alias. Used by administrate
     def name
-      translated_name
+      localized_name
     end
 
-    def translated_name_with_path(language = nil)
-      path.map {|t| t.translated_name(language)}.join(' → ')
+    def localized_name(language = nil)
+      localized_tags.find_by(language: language || AnnotatorStore::Language.english).path
+    end
+
+    def localized_name_with_path(language = nil)
+      localized_tags.find_by(language: language || AnnotatorStore::Language.english).path
     end
 
     def descendants_annotations_count
@@ -65,10 +63,17 @@ module AnnotatorStore
     end
 
     def update_localized_tags
-      localized_tags.each do |lt|
+      AnnotatorStore::Language.all.each do |language|
+        lt = AnnotatorStore::LocalizedTag.find_or_create_by!(tag_id: id, language_id: language.id)
         lt.save!
         lt.tag.descendants.each(&:save!)
       end
+    end
+
+    def name_for_language(language)
+      names.find_by(language_id: language.id)&.name ||
+          names.find_by(language_id: AnnotatorStore::Language.english.id)&.name ||
+          names.order(created_at: :asc).first&.name
     end
 
 

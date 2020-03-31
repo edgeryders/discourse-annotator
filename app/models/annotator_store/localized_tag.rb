@@ -19,8 +19,8 @@ module AnnotatorStore
 
     # Callbacks
     before_validation do
-      self.name = tag.translated_name(language)
-      self.path = tag.translated_name_with_path(language)
+      self.name = tag.name_for_language(language)
+      self.path = tag.path.map {|t| t.name_for_language(language)}.join(' → ')
     end
 
 

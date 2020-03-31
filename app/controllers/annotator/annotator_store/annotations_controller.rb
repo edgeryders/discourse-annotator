@@ -53,7 +53,7 @@ class Annotator::AnnotatorStore::AnnotationsController < Annotator::ApplicationC
 
 
   def records_per_page
-    params[:per_page] || 100
+    params[:per_page] || 50
   end
 
 
@@ -88,13 +88,22 @@ class Annotator::AnnotatorStore::AnnotationsController < Annotator::ApplicationC
 
   # PATCH/PUT /annotations/1
   def update
-    format_client_input_to_rails_convention_for_update
     respond_to do |format|
-      if @annotation.update(annotation_params)
-        format.json {render :show, status: :ok, location: annotator_annotator_store_annotations_url(@annotation)}
-      else
-        format.json {render json: @annotation.errors, status: :unprocessable_entity}
-      end
+      format.json {
+        format_client_input_to_rails_convention_for_update
+        if @annotation.update(annotation_params)
+          render :show, status: :ok, location: annotator_annotator_store_annotations_url(@annotation)
+        else
+          render json: @annotation.errors, status: :unprocessable_entity
+        end
+      }
+      format.html {
+        if @annotation.update(annotation_params)
+          redirect_to([namespace, @annotation], notice: translate_with_resource("update.success"))
+        else
+          render :edit, locals: {page: Administrate::Page::Form.new(dashboard, requested_resource)}
+        end
+      }
     end
   end
 
@@ -149,7 +158,7 @@ class Annotator::AnnotatorStore::AnnotationsController < Annotator::ApplicationC
   # IMAGE annotation input example:
   # {
   #   "url": "http://lloydbleekcollection.cs.uct.ac.za/images/stow/STOW_001.JPG",
-  #   "text": "sdfdfasdf",
+  #   "text": "",
   #   "ranges": [],
   #   "quote": "",
   #   "closure_uid_k7l337": 6,

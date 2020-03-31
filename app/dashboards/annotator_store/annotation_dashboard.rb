@@ -15,6 +15,7 @@ module AnnotatorStore
       uri: Field::String,
       type: Annotator::AnnotationTypeField,
       tag_id: Field::Number,
+      text: Field::Text.with_options(truncate: 1000),
       quote: Field::Text.with_options(truncate: 1000),
       creator_id: Field::Number,
       created_at: Field::DateTime,
@@ -30,9 +31,11 @@ module AnnotatorStore
     COLLECTION_ATTRIBUTES = [
       :id,
       :type,
-      :quote,
       :tag,
+      :text,
+      :quote,
       :creator,
+      :created_at
     ].freeze
 
     # # SHOW_PAGE_ATTRIBUTES
@@ -41,6 +44,7 @@ module AnnotatorStore
       :id,
       :type,
       :quote,
+      :text,
       :tag,
       :creator,
       :created_at,
@@ -52,7 +56,8 @@ module AnnotatorStore
     # # an array of attributes that will be displayed
     # # on the model's form (`new` and `edit`) pages.
     FORM_ATTRIBUTES = [
-      :creator,
+      # :creator,
+      :text,
     ].freeze
 
     # Overwrite this method to customize how tags are displayed

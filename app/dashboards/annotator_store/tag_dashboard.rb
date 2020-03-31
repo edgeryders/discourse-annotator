@@ -62,7 +62,7 @@ module AnnotatorStore
     # Overwrite this method to customize how tags are displayed
     # across all pages of the admin dashboard.
     def display_resource(tag)
-      "Code \"#{tag.translated_name}\""
+      "Code \"#{tag.localized_name}\""
     end
 
   end

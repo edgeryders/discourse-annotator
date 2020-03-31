@@ -3,7 +3,7 @@ json.uri annotation.uri
 
 
 language = defined?(@current_user) ? AnnotatorStore::UserSetting.language_for_user(@current_user) : nil
-json.tags annotation.tag.present? ? [annotation.tag.path.map {|t| t.translated_name(language)}.join(' → ')] : []
+json.tags annotation.tag.present? ? [annotation.tag.path.map {|t| t.localized_name(language)}.join(' → ')] : []
 
 
 json.created annotation.created_at
