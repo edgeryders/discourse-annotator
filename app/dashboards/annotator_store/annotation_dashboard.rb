@@ -15,12 +15,24 @@ module AnnotatorStore
       uri: Field::String,
       type: Annotator::AnnotationTypeField,
       tag_id: Field::Number,
-      text: Field::Text.with_options(truncate: 1000),
-      quote: Field::Text.with_options(truncate: 1000),
       creator_id: Field::Number,
       created_at: Field::DateTime,
       updated_at: Field::DateTime,
-      topic: Annotator::TopicField
+      topic: Annotator::TopicField,
+      src: Field::String,
+      # TextAnnotation
+      text: Field::Text.with_options(truncate: 1000),
+      quote: Field::Text.with_options(truncate: 1000),
+      version: Field::String,
+      # VideoAnnotation
+      container: Field::String,
+      ext: Field::String,
+      start: Field::String,
+      end: Field::String,
+      # Image Annotation
+      shape: Field::String,
+      units: Field::String,
+      geometry: Field::String,
     }.freeze
 
     # COLLECTION_ATTRIBUTES
@@ -38,23 +50,13 @@ module AnnotatorStore
       :created_at
     ].freeze
 
-    # # SHOW_PAGE_ATTRIBUTES
-    # # an array of attributes that will be displayed on the model's show page.
-    SHOW_PAGE_ATTRIBUTES = [
-      :id,
-      :type,
-      :quote,
-      :text,
-      :tag,
-      :creator,
-      :created_at,
-      :updated_at,
-      :topic,
-    ].freeze
+    # SHOW_PAGE_ATTRIBUTES
+    # an array of attributes that will be displayed on the model's show page.
+    SHOW_PAGE_ATTRIBUTES = [] # Overwritten in subclasses.
 
-    # # FORM_ATTRIBUTES
-    # # an array of attributes that will be displayed
-    # # on the model's form (`new` and `edit`) pages.
+    # FORM_ATTRIBUTES
+    # an array of attributes that will be displayed
+    # on the model's form (`new` and `edit`) pages.
     FORM_ATTRIBUTES = [
       # :creator,
       :text,
