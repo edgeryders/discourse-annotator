@@ -37,7 +37,7 @@ module AnnotatorStore
 
     # language:
     def self.with_localized_tags(args = {})
-      select("annotator_store_tags.*, annotator_store_localized_tags.name, annotator_store_localized_tags.path")
+      select("annotator_store_tags.*, annotator_store_localized_tags.name, annotator_store_localized_tags.path AS name_with_path")
           .joins(:localized_tags)
           .where(annotator_store_localized_tags: {language_id: args[:language]})
     end
@@ -51,7 +51,7 @@ module AnnotatorStore
     end
 
     def localized_name(language = nil)
-      localized_tags.find_by(language: language || AnnotatorStore::Language.english).path
+      localized_tags.find_by(language: language || AnnotatorStore::Language.english).name
     end
 
     def localized_name_with_path(language = nil)
