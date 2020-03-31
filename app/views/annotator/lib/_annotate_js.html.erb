@@ -42,12 +42,25 @@
   }
 
   function annotationAutocompleteTags(selector) {
-    <% language = AnnotatorStore::UserSetting.language_for_user(current_user) %>
-    var availableTags = <%= AnnotatorStore::Tag.with_localized_tags(language: language).where(creator_id: current_user.id).order(name_with_path: :asc).map(&:name_with_path).to_json.html_safe -%>;
+    <%# language = AnnotatorStore::UserSetting.language_for_user(current_user) %>
+    <%# var availableTags = <%= AnnotatorStore::Tag.with_localized_tags(language: language).where(creator_id: current_user.id).order(name_with_path: :asc).map(&:name_with_path).to_json.html_safe -% >;  %>
 
     jQuery(document).ready(function ($) {
       $(selector).data('annotator').plugins.Tags.input.autocomplete({
-        source: availableTags,
+        // source: availableTags,
+        <%# See: https://stackoverflow.com/questions/9656523/jquery-autocomplete-with-callback-ajax-json %>
+        source: function( request, response ) {
+            $.ajax({
+                url: "/annotator/localized_codes.json",
+                dataType: "json",
+                data: {
+                    q: request.term
+                },
+                success: function( data ) {
+                    response( data );
+                }
+            });
+        },
         minLength: 0,
         open: function () {
           $(this).autocomplete('widget').css('z-index', 10000);
