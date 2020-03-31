@@ -198,7 +198,14 @@ class Annotator::AnnotatorStore::AnnotationsController < Annotator::ApplicationC
     params[:annotation][:text] = params[:text] # unless params[:text].blank?
     params[:annotation][:quote] = params[:quote] unless params[:quote].blank?
     params[:annotation][:uri] = params[:uri] unless params[:uri].blank?
-    params[:annotation][:post_id] = params[:uri].split('/').last unless params[:uri].blank?
+    unless params[:uri].blank?
+      path, id = params[:uri].split('/').reject(&:empty?)
+      if path == 'topic'
+        params[:annotation][:topic_id] = id
+      elsif path == 'post'
+        params[:annotation][:post_id] = id
+      end
+    end
     params[:annotation][:ranges_attributes] = params[:ranges].map do |r|
       range = {}
       range[:start] = r[:start]
@@ -218,13 +225,13 @@ class Annotator::AnnotatorStore::AnnotationsController < Annotator::ApplicationC
   # Only allow a trusted parameter 'white list' through.
   def annotation_params
     params.require(:annotation).permit(
-        :tag_id, :uri,
+        :tag_id, :uri, :post_id, :topic_id,
         # VideoAnnotation
         :container, :src, :ext, :start, :end,
         # Image Annotation
         :src, :shape, :units, :geometry,
         # TextAnnotation
-        :text, :quote, :version, :post_id, ranges_attributes: [:start, :end, :start_offset, :end_offset]
+        :text, :quote, :version, ranges_attributes: [:start, :end, :start_offset, :end_offset]
     )
   end
 

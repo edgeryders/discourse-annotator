@@ -6,7 +6,7 @@
 
 <% content_for :stylesheet do %>
   <style type="text/css">
-    <% tags = AnnotatorStore::Annotation.where(post_id: @topic_view.posts.map(&:id)).where.not(creator_id: @current_user.id) %>
+    <% tags = AnnotatorStore::Annotation.where(topic_id: @topic_view.topic.id).where.not(creator_id: @current_user.id) %>
     <% if tags.present? %>
     <%= tags.map {|tag| "[data-annotation-id=\"#{tag.id}\"]"}.join(', ').html_safe + "{ background-color: rgba(182, 223, 236, 0.3) !important; }" %>
     <% end %>
@@ -16,9 +16,14 @@
 
 
 <header class="main-content__header" role="banner">
-  <h1 class="main-content__page-title" id="page-title">
+  <h1 class="main-content__page-title" id="topic-<%= @topic_view.topic.id %>-title">
     <%= @topic_view.topic.title %>
   </h1>
+
+  <script>
+      loadAnnotator('#topic-<%= @topic_view.topic.id %>-title', '/topic/<%= @topic_view.topic.id %>');
+  </script>
+
   <div></div>
 </header>
 

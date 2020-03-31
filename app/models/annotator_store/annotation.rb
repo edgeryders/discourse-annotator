@@ -5,6 +5,7 @@ module AnnotatorStore
     belongs_to :tag, counter_cache: true
     belongs_to :creator, class_name: '::User'
     belongs_to :post
+    belongs_to :topic
 
     # Validations
     validates :type, presence: true, inclusion: {
@@ -13,10 +14,13 @@ module AnnotatorStore
     validates :creator, presence: true
     validates :tag, presence: true
 
-
-    def topic
-      post.topic
+    # Callbacks
+    before_validation on: :create do
+      self.topic = post&.topic if topic.blank?
     end
+
+
+    # --- Instance Methods --- #
 
     def text_annotation?
       false
