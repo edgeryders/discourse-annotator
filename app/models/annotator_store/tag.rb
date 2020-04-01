@@ -12,7 +12,7 @@ module AnnotatorStore
     has_many :names, dependent: :delete_all, class_name: 'TagName'
     has_many :localized_tags, dependent: :delete_all
 
-    accepts_nested_attributes_for :names
+    accepts_nested_attributes_for :names, allow_destroy: true
 
 
     # Validations

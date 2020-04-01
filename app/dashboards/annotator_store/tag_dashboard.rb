@@ -56,7 +56,7 @@ module AnnotatorStore
       :parent,
       :description,
       :creator,
-      :merge_tag,
+      :merge_tag
     ].freeze
 
     # Overwrite this method to customize how tags are displayed
