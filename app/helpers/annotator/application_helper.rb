@@ -27,7 +27,7 @@ module Annotator
         JOIN users ON t.creator_id = users.id
         WHERE lt.language_id = #{language.id}
         #{args[:created_by].present? ? "AND t.creator_id = #{args[:created_by].id}" : '' }
-        ORDER BY lt.path ASC
+        ORDER BY LOWER(lt.path) ASC
       ")
       r.map {|t| ["#{t['path']} (#{t['annotations_count']}) by #{t['username']}", t['id']] }
     end

@@ -8,8 +8,8 @@ module AnnotatorStore
 
     # Associations
     belongs_to :creator, class_name: '::User'
-    has_many :annotations, dependent: :destroy
-    has_many :names, dependent: :destroy, class_name: 'TagName'
+    has_many :annotations, dependent: :delete_all
+    has_many :names, dependent: :delete_all, class_name: 'TagName'
     has_many :localized_tags, dependent: :delete_all
 
     accepts_nested_attributes_for :names
@@ -24,13 +24,12 @@ module AnnotatorStore
     after_save do
       if merge_tag_id.present?
         t = AnnotatorStore::Tag.find(merge_tag_id)
-        t.annotations.update_all(tag_id: id)
-        t.destroy
+        t.annotations.update(tag_id: id)
+        t.destroy if t.is_childless?
       end
     end
 
     after_save :update_localized_tags
-    after_destroy :update_localized_tags
 
 
     # --- Class Finder Methods --- #
