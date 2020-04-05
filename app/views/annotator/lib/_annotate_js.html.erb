@@ -56,8 +56,13 @@
                 data: {
                     q: request.term
                 },
-                success: function( data ) {
-                    response( data );
+                success: function (data) {
+                    response($.map(data, function (item) {
+                        return {
+                            label: item.localized_path,
+                            value: item.localized_path
+                        };
+                    }));
                 }
             });
         },
