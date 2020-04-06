@@ -50,11 +50,11 @@ module AnnotatorStore
     end
 
     def localized_name(language = nil)
-      localized_tags.find_by(language: language || AnnotatorStore::Language.english).name
+      localized_tags.find_by(language: language || AnnotatorStore::Language.english)&.name
     end
 
     def localized_name_with_path(language = nil)
-      localized_tags.find_by(language: language || AnnotatorStore::Language.english).path
+      localized_tags.find_by(language: language || AnnotatorStore::Language.english)&.path
     end
 
     def descendants_annotations_count
