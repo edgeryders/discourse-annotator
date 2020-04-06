@@ -8,7 +8,7 @@ module AnnotatorStore
 
     # Associations
     belongs_to :creator, class_name: '::User'
-    has_many :annotations, dependent: :delete_all
+    has_many :annotations, dependent: :destroy
     has_many :names, dependent: :delete_all, class_name: 'TagName'
     has_many :localized_tags, dependent: :delete_all
 

@@ -22,6 +22,7 @@ module AnnotatorStore
         updated_at: Field::DateTime,
         annotations: Field::HasMany.with_options(class_name: 'AnnotatorStore::Annotation', limit: 100),
         names: Field::NestedHasMany.with_options(class_name: 'AnnotatorStore::TagName', association_name: 'names', skip: :tag),
+        localized_tags: Field::NestedHasMany.with_options(class_name: 'AnnotatorStore::LocalizedTag', skip: :tag),
     }.freeze
 
     # COLLECTION_ATTRIBUTES
@@ -46,6 +47,7 @@ module AnnotatorStore
         :created_at,
         :updated_at,
         :annotations,
+        :localized_tags,
     ].freeze
 
     # FORM_ATTRIBUTES
