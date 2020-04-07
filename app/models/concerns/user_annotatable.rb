@@ -11,8 +11,3 @@ module UserAnnotatable
 
   end
 end
-
-
-
-
-

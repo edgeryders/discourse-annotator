@@ -4,4 +4,3 @@
 <div class="field-unit__field">
   <%= f.select :creator_id, User.annotators.order(:username).map {|u| [u.username, u.id] } %>
 </div>
-

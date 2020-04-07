@@ -60,6 +60,8 @@ class Annotator::TopicsController < Annotator::ApplicationController
                     .joins("LEFT OUTER JOIN (#{user_counts.to_sql}) tu ON topics.id = tu.id")
                     .joins("LEFT OUTER JOIN (#{total_counts.to_sql}) tc ON topics.id = tc.id")
 
+    resources = resources.listable_topics # Exclude private messages.
+
     if params[:annotator_id].present?
       resources = resources.where(id: Post.select(:topic_id).with_annotations.where(annotator_store_annotations: {creator_id: params[:annotator_id]}))
     end
