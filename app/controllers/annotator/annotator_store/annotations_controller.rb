@@ -176,7 +176,7 @@ class Annotator::AnnotatorStore::AnnotationsController < Annotator::ApplicationC
   # }
   def format_client_input_to_rails_convention_for_create
     params[:annotation] = {}
-    params[:annotation][:tag_id] = get_tag_id unless params[:tags].blank?
+    params[:annotation][:tag_id] = get_code.id unless params[:tags].blank?
 
     # VideoAnnotation
     params[:annotation][:uri] = params[:uri] unless params[:uri].blank?
@@ -235,26 +235,19 @@ class Annotator::AnnotatorStore::AnnotationsController < Annotator::ApplicationC
     )
   end
 
-  def get_tag_id
-    path = params[:tags].join(' ').split(' → ').map(&:strip)
+  def get_code
     language = AnnotatorStore::UserSetting.language_for_user(current_user)
-    tag_names = AnnotatorStore::TagName.joins(:tag).where(name: path.last, annotator_store_tags: {creator_id: current_user.id}).all
+    path_items = []
+    code = nil
 
-    tag_names.each do |tag_name|
-      return tag_name.tag_id if path_matches?(tag_name.tag, path)
+    params[:tags].join(' ').split(' → ').map(&:strip).each do |code_name|
+      path_items << code_name
+      code = AnnotatorStore::Tag.joins(:localized_tags).find_by(
+          creator_id: current_user.id,
+          annotator_store_localized_tags: {path: path_items.join(' → ')}
+      ) || create_code!(parent: code, name: code_name, language: language)
     end
-    create_tag!(name: path.last, language: language).id
-  end
-
-  # If the path of the tag matches the given path.
-  def path_matches?(tag, path)
-    return true if tag.blank? && path.blank?
-
-    if tag.present? && path.present? && tag.names.exists?(name: path.last)
-      path_matches?(tag.parent, path.dup[0...-1])
-    else
-      false
-    end
+    code
   end
 
   # Use callbacks to share common setup or constraints between actions.
@@ -270,8 +263,9 @@ class Annotator::AnnotatorStore::AnnotationsController < Annotator::ApplicationC
 
   # name:
   # language:
-  def create_tag!(args = {})
-    tag = AnnotatorStore::Tag.new(creator: current_user)
+  # parent:
+  def create_code!(args = {})
+    tag = AnnotatorStore::Tag.new(parent: args[:parent], creator: current_user)
     tag.names.build(name: args[:name], language: args[:language])
     tag.save!
     tag
@@ -279,3 +273,26 @@ class Annotator::AnnotatorStore::AnnotationsController < Annotator::ApplicationC
 
 
 end
+
+
+# def get_code_id
+#   path = params[:tags].join(' ').split(' → ').map(&:strip)
+#   language = AnnotatorStore::UserSetting.language_for_user(current_user)
+#   tag_names = AnnotatorStore::TagName.joins(:tag).where(name: path.last, annotator_store_tags: {creator_id: current_user.id}).all
+#
+#   tag_names.each do |tag_name|
+#     return tag_name.tag_id if path_matches?(tag_name.tag, path)
+#   end
+#   create_code!(name: path.last, language: language).id
+# end
+#
+# # If the path of the tag matches the given path.
+# def path_matches?(tag, path)
+#   return true if tag.blank? && path.blank?
+#
+#   if tag.present? && path.present? && tag.names.exists?(name: path.last)
+#     path_matches?(tag.parent, path.dup[0...-1])
+#   else
+#     false
+#   end
+# end

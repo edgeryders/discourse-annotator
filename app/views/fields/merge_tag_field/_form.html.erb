@@ -38,7 +38,7 @@
                   labelField: 'localized_path',
                   searchField: 'localized_path',
                   create: false,
-                  searchUrl: "/annotator/localized_codes.json" + '?q=',
+                  searchUrl: "/annotator/mergeable_codes.json" + '?code_id=<%= field.resource.id %>&q=',
 
                   load: function(query, callback) {
                       if (!query.length) return callback();

@@ -11,6 +11,7 @@ module AnnotatorStore
     # on pages throughout the dashboard.
     ATTRIBUTE_TYPES = {
       discourse_user: Field::BelongsTo.with_options(class_name: '::User', order: 'username ASC', scope: -> { ::User.annotators }),
+      discourse_tag: Field::BelongsTo.with_options(class_name: '::Tag', order: 'name ASC', scope: -> { ::Tag.where('lower(name) LIKE ?', "ethno-%") }),
       language: Field::BelongsTo.with_options(class_name: 'AnnotatorStore::Language'),
       id: Field::Number,
     }.freeze
@@ -23,6 +24,7 @@ module AnnotatorStore
     COLLECTION_ATTRIBUTES = [
       #:id,
       :discourse_user,
+      :discourse_tag,
       :language,
     ].freeze
 
@@ -30,6 +32,7 @@ module AnnotatorStore
     # an array of attributes that will be displayed on the model's show page.
     SHOW_PAGE_ATTRIBUTES = [
       :discourse_user,
+      :discourse_tag,
       :language,
       :id,
     ].freeze
@@ -39,6 +42,7 @@ module AnnotatorStore
     # on the model's form (`new` and `edit`) pages.
     FORM_ATTRIBUTES = [
       :discourse_user,
+      :discourse_tag,
       :language,
     ].freeze
 

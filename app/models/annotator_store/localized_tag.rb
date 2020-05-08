@@ -6,7 +6,6 @@ module AnnotatorStore
 
     delegate :locale, to: :language
 
-
     # Associations
     belongs_to :tag
     belongs_to :language

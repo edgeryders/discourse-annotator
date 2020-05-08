@@ -12,6 +12,7 @@ Rails.application.routes.draw do
     namespace :annotator_store, path: '' do
       resources :tags, path: 'codes'
       match 'localized_codes', to: 'localized_tags#index', via: [:get], defaults: {format: :json}, constraints: {format: :json}
+      match 'mergeable_codes', to: 'localized_tags#mergeable', via: [:get], defaults: {format: :json}, constraints: {format: :json}
       resources :localized_tags, only: [:show]
       resources :tag_names
       resources :languages
