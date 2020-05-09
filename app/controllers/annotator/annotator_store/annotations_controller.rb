@@ -236,18 +236,9 @@ class Annotator::AnnotatorStore::AnnotationsController < Annotator::ApplicationC
   end
 
   def get_code
-    language = AnnotatorStore::UserSetting.language_for_user(current_user)
-    path_items = []
-    code = nil
-
-    params[:tags].join(' ').split(' → ').map(&:strip).each do |code_name|
-      path_items << code_name
-      code = AnnotatorStore::Tag.joins(:localized_tags).find_by(
-          creator_id: current_user.id,
-          annotator_store_localized_tags: {path: path_items.join(' → ')}
-      ) || create_code!(parent: code, name: code_name, language: language)
-    end
-    code
+    path = params[:tags].join(' ')
+    AnnotatorStore::Tag.joins(:localized_tags).find_by(annotator_store_localized_tags: {path: path}) ||
+        create_code!(name: path, language: AnnotatorStore::UserSetting.language_for_user(current_user))
   end
 
   # Use callbacks to share common setup or constraints between actions.
@@ -273,6 +264,22 @@ class Annotator::AnnotatorStore::AnnotationsController < Annotator::ApplicationC
 
 
 end
+
+
+# def get_code
+#   language = AnnotatorStore::UserSetting.language_for_user(current_user)
+#   path_items = []
+#   code = nil
+#
+#   params[:tags].join(' ').split(' → ').map(&:strip).each do |code_name|
+#     path_items << code_name
+#     code = AnnotatorStore::Tag.joins(:localized_tags).find_by(
+#         creator_id: current_user.id,
+#         annotator_store_localized_tags: {path: path_items.join(' → ')}
+#     ) || create_code!(parent: code, name: code_name, language: language)
+#   end
+#   code
+# end
 
 
 # def get_code_id
