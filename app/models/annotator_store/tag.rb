@@ -21,13 +21,14 @@ module AnnotatorStore
     validates :names, length: {minimum: 1, too_short: ": One name is required"}
 
     # Callbacks
-    # after_save do
-    #   if merge_tag_id.present?
-    #     t = AnnotatorStore::Tag.find(merge_tag_id)
-    #     t.annotations.update!(tag_id: id)
-    #     t.destroy if t.is_childless?
-    #   end
-    # end
+    after_save do
+      if merge_tag_id.present?
+        t = AnnotatorStore::Tag.find(merge_tag_id)
+        t.annotations.each {|a| a.update_attributes!(tag_id: id)}
+        t.reload # Important! Otherwise the previously assigned annotations are destroyed as well.
+        t.destroy if t.annotations.none? && t.is_childless?
+      end
+    end
 
     after_save :update_localized_tags
 

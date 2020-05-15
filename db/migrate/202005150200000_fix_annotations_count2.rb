@@ -1,4 +1,4 @@
-class FixAnnotationsCount < ActiveRecord::Migration[5.2]
+class FixAnnotationsCount2 < ActiveRecord::Migration[5.2]
 
 
   def change
