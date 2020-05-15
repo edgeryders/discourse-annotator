@@ -13,7 +13,7 @@ class Annotator::AnnotatorStore::TagsController < Annotator::ApplicationControll
                   params[:search].present? ? scoped_resource : scoped_resource.where(ancestry: nil)
                 end
     resources = resources.with_localized_tags(language: AnnotatorStore::UserSetting.language_for_user(current_user))
-    resources = resources.where(annotator_store_localized_tags: {name: params[:search] }) if params[:search].present?
+    resources = resources.where("annotator_store_localized_tags.path ILIKE ?", "%#{params[:search].split.join('%')}%") if params[:search].present?
     resources = resources.where(creator_id: params[:creator_id]) if params[:creator_id].present?
     resources = case params[:order]
                 when 'created_at'

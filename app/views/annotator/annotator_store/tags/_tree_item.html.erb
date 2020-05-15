@@ -10,7 +10,7 @@
     </strong>
   </span>
   <%= "by #{tag.creator.username}" unless params[:creator_id].present? %>
-  <%= link_to('Show', [namespace, tag], class: "action-edit",) %> |
+  <%= link_to('Show', [namespace, tag], class: "action-edit") %> |
   <%= link_to('Edit', [:edit, namespace, tag], class: "action-edit",) %> |
   <%= link_to('Annotations', annotator_annotator_store_annotations_path(code_id: tag.id), class: "action-edit",) %> |
   <%= link_to('Merge', edit_annotator_annotator_store_tag_path(tag.id, merge: true), class: "action-edit") %>
