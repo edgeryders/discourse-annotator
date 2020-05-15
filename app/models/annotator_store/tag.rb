@@ -4,7 +4,7 @@ module AnnotatorStore
     attr_accessor :merge_tag_id
 
     # https://github.com/stefankroes/ancestry
-    has_ancestry
+    has_ancestry orphan_strategy: :adopt
 
     # Associations
     belongs_to :creator, class_name: '::User'
@@ -21,13 +21,13 @@ module AnnotatorStore
     validates :names, length: {minimum: 1, too_short: ": One name is required"}
 
     # Callbacks
-    after_save do
-      if merge_tag_id.present?
-        t = AnnotatorStore::Tag.find(merge_tag_id)
-        t.annotations.update(tag_id: id)
-        t.destroy if t.is_childless?
-      end
-    end
+    # after_save do
+    #   if merge_tag_id.present?
+    #     t = AnnotatorStore::Tag.find(merge_tag_id)
+    #     t.annotations.update!(tag_id: id)
+    #     t.destroy if t.is_childless?
+    #   end
+    # end
 
     after_save :update_localized_tags
 
@@ -39,6 +39,18 @@ module AnnotatorStore
       select("annotator_store_tags.*, annotator_store_localized_tags.name, annotator_store_localized_tags.path AS name_with_path")
           .joins(:localized_tags)
           .where(annotator_store_localized_tags: {language_id: args[:language]})
+    end
+
+
+    # --- Class Methods --- #
+
+    def self.fix_annotations_count
+      ActiveRecord::Base.connection.execute <<-SQL.squish
+        UPDATE annotator_store_tags
+        SET annotations_count = (SELECT count(1)
+          FROM annotator_store_annotations
+          WHERE annotator_store_annotations.tag_id = annotator_store_tags.id)
+      SQL
     end
 
 
