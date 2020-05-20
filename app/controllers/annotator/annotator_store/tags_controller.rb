@@ -5,14 +5,19 @@ require_dependency 'annotator/application_controller'
 class Annotator::AnnotatorStore::TagsController < Annotator::ApplicationController
 
 
+  skip_before_action :ensure_logged_in, :ensure_staff_or_annotator_group_member,
+                     if: proc {|c| c.action_name == "index" && AnnotatorStore::Setting.instance.public_codes_list_api_endpoint? }
+
+
   def index
+    language = current_user.present? ? AnnotatorStore::UserSetting.language_for_user(current_user) : AnnotatorStore::Language.english
     resources = if api_request?
                   scoped_resource
                 else
                   # Search or Tree view
                   params[:search].present? ? scoped_resource : scoped_resource.where(ancestry: nil)
                 end
-    resources = resources.with_localized_tags(language: AnnotatorStore::UserSetting.language_for_user(current_user))
+    resources = resources.with_localized_tags(language: language)
     resources = resources.where("annotator_store_localized_tags.path ILIKE ?", "%#{params[:search].split.join('%')}%") if params[:search].present?
     resources = resources.where(creator_id: params[:creator_id]) if params[:creator_id].present?
     resources = case params[:order]

@@ -3,6 +3,11 @@ require_dependency "annotator_constraint"
 
 Rails.application.routes.draw do
 
+
+  get '/annotator/codes.json', to: 'annotator/annotator_store/tags#index',
+      constraints: lambda { |req| AnnotatorStore::Setting.instance.public_codes_list_api_endpoint? }
+
+
   namespace :annotator, constraints: AnnotatorConstraint.new  do
 
     root to: 'application#front'
@@ -17,6 +22,7 @@ Rails.application.routes.draw do
       resources :tag_names
       resources :languages
       resources :user_settings
+      resource :setting, only: [:show, :edit, :update], path: 'settings'
       # Search
       match 'search', to: 'pages#search', via: [:get], defaults: {format: :json}, constraints: {format: :json}
       match 'search', to: 'annotations#options', via: [:options], defaults: {format: :json}, constraints: {format: :json}
