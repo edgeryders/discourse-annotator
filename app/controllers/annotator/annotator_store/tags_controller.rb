@@ -6,7 +6,7 @@ class Annotator::AnnotatorStore::TagsController < Annotator::ApplicationControll
 
 
   skip_before_action :ensure_logged_in, :ensure_staff_or_annotator_group_member,
-                     if: proc {|c| c.action_name == "index" && AnnotatorStore::Setting.instance.public_codes_list_api_endpoint? }
+                     if: proc {|c| api_request? && c.action_name == "index" && AnnotatorStore::Setting.instance.public_codes_list_api_endpoint? }
 
 
   def index

@@ -4,7 +4,7 @@ require_dependency "annotator_constraint"
 Rails.application.routes.draw do
 
 
-  get '/annotator/codes.json', to: 'annotator/annotator_store/tags#index',
+  get '/annotator/codes', to: 'annotator/annotator_store/tags#index', format: :json,
       constraints: lambda { |req| AnnotatorStore::Setting.instance.public_codes_list_api_endpoint? }
 
 
