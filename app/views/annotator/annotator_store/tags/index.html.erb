@@ -54,6 +54,7 @@ It renders the `_table` partial to display details about the resources.
         <th scope="col"></th>
         <th scope="col"></th>
         <th scope="col"></th>
+        <th scope="col"></th>
       </tr>
       </thead>
 
@@ -68,6 +69,9 @@ It renders the `_table` partial to display details about the resources.
           </td>
           <td>
             <%= link_to('Merge', edit_annotator_annotator_store_tag_path(resource.id, merge: true), class: "link-primary") %>
+          </td>
+          <td>
+            <%= link_to('Copy', copy_annotator_annotator_store_tag_path(resource.id), method: :put, class: "link-primary") %>
           </td>
           <td>
             <%= link_to('Annotations', annotator_annotator_store_annotations_path(code_id: resource.id), class: "link-primary",) %>

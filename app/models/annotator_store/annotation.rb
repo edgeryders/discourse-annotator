@@ -6,6 +6,9 @@ module AnnotatorStore
     belongs_to :creator, class_name: '::User'
     belongs_to :post
     belongs_to :topic
+    # Note: Only text-annotations use ranges. The declaration is kept here to simplify copying codes with all associated
+    # objects. This requires that all annotations respond to a `ranges` attribute.
+    has_many :ranges, foreign_key: 'annotation_id', dependent: :destroy, autosave: true
 
     # Validations
     validates :type, presence: true, inclusion: {

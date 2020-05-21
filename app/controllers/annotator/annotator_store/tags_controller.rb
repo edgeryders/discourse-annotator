@@ -89,6 +89,12 @@ class Annotator::AnnotatorStore::TagsController < Annotator::ApplicationControll
   end
 
 
+  def copy
+    msg = requested_resource.copy ? 'Code was successfully copied.' : 'An error occurred while coping the code!'
+    redirect_back fallback_location: annotator_annotator_store_tags_path, notice: msg
+  end
+
+
   def destroy
     requested_resource.destroy
     flash[:notice] = 'Code was successfully destroyed.'

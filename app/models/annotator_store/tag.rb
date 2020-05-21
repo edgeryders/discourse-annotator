@@ -1,3 +1,6 @@
+require 'deep_cloneable';
+
+
 module AnnotatorStore
   class Tag < ActiveRecord::Base
 
@@ -86,6 +89,16 @@ module AnnotatorStore
       names.find_by(language_id: language.id)&.name ||
           names.find_by(language_id: AnnotatorStore::Language.english.id)&.name ||
           names.order(created_at: :asc).first&.name
+    end
+
+    def copy
+      # https://github.com/moiristo/deep_cloneable
+      new = deep_clone include: [:names, {annotations: :ranges}] do |original, kopy|
+        if kopy.is_a?(AnnotatorStore::TagName)
+          kopy.name = "#{original.name} (COPY)"
+        end
+      end
+      new.save
     end
 
 
