@@ -1,0 +1,13 @@
+<div class="field-unit__label">
+  <%= f.label 'Discourse tag' %>
+</div>
+<div class="field-unit__field">
+  <%= f.select(field.permitted_attribute, nil) do %>
+    <%= options_for_select(field.associated_resource_options, field.selected_option) %>
+  <% end %>
+  <div>
+    Please select the Discourse tag associated with the coding project ("ethnographic corpus") you are working on.
+    When coding, the system will then suggest all codes used in this coding project, regardless of the code author.
+    Code names will be included in both your coding language and English.
+  </div>
+</div>

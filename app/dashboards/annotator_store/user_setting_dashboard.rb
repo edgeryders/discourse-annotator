@@ -11,7 +11,7 @@ module AnnotatorStore
     # on pages throughout the dashboard.
     ATTRIBUTE_TYPES = {
       discourse_user: Field::BelongsTo.with_options(class_name: '::User', order: 'username ASC', scope: -> { ::User.annotators }),
-      discourse_tag: Field::BelongsTo.with_options(class_name: '::Tag', order: 'name ASC', scope: -> { ::Tag.where('lower(name) LIKE ?', "ethno-%") }),
+      discourse_tag: Annotator::DiscourseTagField.with_options(class_name: '::Tag', order: 'name ASC', scope: -> { ::Tag.where('lower(name) LIKE ?', "ethno-%") }),
       language: Field::BelongsTo.with_options(class_name: 'AnnotatorStore::Language'),
       id: Field::Number,
     }.freeze
