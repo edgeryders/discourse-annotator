@@ -27,7 +27,10 @@ module AnnotatorStore
     after_save do
       if merge_tag_id.present?
         t = AnnotatorStore::Tag.find(merge_tag_id)
-        t.annotations.each {|a| a.update_attributes!(tag_id: id)}
+        t.annotations.each {|a| a.update!(tag_id: id)}
+        # Required as otherwise the counter-cache values are not updated (2020-06-30). See: https://github.com/rails/rails/issues/32098
+        AnnotatorStore::Tag.reset_counters(id, :annotations)
+        AnnotatorStore::Tag.reset_counters(t.id, :annotations)
         t.reload # Important! Otherwise the previously assigned annotations are destroyed as well.
         t.destroy if t.annotations.none? && t.is_childless?
       end
@@ -48,6 +51,7 @@ module AnnotatorStore
 
     # --- Class Methods --- #
 
+    # AnnotatorStore::Tag.fix_annotations_count
     def self.fix_annotations_count
       ActiveRecord::Base.connection.execute <<-SQL.squish
         UPDATE annotator_store_tags
