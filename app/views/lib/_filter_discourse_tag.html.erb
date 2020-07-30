@@ -1,0 +1,24 @@
+<%
+  name = 'Discourse Tag'
+  filter = 'discourse_tag'
+  any = "Any #{name}"
+  tags = ::Tag.where('lower(name) LIKE ?', "ethno-%").order('name ASC')
+%>
+
+<div class="dropdown">
+  <div class="dropdown-btn" aria-haspopup="true" role="button" tabindex="0">
+    <div class="dropdown-btn-text">
+      <%= params[filter].present? ? "#{name}: #{params[filter]}" : any %>
+    </div>
+    <span class="dropdown-arrow"></span>
+  </div>
+
+  <div class="dropdown-content">
+    <%= link_to any, request.query_parameters.except(:page).merge(filter => nil),
+                class: (params[filter].present? ? '' : 'active') %>
+    <% tags.each do |model| %>
+      <%= link_to "#{model.name}", request.query_parameters.except(:page).merge(filter => model.name),
+                  class: (params[filter] == model.name ? 'active' : '') %>
+    <% end %>
+  </div>
+</div>

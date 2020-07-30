@@ -6,7 +6,7 @@ class Annotator::AnnotatorStore::TagsController < Annotator::ApplicationControll
 
 
   skip_before_action :ensure_logged_in, :ensure_staff_or_annotator_group_member,
-                     if: proc {|c| api_request? && c.action_name == "index" && AnnotatorStore::Setting.instance.public_codes_list_api_endpoint? }
+                     if: proc { |c| api_request? && c.action_name == "index" && AnnotatorStore::Setting.instance.public_codes_list_api_endpoint? }
 
 
   def index
@@ -28,13 +28,16 @@ class Annotator::AnnotatorStore::TagsController < Annotator::ApplicationControll
                 else
                   resources.order('LOWER(annotator_store_localized_tags.name) ASC')
                 end
+    if params[:discourse_tag].present? && (tag = ::Tag.find_by(name: params[:discourse_tag]))
+      resources = resources.where(id: AnnotatorStore::Annotation.where(topic_id: tag.topic_ids).select(:tag_id) )
+    end
     resources = resources.page(params[:page]).per(records_per_page)
 
     search_term = params[:search].to_s.strip
     page = Administrate::Page::Collection.new(dashboard)
 
     respond_to do |format|
-      format.html {render locals: {resources: resources, search_term: search_term, page: page, show_search_bar: show_search_bar?}}
+      format.html { render locals: {resources: resources, search_term: search_term, page: page, show_search_bar: show_search_bar?} }
       format.json {
         render json: JSON.pretty_generate(
             JSON.parse(
@@ -50,7 +53,7 @@ class Annotator::AnnotatorStore::TagsController < Annotator::ApplicationControll
 
   def show
     respond_to do |format|
-      format.html {render locals: {page: Administrate::Page::Show.new(dashboard, requested_resource)}}
+      format.html { render locals: {page: Administrate::Page::Show.new(dashboard, requested_resource)} }
       format.json {
         render json: JSON.pretty_generate(
             JSON.parse(

@@ -39,5 +39,3 @@ module AnnotatorStore
 
   end
 end
-
-
