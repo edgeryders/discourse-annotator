@@ -6,7 +6,7 @@
       ) %>
   <%= link_to(
           'Codes',
-          [:annotator_annotator_store, :tags],
+          annotator_annotator_store_tags_path(creator_id: current_user.id),
           class: "navigation__link navigation__link--#{nav_link_state('annotator_store__tags')}"
       ) %>
   <%= link_to(

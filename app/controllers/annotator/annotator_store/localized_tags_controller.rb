@@ -7,13 +7,16 @@ class Annotator::AnnotatorStore::LocalizedTagsController < Annotator::Applicatio
                .order("LOWER(annotator_store_localized_tags.path) ASC")
                .where(annotator_store_localized_tags: {language_id: AnnotatorStore::UserSetting.language_for_user(current_user).id})
 
-    tags = if current_user.annotator_store_settings.discourse_tag.present?
+    tags = if current_user.annotator_store_settings&.discourse_tag.present?
              code_ids = AnnotatorStore::Annotation.select('DISTINCT tag_id')
                             .where(topic_id: current_user.annotator_store_settings.discourse_tag.topics)
              tags.where(id: code_ids)
            else
              tags.where(creator_id: current_user.id)
            end
+
+
+
     tags = tags.where("annotator_store_localized_tags.path ILIKE ?", "%#{params[:q].split.join('%')}%") if params[:q].present?
 
     respond_to do |format|

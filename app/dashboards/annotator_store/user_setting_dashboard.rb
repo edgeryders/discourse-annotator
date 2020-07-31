@@ -12,6 +12,7 @@ module AnnotatorStore
     ATTRIBUTE_TYPES = {
       discourse_user: Field::BelongsTo.with_options(class_name: '::User', order: 'username ASC', scope: -> { ::User.annotators }),
       discourse_tag: Annotator::DiscourseTagField.with_options(class_name: '::Tag', order: 'name ASC', scope: -> { ::Tag.where('lower(name) LIKE ?', "ethno-%") }),
+      propose_codes_from_users: Annotator::ProposeCodesFromUsersField,
       language: Field::BelongsTo.with_options(class_name: 'AnnotatorStore::Language'),
       id: Field::Number,
     }.freeze
@@ -25,6 +26,7 @@ module AnnotatorStore
       #:id,
       :discourse_user,
       :discourse_tag,
+      :propose_codes_from_users,
       :language,
     ].freeze
 
@@ -33,6 +35,7 @@ module AnnotatorStore
     SHOW_PAGE_ATTRIBUTES = [
       :discourse_user,
       :discourse_tag,
+      :propose_codes_from_users,
       :language,
       :id,
     ].freeze
@@ -43,6 +46,7 @@ module AnnotatorStore
     FORM_ATTRIBUTES = [
       :discourse_user,
       :discourse_tag,
+      :propose_codes_from_users,
       :language,
     ].freeze
 

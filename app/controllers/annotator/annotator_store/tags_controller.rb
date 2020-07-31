@@ -37,7 +37,8 @@ class Annotator::AnnotatorStore::TagsController < Annotator::ApplicationControll
     page = Administrate::Page::Collection.new(dashboard)
 
     respond_to do |format|
-      format.html { render locals: {resources: resources, search_term: search_term, page: page, show_search_bar: show_search_bar?} }
+      format.html { render locals: {resources: resources, search_term: search_term, page: page,
+                                    show_search_bar: show_search_bar?} }
       format.json {
         render json: JSON.pretty_generate(
             JSON.parse(
@@ -82,7 +83,7 @@ class Annotator::AnnotatorStore::TagsController < Annotator::ApplicationControll
   def update
     if requested_resource.update(resource_params)
       if resource_params.include?(:merge_tag_id)
-        redirect_to annotator_annotator_store_tags_path, notice: 'Codes were successfully merged.'
+        redirect_to annotator_annotator_store_tags_path(creator_id: current_user.id), notice: 'Codes were successfully merged.'
       else
         redirect_to [namespace, requested_resource], notice: 'Code was successfully updated.'
       end
@@ -94,7 +95,7 @@ class Annotator::AnnotatorStore::TagsController < Annotator::ApplicationControll
 
   def copy
     msg = requested_resource.copy ? 'Code was successfully copied.' : 'An error occurred while coping the code!'
-    redirect_back fallback_location: annotator_annotator_store_tags_path, notice: msg
+    redirect_back fallback_location: annotator_annotator_store_tags_path(creator_id: current_user.id), notice: msg
   end
 
 
@@ -124,7 +125,7 @@ class Annotator::AnnotatorStore::TagsController < Annotator::ApplicationControll
 
 
   def records_per_page
-    params[:per_page] || 50
+    params[:per_page] || 300
   end
 
   private
