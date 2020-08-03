@@ -4,7 +4,7 @@ require 'deep_cloneable';
 module AnnotatorStore
   class Tag < ActiveRecord::Base
 
-    attr_accessor :merge_tag_id
+    attr_accessor :merge_into_tag_id
 
     # https://github.com/stefankroes/ancestry
     has_ancestry orphan_strategy: :adopt
@@ -22,19 +22,6 @@ module AnnotatorStore
     #validates :name, presence: true, uniqueness: {scope: [:ancestry, :creator_id], case_sensitive: false}
     validates :creator, presence: true
     validates :names, length: {minimum: 1, too_short: ": One name is required"}
-
-    # Callbacks
-    after_save do
-      if merge_tag_id.present?
-        t = AnnotatorStore::Tag.find(merge_tag_id)
-        t.annotations.each {|a| a.update!(tag_id: id)}
-        # Required as otherwise the counter-cache values are not updated (2020-06-30). See: https://github.com/rails/rails/issues/32098
-        AnnotatorStore::Tag.reset_counters(id, :annotations)
-        AnnotatorStore::Tag.reset_counters(t.id, :annotations)
-        t.reload # Important! Otherwise the previously assigned annotations are destroyed as well.
-        t.destroy if t.annotations.none? && t.is_childless?
-      end
-    end
 
     after_save :update_localized_tags
 
@@ -103,6 +90,24 @@ module AnnotatorStore
         end
       end
       new.save
+    end
+
+
+    def merge_into(merge_into_tag)
+      raise ArgumentError.new("Can't merge code with self.") if merge_into_tag == self
+
+      t = AnnotatorStore::Tag.find(merge_into_tag.id)
+      annotations.each { |a| a.update!(tag_id: t.id) }
+      # Required as otherwise the counter-cache values are not updated (2020-06-30). See: https://github.com/rails/rails/issues/32098
+      AnnotatorStore::Tag.reset_counters(id, :annotations)
+      AnnotatorStore::Tag.reset_counters(t.id, :annotations)
+      # Move all child elements to the new code.
+      children.each do |c|
+        c.parent = t
+        c.save!
+      end
+      reload # Important! Otherwise the annotations that were merged into another tag are destroyed as well.
+      destroy if annotations.none? && is_childless?
     end
 
 

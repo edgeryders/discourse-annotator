@@ -12,7 +12,7 @@ module AnnotatorStore
     ATTRIBUTE_TYPES = {
         creator: Annotator::UserField,
         parent: Annotator::ParentTagField.with_options(class_name: 'AnnotatorStore::Tag'),
-        merge_tag: Annotator::MergeTagField.with_options(class_name: 'AnnotatorStore::Tag'),
+        merge_into_tag: Annotator::MergeTagField.with_options(class_name: 'AnnotatorStore::Tag'),
         id: Field::Number,
         name: Field::String,
         description: Field::Text,
@@ -58,7 +58,7 @@ module AnnotatorStore
         :parent,
         :description,
         :creator,
-        :merge_tag
+        :merge_into_tag
     ].freeze
 
     # Overwrite this method to customize how tags are displayed

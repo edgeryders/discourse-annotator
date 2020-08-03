@@ -18,7 +18,7 @@ class Annotator::AnnotatorStore::TagsController < Annotator::ApplicationControll
                   params[:search].present? ? scoped_resource : scoped_resource.where(ancestry: nil)
                 end
     resources = resources.with_localized_tags(language: language)
-    resources = resources.where("annotator_store_localized_tags.path ILIKE ?", "%#{params[:search].split.join('%')}%") if params[:search].present?
+    resources = resources.where("' ' || annotator_store_localized_tags.path ILIKE ?", "% #{params[:search].split.join('%')}%") if params[:search].present?
     resources = resources.where(creator_id: params[:creator_id]) if params[:creator_id].present?
     resources = case params[:order]
                 when 'created_at'
@@ -82,11 +82,7 @@ class Annotator::AnnotatorStore::TagsController < Annotator::ApplicationControll
 
   def update
     if requested_resource.update(resource_params)
-      if resource_params.include?(:merge_tag_id)
-        redirect_to annotator_annotator_store_tags_path(creator_id: current_user.id), notice: 'Codes were successfully merged.'
-      else
-        redirect_to [namespace, requested_resource], notice: 'Code was successfully updated.'
-      end
+      redirect_to [namespace, requested_resource], notice: 'Code was successfully updated.'
     else
       render :edit, locals: {page: Administrate::Page::Form.new(dashboard, requested_resource)}
     end
@@ -99,6 +95,22 @@ class Annotator::AnnotatorStore::TagsController < Annotator::ApplicationControll
   end
 
 
+  def merge
+    render locals: {
+        page: Administrate::Page::Form.new(dashboard, requested_resource),
+    }
+  end
+
+
+  def merge_into
+    if requested_resource.merge_into(AnnotatorStore::Tag.find(params[:tag][:merge_into_tag_id]) )
+      redirect_to annotator_annotator_store_tags_path(creator_id: current_user.id), notice: 'Codes were successfully merged.'
+    else
+      render :merge, locals: {page: Administrate::Page::Form.new(dashboard, requested_resource)}
+    end
+  end
+
+
   def destroy
     requested_resource.destroy
     flash[:notice] = 'Code was successfully destroyed.'
@@ -106,27 +118,10 @@ class Annotator::AnnotatorStore::TagsController < Annotator::ApplicationControll
   end
 
 
-  # Overwrite any of the RESTful controller actions to implement custom behavior
-  # For example, you may want to send an email after a foo is updated.
-  #
-  # def update
-  #   foo = Foo.find(params[:id])
-  #   foo.update(params[:foo])
-  #   send_foo_updated_email
-  # end
-
-  # Override this method to specify custom lookup behavior.
-  # This will be used to set the resource for the `show`, `edit`, and `update`
-  # actions.
-  #
-  # def find_resource(param)
-  #   Foo.find_by!(slug: param)
-  # end
-
-
   def records_per_page
     params[:per_page] || 300
   end
+
 
   private
 
@@ -137,7 +132,27 @@ class Annotator::AnnotatorStore::TagsController < Annotator::ApplicationControll
 end
 
 
-#scope = scope.joins(:names).where(annotator_store_tag_names: {name: params[:search] }) if params[:search].present?
-#resources = Administrate::Search.new(scope, dashboard_class, search_term).run
-#resources = apply_collection_includes(resources)
-#resources = params[:search].present? ? order.apply(resources) : resources.order(updated_at: :desc)
+
+
+# Overwrite any of the RESTful controller actions to implement custom behavior
+# For example, you may want to send an email after a foo is updated.
+#
+# def update
+#   foo = Foo.find(params[:id])
+#   foo.update(params[:foo])
+#   send_foo_updated_email
+# end
+
+# Override this method to specify custom lookup behavior.
+# This will be used to set the resource for the `show`, `edit`, and `update`
+# actions.
+#
+# def find_resource(param)
+#   Foo.find_by!(slug: param)
+# end
+
+
+# scope = scope.joins(:names).where(annotator_store_tag_names: {name: params[:search] }) if params[:search].present?
+# resources = Administrate::Search.new(scope, dashboard_class, search_term).run
+# resources = apply_collection_includes(resources)
+# resources = params[:search].present? ? order.apply(resources) : resources.order(updated_at: :desc)

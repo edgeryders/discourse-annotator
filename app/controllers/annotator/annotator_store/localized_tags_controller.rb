@@ -24,7 +24,7 @@ class Annotator::AnnotatorStore::LocalizedTagsController < Annotator::Applicatio
     end
 
 
-    tags = tags.where("annotator_store_localized_tags.path ILIKE ?", "%#{params[:q].split.join('%')}%") if params[:q].present?
+    tags = tags.where("' ' || annotator_store_localized_tags.path ILIKE ?", "% #{params[:q].split.join('%')}%") if params[:q].present?
 
     respond_to do |format|
       format.json { render json: tags.to_json(fields: %i[tag_id localized_path]) }
@@ -38,7 +38,7 @@ class Annotator::AnnotatorStore::LocalizedTagsController < Annotator::Applicatio
                 .order("LOWER(annotator_store_localized_tags.path) ASC")
                 .where.not(id: params[:code_id])
                 .where(annotator_store_localized_tags: {language_id: AnnotatorStore::UserSetting.language_for_user(current_user).id})
-    codes = codes.where("annotator_store_localized_tags.path ILIKE ?", "%#{params[:q].split.join('%')}%") if params[:q].present?
+    codes = codes.where("' ' || annotator_store_localized_tags.path ILIKE ?", "% #{params[:q].split.join('%')}%") if params[:q].present?
     respond_to do |format|
       format.json {
         render json: codes.map { |c|

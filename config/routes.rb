@@ -17,6 +17,8 @@ Rails.application.routes.draw do
     namespace :annotator_store, path: '' do
       resources :tags, path: 'codes'do
         member do
+          get :merge
+          put :merge_into
           put :copy
         end
       end

@@ -16,7 +16,7 @@ and renders all form fields for a resource's editable attributes.
 
 <% content_for(:javascript) do %>
   <script>
-    $('#tag_creator_id, #tag_parent_id, #tag_merge_tag_id').selectize();
+    $('#tag_creator_id, #tag_parent_id').selectize();
   </script>
 <% end %>
 
@@ -37,7 +37,8 @@ and renders all form fields for a resource's editable attributes.
     </div>
   <% end %>
 
-  <% attributes = current_user.admin? ? page.attributes : page.attributes.delete_if {|a| a.name == 'creator'} %>
+  <% attributes = current_user.admin? ? page.attributes : page.attributes.delete_if {|a| a.name == 'creator' } %>
+  <% attributes = attributes.delete_if {|a| a.name == 'merge_into_tag'} %>
 
   <% attributes.each do |attribute| -%>
     <div class="field-unit field-unit--<%= attribute.html_class %>">
