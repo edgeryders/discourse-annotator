@@ -1,29 +1,3 @@
-<%#
-# Index
-
-This view is the template for the index page.
-It is responsible for rendering the search bar, header and pagination.
-It renders the `_table` partial to display details about the resources.
-
-## Local variables:
-
-- `page`:
-  An instance of [Administrate::Page::Collection][1].
-  Contains helper methods to help display a table,
-  and knows which attributes should be displayed in the resource's table.
-- `resources`:
-  An instance of `ActiveRecord::Relation` containing the resources
-  that match the user's search criteria.
-  By default, these resources are passed to the table partial to be displayed.
-- `search_term`:
-  A string containing the term the user has searched for, if any.
-- `show_search_bar`:
-  A boolean that determines if the search bar should be shown.
-
-[1]: http://www.rubydoc.info/gems/administrate/Administrate/Page/Collection
-%>
-
-
 <header class="main-content__header" role="banner">
   <h1 class="main-content__page-title" id="page-title">Codes</h1>
   <% if show_search_bar %>
@@ -43,59 +17,14 @@ It renders the `_table` partial to display details about the resources.
                filter: :creator_id,
                users: User.where(id: AnnotatorStore::Tag.select(:creator_id).uniq.pluck(:creator_id)).order(:username) %>
     <%= render '/lib/sort_by', options: {name: 'Name', created_at: 'Newest', updated_at: 'Updated'} %>
+
+    <%= render 'lib/codes_view_nav' %>
   </div>
 
   <% if params[:search].present? %>
-    <table>
-      <thead>
-      <tr>
-        <th scope="col">Id</th>
-        <th scope="col">Name</th>
-        <th scope="col">Creator</th>
-        <th scope="col">Annotations</th>
-        <th scope="col"></th>
-        <th scope="col"></th>
-        <th scope="col"></th>
-        <th scope="col"></th>
-        <th scope="col"></th>
-      </tr>
-      </thead>
-
-      <tbody>
-      <% resources.each do |resource| %>
-        <tr>
-          <td><%= resource.id %></td>
-          <td><%= link_to(resource.name_with_path, [namespace, resource], class: "link-primary") %></td>
-          <td><%= "by #{resource.creator.username}" %></td>
-          <td><%= resource.annotations_count %></td>
-          <td>
-            <%= link_to('Edit', [:edit, namespace, resource], class: "link-primary",) %>
-          </td>
-          <td>
-            <%= link_to('Merge', merge_annotator_annotator_store_tag_path(resource.id), class: "link-primary") %>
-          </td>
-          <td>
-            <%= link_to('Copy', copy_annotator_annotator_store_tag_path(resource.id), method: :put, class: "link-primary") %>
-          </td>
-          <td>
-            <% if resource.is_childless? %>
-              <%= link_to(
-                      'Destroy',
-                      [namespace, resource],
-                      class: "text-color-red",
-                      method: :delete,
-                      data: {confirm: "Are you sure? This code has #{resource.annotations_count} annotations which will also be deleted."}
-                  ) %>
-            <% end %>
-          </td>
-          <td>
-            <%= link_to('Annotations', annotator_annotator_store_annotations_path(code_id: resource.id), class: "link-primary",) %>
-          </td>
-        </tr>
-      <% end %>
-      </tbody>
-    </table>
-
+    <%= render 'search_results', resources: resources, namespace: namespace %>
+  <% elsif params[:view] == 'translate' %>
+    <%= render 'translate', resources: resources, namespace: namespace %>
   <% else %>
     <%= render 'tree', tags: resources %>
   <% end %>

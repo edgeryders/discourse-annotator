@@ -1,0 +1,18 @@
+<% options = {tree: 'Tree', translate: 'Translate'} %>
+
+<div class="dropdown" style="float:right; margin-right:50px;">
+  <div class="dropdown-btn" aria-haspopup="true" role="button" tabindex="0">
+    <div class="dropdown-btn-text">
+      View: <%= params[:view].blank? ? options.first.last : options[params[:view].to_sym] %>
+    </div>
+    <span class="dropdown-arrow"></span>
+  </div>
+
+  <div class="dropdown-content">
+    <% options.each do |key, label| %>
+      <%= link_to label,
+                  request.query_parameters.except(:page).merge(view: key),
+                  class: ((params[:view].blank? && key == options.first.first) || params[:view]&.to_sym == key ? 'active' : nil) %>
+    <% end %>
+  </div>
+</div>

@@ -1,4 +1,4 @@
-require 'deep_cloneable';
+require 'deep_cloneable'
 
 
 module AnnotatorStore
@@ -15,11 +15,11 @@ module AnnotatorStore
     has_many :names, dependent: :delete_all, class_name: 'TagName'
     has_many :localized_tags, dependent: :delete_all
 
-    accepts_nested_attributes_for :names, allow_destroy: true
+    accepts_nested_attributes_for :names, allow_destroy: true, reject_if: proc { |attributes| attributes['name'].blank? }
 
 
     # Validations
-    #validates :name, presence: true, uniqueness: {scope: [:ancestry, :creator_id], case_sensitive: false}
+    # validates :name, presence: true, uniqueness: {scope: [:ancestry, :creator_id], case_sensitive: false}
     validates :creator, presence: true
     validates :names, length: {minimum: 1, too_short: ": One name is required"}
 

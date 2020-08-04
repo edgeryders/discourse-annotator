@@ -1,0 +1,49 @@
+<table>
+  <thead>
+  <tr>
+    <th scope="col">Id</th>
+    <th scope="col">Name</th>
+    <th scope="col">Creator</th>
+    <th scope="col">Annotations</th>
+    <th scope="col"></th>
+    <th scope="col"></th>
+    <th scope="col"></th>
+    <th scope="col"></th>
+    <th scope="col"></th>
+  </tr>
+  </thead>
+
+  <tbody>
+  <% resources.each do |resource| %>
+    <tr>
+      <td><%= resource.id %></td>
+      <td><%= link_to(resource.name_with_path, [namespace, resource], class: "link-primary") %></td>
+      <td><%= "by #{resource.creator.username}" %></td>
+      <td><%= resource.annotations_count %></td>
+      <td>
+        <%= link_to('Edit', [:edit, namespace, resource], class: "link-primary",) %>
+      </td>
+      <td>
+        <%= link_to('Merge', merge_annotator_annotator_store_tag_path(resource.id), class: "link-primary") %>
+      </td>
+      <td>
+        <%= link_to('Copy', copy_annotator_annotator_store_tag_path(resource.id), method: :put, class: "link-primary") %>
+      </td>
+      <td>
+        <% if resource.is_childless? %>
+          <%= link_to(
+                  'Destroy',
+                  [namespace, resource],
+                  class: "text-color-red",
+                  method: :delete,
+                  data: {confirm: "Are you sure? This code has #{resource.annotations_count} annotations which will also be deleted."}
+              ) %>
+        <% end %>
+      </td>
+      <td>
+        <%= link_to('Annotations', annotator_annotator_store_annotations_path(code_id: resource.id), class: "link-primary",) %>
+      </td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>

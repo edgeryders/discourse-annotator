@@ -1,0 +1,7 @@
+$("#code-row-<%= @requested_resource.id %>").replaceWith('<%= j render("translate_row", resource: @requested_resource, saved: @requested_resource.errors.empty?) %>');
+
+
+//setTimeout(function(){
+//    $(".saved-notification").fadeOut("slow");
+//},1000)
+

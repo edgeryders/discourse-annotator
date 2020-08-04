@@ -29,7 +29,7 @@ class Annotator::AnnotatorStore::TagsController < Annotator::ApplicationControll
                   resources.order('LOWER(annotator_store_localized_tags.name) ASC')
                 end
     if params[:discourse_tag].present? && (tag = ::Tag.find_by(name: params[:discourse_tag]))
-      resources = resources.where(id: AnnotatorStore::Annotation.where(topic_id: tag.topic_ids).select(:tag_id) )
+      resources = resources.where(id: AnnotatorStore::Annotation.where(topic_id: tag.topic_ids).select(:tag_id))
     end
     resources = resources.page(params[:page]).per(records_per_page)
 
@@ -37,8 +37,9 @@ class Annotator::AnnotatorStore::TagsController < Annotator::ApplicationControll
     page = Administrate::Page::Collection.new(dashboard)
 
     respond_to do |format|
-      format.html { render locals: {resources: resources, search_term: search_term, page: page,
-                                    show_search_bar: show_search_bar?} }
+      format.html {
+        render locals: {resources: resources, search_term: search_term, page: page, show_search_bar: show_search_bar?}
+      }
       format.json {
         render json: JSON.pretty_generate(
             JSON.parse(
@@ -81,10 +82,18 @@ class Annotator::AnnotatorStore::TagsController < Annotator::ApplicationControll
 
 
   def update
-    if requested_resource.update(resource_params)
-      redirect_to [namespace, requested_resource], notice: 'Code was successfully updated.'
-    else
-      render :edit, locals: {page: Administrate::Page::Form.new(dashboard, requested_resource)}
+    respond_to do |format|
+      if requested_resource.update(resource_params)
+        format.html {
+          redirect_to [namespace, requested_resource], notice: 'Code was successfully updated.'
+        }
+        format.js {}
+      else
+        format.html {
+          render :edit, locals: {page: Administrate::Page::Form.new(dashboard, requested_resource)}
+        }
+        format.js {}
+      end
     end
   end
 
@@ -103,7 +112,7 @@ class Annotator::AnnotatorStore::TagsController < Annotator::ApplicationControll
 
 
   def merge_into
-    if requested_resource.merge_into(AnnotatorStore::Tag.find(params[:tag][:merge_into_tag_id]) )
+    if requested_resource.merge_into(AnnotatorStore::Tag.find(params[:tag][:merge_into_tag_id]))
       redirect_to annotator_annotator_store_tags_path(creator_id: current_user.id), notice: 'Codes were successfully merged.'
     else
       render :merge, locals: {page: Administrate::Page::Form.new(dashboard, requested_resource)}
@@ -130,8 +139,6 @@ class Annotator::AnnotatorStore::TagsController < Annotator::ApplicationControll
   end
 
 end
-
-
 
 
 # Overwrite any of the RESTful controller actions to implement custom behavior
