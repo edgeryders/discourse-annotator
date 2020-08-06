@@ -111,6 +111,7 @@ class Annotator::AnnotatorStore::AnnotationsController < Annotator::ApplicationC
   def destroy
     @annotation.destroy
     respond_to do |format|
+      format.html { redirect_back fallback_location: annotator_root_path }
       format.json {head :no_content, status: :no_content}
     end
   end
@@ -246,10 +247,8 @@ class Annotator::AnnotatorStore::AnnotationsController < Annotator::ApplicationC
     @annotation = AnnotatorStore::Annotation.find(params[:id])
   end
 
-
-  # disable 'edit' and 'destroy' links
   def valid_action?(name, resource = resource_class)
-    %w[edit destroy].exclude?(name.to_s) && super
+    %w[show edit].exclude?(name.to_s)
   end
 
   # name:

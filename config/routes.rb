@@ -32,16 +32,16 @@ Rails.application.routes.draw do
       # Search
       match 'search', to: 'pages#search', via: [:get], defaults: {format: :json}, constraints: {format: :json}
       match 'search', to: 'annotations#options', via: [:options], defaults: {format: :json}, constraints: {format: :json}
-      # Annotations Endpoint
-      resources :annotations, only: [:index, :show], defaults: {format: :html}, constraints: {format: :html}
 
+      # Annotations Endpoint
+      resources :annotations, only: [:index, :show, :destroy], defaults: {format: :html}, constraints: {format: :html}
       resources :annotations, only: [:index, :create, :show, :edit, :update, :destroy], defaults: {format: :json}, constraints: {format: :json} do
         match '/', to: 'annotations#options', via: [:options], on: :collection
         match '/', to: 'annotations#options', via: [:options], on: :member
       end
-      resources :text_annotations, only: [:index, :show, :edit, :update]
-      resources :video_annotations, only: [:index, :show, :edit, :update]
-      resources :image_annotations, only: [:index, :show, :edit, :update]
+      resources :text_annotations, only: [:index, :show, :edit, :update, :destroy]
+      resources :video_annotations, only: [:index, :show, :edit, :update, :destroy]
+      resources :image_annotations, only: [:index, :show, :edit, :update, :destroy]
     end
   end
 

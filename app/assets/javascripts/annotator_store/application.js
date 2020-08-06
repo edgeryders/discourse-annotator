@@ -16,7 +16,7 @@
 //= require ./vendor/jquery-ui.min
 
 // require ./vendor/annotator-full.min.1.2.5.modified
-//= require ./vendor/annotator-full.1.2.5.modified
+//= require ./vendor/annotator-full.1.2.5.edited
 // https://github.com/annotorious/annotorious
 // NOTE: All occurrences of "window.pageYOffset" were replaced with "0" as otherwise the Annotator popover is positioned
 //   incorrectly when the page is scrolled down.

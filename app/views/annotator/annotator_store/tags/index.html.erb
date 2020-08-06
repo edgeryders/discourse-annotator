@@ -19,6 +19,8 @@
     <%= render '/lib/sort_by', options: {name: 'Name', created_at: 'Newest', updated_at: 'Updated'} %>
 
     <%= render 'lib/codes_view_nav' %>
+
+<!--    <a href="<%#= request.path %>" target="_blank">Export current list</a>-->
   </div>
 
   <% if params[:search].present? %>
