@@ -18,13 +18,5 @@ module AnnotatorStore
     end
 
 
-    # https://github.com/rails/sprockets/issues/542
-    # initializer "annotator_store.assets.precompile" do |app|
-    #   app.config.assets.precompile << "annotator_store.js"
-    #   app.config.assets.precompile << "annotator_store.css"
-    # end
-
-
   end
-
 end
