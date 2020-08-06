@@ -19,6 +19,9 @@ module AnnotatorStore
 
 
     initializer "annotator_store.assets.precompile" do |app|
+      app.config.assets.paths << Rails.root.join("app", "assets", "javascripts", "annotator_store")
+      app.config.assets.paths << Rails.root.join("app", "assets", "stylesheets", "annotator_store")
+
       app.config.assets.precompile += %w( application.js application.css )
     end
 
