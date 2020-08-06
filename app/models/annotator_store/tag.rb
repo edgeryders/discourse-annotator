@@ -4,6 +4,7 @@ require 'deep_cloneable'
 module AnnotatorStore
   class Tag < ActiveRecord::Base
 
+    attr_accessor :merge_into_tag
     attr_accessor :merge_into_tag_id
 
     # https://github.com/stefankroes/ancestry
