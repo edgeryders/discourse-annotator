@@ -18,12 +18,12 @@ module AnnotatorStore
     end
 
 
+    # https://github.com/rails/sprockets/issues/542
     initializer "annotator_store.assets.precompile" do |app|
-      app.config.assets.paths << Rails.root.join("app", "assets", "javascripts", "annotator_store")
-      app.config.assets.paths << Rails.root.join("app", "assets", "stylesheets", "annotator_store")
-
-      app.config.assets.precompile += %w( application.js application.css )
+      app.config.assets.precompile << "annotator_store.js"
+      app.config.assets.precompile << "annotator_store.css"
     end
+
 
   end
 
