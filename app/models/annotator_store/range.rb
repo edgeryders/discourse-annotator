@@ -6,5 +6,6 @@ module AnnotatorStore
     # Validations
     validates :start_offset, presence: true
     validates :end_offset, presence: true
+
   end
 end

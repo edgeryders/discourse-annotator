@@ -17,6 +17,9 @@ module AnnotatorStore
     validates :creator, presence: true
     validates :tag, presence: true
 
+    validates_length_of :ranges, maximum: 1
+
+
     # Callbacks
     before_validation on: :create do
       self.topic = post&.topic if topic.blank?

@@ -221,6 +221,9 @@ class Annotator::AnnotatorStore::AnnotationsController < Annotator::ApplicationC
   # that we are able to create a proper params object
   def format_client_input_to_rails_convention_for_update
     format_client_input_to_rails_convention_for_create
+    # Annotator sends duplicate ranges when an annotation is updated which would then be saved.
+    # As ranges are not allowed to be changed we can simply remove the provided attributes.
+    params[:annotation][:ranges_attributes] = {}
   end
 
   # Only allow a trusted parameter 'white list' through.
