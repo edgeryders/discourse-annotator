@@ -924,11 +924,11 @@
                 // the created tags in the popover.
                 var firstTag = annotation.tags.shift();
                 if (annotation.tags.length >= 1) {
-                    annotation.tags.forEach(tag => {
+                    for (var i = 0, len = annotation.tags.length; i < len; i++) {
                         var clonedAnnotation = Object.assign({}, annotation);
-                        clonedAnnotation.tags = [tag]
+                        clonedAnnotation.tags = [annotation.tags[i]]
                         this.setupAnnotation(clonedAnnotation);
-                    });
+                    }
                 }
                 annotation.tags = [firstTag];
                 // END
