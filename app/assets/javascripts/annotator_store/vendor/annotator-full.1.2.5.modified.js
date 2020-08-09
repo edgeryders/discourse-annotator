@@ -922,10 +922,10 @@
 
                 // START damingo (Github ID), 2020-08-09, Set up one annotation for each tag. Required to display
                 // the created tags in the popover.
-                let firstTag = annotation.tags.shift();
+                var firstTag = annotation.tags.shift();
                 if (annotation.tags.length >= 1) {
                     annotation.tags.forEach(tag => {
-                        let clonedAnnotation = Object.assign({}, annotation);
+                        var clonedAnnotation = Object.assign({}, annotation);
                         clonedAnnotation.tags = [tag]
                         this.setupAnnotation(clonedAnnotation);
                     });
