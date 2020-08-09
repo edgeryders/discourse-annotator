@@ -79,8 +79,12 @@ Annotator.Plugin.MyTags = function (element, message) {
             controller = new AbortController();
             // show loading animation and hide the suggestions dropdown
             tagify.loading(true).dropdown.hide.call(tagify)
+
+
             fetch('/annotator/localized_codes.json?q=' + value, {signal: controller.signal})
-                .then(RES => RES.json())
+                .then((result) => {
+                    return result.json()
+                })
                 .then(function (results) {
                     var whitelist = [];
                     for (var i = 0; i < results.length; i++) {
