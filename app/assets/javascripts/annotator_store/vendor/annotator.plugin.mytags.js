@@ -80,9 +80,8 @@ Annotator.Plugin.MyTags = function (element, message) {
             // show loading animation and hide the suggestions dropdown
             tagify.loading(true).dropdown.hide.call(tagify)
 
-
             fetch('/annotator/localized_codes.json?q=' + value, {signal: controller.signal})
-                .then((result) => {
+                .then(function (result) {
                     return result.json()
                 })
                 .then(function (results) {
@@ -94,6 +93,7 @@ Annotator.Plugin.MyTags = function (element, message) {
                     tagify.settings.whitelist.splice(0, whitelist.length, ...whitelist)
                     tagify.loading(false).dropdown.show.call(tagify, value); // render the suggestions dropdown
                 })
+
         }
 
         return plugin.input = $(this.field).find(':input');
