@@ -90,7 +90,10 @@ Annotator.Plugin.MyTags = function (element, message) {
                         whitelist.push(results[i]['localized_path']);
                     }
                     // update whitelist Array in-place
-                    tagify.settings.whitelist.splice(0, whitelist.length, ...whitelist)
+                    // Causes this error https://github.com/lautis/uglifier/issues/127 but `Uglifier.new(harmony: true)`
+                    // doesn't resolve it.
+                    // tagify.settings.whitelist.splice(0, whitelist.length, ...whitelist)
+                    tagify.settings.whitelist = whitelist
                     tagify.loading(false).dropdown.show.call(tagify, value); // render the suggestions dropdown
                 })
 
