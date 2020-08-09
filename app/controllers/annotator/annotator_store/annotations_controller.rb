@@ -78,7 +78,9 @@ class Annotator::AnnotatorStore::AnnotationsController < Annotator::ApplicationC
     end
     respond_to do |format|
       if success
-        format.json { render :show, status: :created, location: annotator_annotator_store_annotations_url(@annotation) }
+        format.json {
+          render :show, status: :created, location: annotator_annotator_store_annotations_url(@annotation)
+        }
       else
         format.json { render json: @annotation.errors, status: :unprocessable_entity }
       end

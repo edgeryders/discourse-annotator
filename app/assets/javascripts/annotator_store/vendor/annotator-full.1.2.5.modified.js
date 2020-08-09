@@ -919,6 +919,20 @@
         Annotator.prototype.onEditorSubmit = function(annotation) {
             this.publish('annotationEditorSubmit', [this.editor, annotation]);
             if (annotation.ranges === void 0) {
+
+                // START damingo (Github ID), 2020-08-09, Set up one annotation for each tag. Required to display
+                // the created tags in the popover.
+                let firstTag = annotation.tags.shift();
+                if (annotation.tags.length >= 1) {
+                    annotation.tags.forEach(tag => {
+                        let clonedAnnotation = Object.assign({}, annotation);
+                        clonedAnnotation.tags = [tag]
+                        this.setupAnnotation(clonedAnnotation);
+                    });
+                }
+                annotation.tags = [firstTag];
+                // END
+
                 return this.setupAnnotation(annotation);
             } else {
                 return this.updateAnnotation(annotation);

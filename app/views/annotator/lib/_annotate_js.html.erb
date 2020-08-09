@@ -5,6 +5,7 @@
     function loadAnnotator(selector, uri) {
         jQuery(document).ready(function ($) {
             var content = $(selector).annotator();
+
             content.annotator('addPlugin', 'AnnotoriousImagePlugin');
             content.annotator('addPlugin', 'MyTags');
             content.annotator('addPlugin', 'Store', {
