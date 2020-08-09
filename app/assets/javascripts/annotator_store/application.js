@@ -24,3 +24,6 @@
 //= require ./vendor/video.4.2.2.min
 //= require ./vendor/rangeslider.min
 //= require ./vendor/ova.min.modified
+
+//= require ./vendor/annotator.plugin.mytags
+//= require ./vendor/tagify.min

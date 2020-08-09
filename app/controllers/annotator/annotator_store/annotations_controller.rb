@@ -45,7 +45,7 @@ class Annotator::AnnotatorStore::AnnotationsController < Annotator::ApplicationC
       }
       format.json {
         # Rename tag_id to code_id
-        r = resources.to_a.map(&:attributes).each {|a| a['code_id'] = a.delete('tag_id')}
+        r = resources.to_a.map(&:attributes).each { |a| a['code_id'] = a.delete('tag_id') }
         render json: JSON.pretty_generate(JSON.parse(r.to_json))
       }
     end
@@ -59,21 +59,28 @@ class Annotator::AnnotatorStore::AnnotationsController < Annotator::ApplicationC
 
   # POST /annotations
   def create
-    format_client_input_to_rails_convention_for_create
-    # Determine the class based on the attributes that are set.
-    @annotation = if params[:target].present?
-                    AnnotatorStore::VideoAnnotation.new(annotation_params)
-                  elsif params[:annotation][:geometry].present?
-                    AnnotatorStore::ImageAnnotation.new(annotation_params)
-                  else
-                    AnnotatorStore::TextAnnotation.new(annotation_params)
-                  end
-    @annotation.creator = current_user
+    success = true
+    # Create one annotation for each provided code-name.
+    params[:tags].each do |path|
+      code = get_code(path)
+      format_client_input_to_rails_convention_for_create(code)
+
+      # Determine the class based on the attributes that are set.
+      @annotation = if params[:target].present?
+                      AnnotatorStore::VideoAnnotation.new(annotation_params)
+                    elsif params[:annotation][:geometry].present?
+                      AnnotatorStore::ImageAnnotation.new(annotation_params)
+                    else
+                      AnnotatorStore::TextAnnotation.new(annotation_params)
+                    end
+      @annotation.creator = current_user
+      success = false unless success && @annotation.save
+    end
     respond_to do |format|
-      if @annotation.save
-        format.json {render :show, status: :created, location: annotator_annotator_store_annotations_url(@annotation)}
+      if success
+        format.json { render :show, status: :created, location: annotator_annotator_store_annotations_url(@annotation) }
       else
-        format.json {render json: @annotation.errors, status: :unprocessable_entity}
+        format.json { render json: @annotation.errors, status: :unprocessable_entity }
       end
     end
   end
@@ -81,8 +88,8 @@ class Annotator::AnnotatorStore::AnnotationsController < Annotator::ApplicationC
   # GET /annotations/1
   def show
     respond_to do |format|
-      format.html {render locals: {page: Administrate::Page::Show.new(dashboard, requested_resource)}}
-      format.json {render :show}
+      format.html { render locals: {page: Administrate::Page::Show.new(dashboard, requested_resource)} }
+      format.json { render :show }
     end
   end
 
@@ -112,14 +119,14 @@ class Annotator::AnnotatorStore::AnnotationsController < Annotator::ApplicationC
     @annotation.destroy
     respond_to do |format|
       format.html { redirect_back fallback_location: annotator_root_path }
-      format.json {head :no_content, status: :no_content}
+      format.json { head :no_content, status: :no_content }
     end
   end
 
   # OPTIONS /annotations
   def options
     respond_to do |format|
-      format.json {render :options}
+      format.json { render :options }
     end
   end
 
@@ -175,9 +182,9 @@ class Annotator::AnnotatorStore::AnnotationsController < Annotator::ApplicationC
   #     }
   #   ]
   # }
-  def format_client_input_to_rails_convention_for_create
+  def format_client_input_to_rails_convention_for_create(code)
     params[:annotation] = {}
-    params[:annotation][:tag_id] = get_code.id unless params[:tags].blank?
+    params[:annotation][:tag_id] = code.id
 
     # VideoAnnotation
     params[:annotation][:uri] = params[:uri] unless params[:uri].blank?
@@ -220,7 +227,8 @@ class Annotator::AnnotatorStore::AnnotationsController < Annotator::ApplicationC
   # Convert the data sent by AnnotatorJS to the format that Rails expects so
   # that we are able to create a proper params object
   def format_client_input_to_rails_convention_for_update
-    format_client_input_to_rails_convention_for_create
+    code = get_code(params[:tags].first)
+    format_client_input_to_rails_convention_for_create(code)
     # Annotator sends duplicate ranges when an annotation is updated which would then be saved.
     # As ranges are not allowed to be changed we can simply remove the provided attributes.
     params[:annotation][:ranges_attributes] = {}
@@ -239,8 +247,7 @@ class Annotator::AnnotatorStore::AnnotationsController < Annotator::ApplicationC
     )
   end
 
-  def get_code
-    path = params[:tags].join(' ')
+  def get_code(path)
     AnnotatorStore::Tag.joins(:localized_tags).find_by(annotator_store_localized_tags: {path: path}) ||
         create_code!(name: path, language: AnnotatorStore::UserSetting.language_for_user(current_user))
   end

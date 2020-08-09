@@ -14,7 +14,8 @@
  * NOTE: The order is important.
  *= require ./vendor/normalize
  *= require ./vendor/jquery-ui.min
- *= require ./vendor/annotator.min.1.2.7
+ *= require ./vendor/tagify
+ *= require ./vendor/annotator.1.2.7
  *= require ./vendor/annotorious
  *= require ./vendor/video-js.4.2.2
  *= require ./vendor/rangeslider.min
