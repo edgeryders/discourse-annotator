@@ -29,6 +29,17 @@ as well as a link to its edit page.
       [:edit, namespace, page.resource],
       class: "button",
     ) %>
+
+    <% if page.resource.is_childless? %>
+      <%= link_to(
+              'Delete',
+              [namespace, page.resource],
+              class: "button button-delete",
+              style: 'margin-left:10px;',
+              method: :delete,
+              data: {confirm: "Are you sure? This code has #{page.resource.annotations_count} annotations which will also be deleted."}
+          ) %>
+    <% end %>
   </div>
 </header>
 

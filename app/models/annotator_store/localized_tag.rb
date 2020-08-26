@@ -25,6 +25,7 @@ module AnnotatorStore
 
     # --- Class Methods --- #
 
+    # AnnotatorStore::LocalizedTag.create_or_update_all
     def self.create_or_update_all
       AnnotatorStore::Language.all.each do |language|
         AnnotatorStore::Tag.find_each do |tag|

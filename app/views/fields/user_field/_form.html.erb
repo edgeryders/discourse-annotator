@@ -2,5 +2,9 @@
   <%= f.label field.attribute %>
 </div>
 <div class="field-unit__field">
-  <%= f.select :creator_id, User.annotators.order(:username).map {|u| [u.username, u.id] } %>
+  <%
+    values = User.annotators.order(:username).map { |u| [u.username, u.id] }
+    values << [field.resource.creator.username, field.resource.creator_id] unless User.annotators.where(id: field.resource.creator_id).exists?
+  %>
+  <%= f.select :creator_id, values %>
 </div>

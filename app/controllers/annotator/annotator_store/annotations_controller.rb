@@ -250,7 +250,7 @@ class Annotator::AnnotatorStore::AnnotationsController < Annotator::ApplicationC
   end
 
   def get_code(path)
-    AnnotatorStore::Tag.joins(:localized_tags).find_by(annotator_store_localized_tags: {path: path}) ||
+    AnnotatorStore::Tag.joins(:localized_tags).where("lower(annotator_store_localized_tags.path) = ?", path&.downcase)&.first ||
         create_code!(name: path, language: AnnotatorStore::UserSetting.language_for_user(current_user))
   end
 
