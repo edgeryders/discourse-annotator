@@ -29,7 +29,7 @@ module AnnotatorStore
     def self.create_or_update_all
       AnnotatorStore::Language.all.each do |language|
         AnnotatorStore::Tag.find_each do |tag|
-          AnnotatorStore::LocalizedTag.find_or_create_by!(tag_id: tag.id, language_id: language.id)
+          tag.update_localized_tags
         end
       end
     end
