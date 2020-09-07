@@ -3,11 +3,16 @@ json.uri annotation.uri
 
 
 language = defined?(@current_user) ? AnnotatorStore::UserSetting.language_for_user(@current_user) : nil
-json.tags annotation.tag.present? ? [annotation.tag.path.map {|t| t.localized_name(language)}.join(' → ')] : []
 
 
-json.created annotation.created_at
-json.updated annotation.updated_at
+json.created_at annotation.created_at
+json.updated_at annotation.updated_at
+
+json.post_id annotation.post_id
+json.creator_id annotation.creator_id
+json.type annotation.type
+json.topic_id annotation.topic_id
+json.code_id annotation.tag_id
 
 
 if annotation.text_annotation?
@@ -101,3 +106,6 @@ elsif annotation.image_annotation?
   #   ]
   # }
 end
+
+# TODO rename to `codes`. Postponed as it requires extensive testing.
+json.tags annotation.tag.present? ? [annotation.tag.path.map {|t| t.localized_name(language)}.join(' → ')] : []
