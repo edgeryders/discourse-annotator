@@ -21,8 +21,8 @@ module AnnotatorStore
       topic: Annotator::TopicField,
       src: Field::String,
       # TextAnnotation
-      text: Field::Text.with_options(truncate: 1000),
-      quote: Field::Text.with_options(truncate: 1000),
+      text: Field::Text.with_options(truncate: 1000, searchable: true),
+      quote: Field::Text.with_options(truncate: 1000, searchable: true),
       version: Field::String,
       # VideoAnnotation
       container: Field::String,

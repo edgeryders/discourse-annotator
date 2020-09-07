@@ -28,7 +28,7 @@ class Annotator::AnnotatorStore::AnnotationsController < Annotator::ApplicationC
     end
 
     search_term = params[:search].to_s.strip
-    resources = Administrate::Search.new(scope, dashboard_class, search_term).run
+    resources = Administrate::Search.new(scope, AnnotatorStore::AnnotationDashboard, search_term).run
     resources = apply_collection_includes(resources)
     resources = order.apply(resources)
     resources = resources.page(params[:page]).per(records_per_page)

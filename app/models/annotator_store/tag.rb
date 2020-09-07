@@ -36,6 +36,11 @@ module AnnotatorStore
           .where(annotator_store_localized_tags: {language_id: args[:language]})
     end
 
+    def self.without_names
+      joins('LEFT OUTER JOIN annotator_store_tag_names ON annotator_store_tag_names.tag_id = annotator_store_tags.id')
+          .where('annotator_store_tag_names.tag_id IS NULL')
+    end
+
 
     # --- Class Methods --- #
 

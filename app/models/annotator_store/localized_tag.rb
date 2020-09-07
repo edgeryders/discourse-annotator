@@ -19,7 +19,7 @@ module AnnotatorStore
     # Callbacks
     before_validation do
       self.name = tag.name_for_language(language)
-      self.path = tag.path.map {|t| t.name_for_language(language)}.join(' → ')
+      self.path = tag.path.map { |t| t.name_for_language(language) }.join(' → ')
     end
 
 
@@ -27,10 +27,9 @@ module AnnotatorStore
 
     # AnnotatorStore::LocalizedTag.create_or_update_all
     def self.create_or_update_all
-      AnnotatorStore::Language.all.each do |language|
-        AnnotatorStore::Tag.find_each do |tag|
-          tag.update_localized_tags
-        end
+      AnnotatorStore::Tag.find_each do |tag|
+        p "code ##{tag.id}..."
+        tag.update_localized_tags
       end
     end
 
