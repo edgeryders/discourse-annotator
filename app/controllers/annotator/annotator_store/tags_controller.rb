@@ -10,7 +10,7 @@ class Annotator::AnnotatorStore::TagsController < Annotator::ApplicationControll
 
 
   def index
-    language = current_user.present? ? AnnotatorStore::UserSetting.language_for_user(current_user) : AnnotatorStore::Language.english
+    language = (current_user.present? && api_request?) ? AnnotatorStore::UserSetting.language_for_user(current_user) : AnnotatorStore::Language.english
     resources = if api_request?
                   scoped_resource
                 else
