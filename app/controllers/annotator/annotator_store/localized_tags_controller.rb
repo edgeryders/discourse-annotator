@@ -49,5 +49,22 @@ class Annotator::AnnotatorStore::LocalizedTagsController < Annotator::Applicatio
   end
 
 
+  def parent_codes
+    codes = AnnotatorStore::Tag.joins(:localized_tags).joins(:creator)
+                .select('annotator_store_tags.id, users.username username, annotator_store_localized_tags.path localized_path')
+                .order("LOWER(annotator_store_localized_tags.path) ASC")
+                .where.not(id: params[:code_id])
+                .where(annotator_store_localized_tags: {language_id: AnnotatorStore::UserSetting.language_for_user(current_user).id})
+    codes = codes.where("' ' || annotator_store_localized_tags.path ILIKE ?", "% #{params[:q].split.join('%')}%") if params[:q].present?
+    respond_to do |format|
+      format.json {
+        render json: codes.map { |c|
+          {id: c.id, localized_path: "#{c.localized_path} (by #{c.username})"}
+        }.to_json
+      }
+    end
+  end
+
+
 end
 

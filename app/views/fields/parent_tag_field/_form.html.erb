@@ -1,13 +1,50 @@
 <div class="field-unit__label">
   <%= f.label field.attribute %>
 </div>
-<div class="field-unit__field">
-  <% tags = if current_user.admin?
-              nested_dropdown_tags
-            else
-              nested_dropdown_tags(created_by: field.resource.persisted? ? field.resource.creator : current_user)
-            end
+<div class="field-unit__field field-unit--parent-id-field">
+  <%# f.select :parent_id, nested_dropdown_tags, include_blank: true %>
+  <%
+    language = AnnotatorStore::UserSetting.language_for_user(current_user)
+    parent = field.resource.parent
   %>
-
-  <%= f.select :parent_id, tags, include_blank: true %>
+  <%= f.select(field.permitted_attribute, nil) do %>
+    <% if parent.present? %>
+      <option value="<%= parent.id %>" selected="selected">
+        <%= "#{parent.localized_name_with_path(language)} (by #{parent.creator&.username})" %>
+      </option>
+    <% end %>
+  <% end %>
 </div>
+
+
+
+<script>
+    // belongs_to form
+    $(function () {
+        $(".field-unit--parent-id-field select").each(function initializeSelectize(index, element) {
+            var $element = $(element);
+            $element.selectize({
+                valueField: 'id',
+                labelField: 'localized_path',
+                searchField: 'localized_path',
+                create: false,
+                searchUrl: "/annotator/parent_codes.json" + '?code_id=<%= field.resource.id %>&q=',
+                load: function (query, callback) {
+                    if (!query.length) return callback();
+                    var searchUrl = this.settings.searchUrl;
+                    $.ajax({
+                        url: searchUrl + encodeURIComponent(query),
+                        type: 'GET',
+                        error: function () {
+                            callback();
+                        },
+                        success: function (res) {
+                            callback(res);
+                        }
+                    });
+                },
+            });
+        });
+    });
+</script>
+

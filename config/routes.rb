@@ -24,6 +24,7 @@ Rails.application.routes.draw do
       end
       match 'localized_codes', to: 'localized_tags#index', via: [:get], defaults: {format: :json}, constraints: {format: :json}
       match 'mergeable_codes', to: 'localized_tags#mergeable', via: [:get], defaults: {format: :json}, constraints: {format: :json}
+      match 'parent_codes', to: 'localized_tags#parent_codes', via: [:get], defaults: {format: :json}, constraints: {format: :json}
       resources :localized_tags, only: [:show]
       resources :tag_names
       resources :languages
