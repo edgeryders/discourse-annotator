@@ -12,6 +12,11 @@ module AnnotatorStore
     # Callbacks
     after_create :create_localized_tags
 
+    # Scopes
+    scope :with_codes_count, -> {
+      select('annotator_store_languages.*, count(annotator_store_tag_names.id) AS codes_count').left_joins(:tag_names).group('annotator_store_languages.id')
+    }
+
 
     # --- Class Methods --- #
 

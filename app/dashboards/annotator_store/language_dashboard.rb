@@ -14,6 +14,7 @@ class AnnotatorStore::LanguageDashboard < Administrate::BaseDashboard
     locale: Annotator::LocaleField,
     created_at: Field::DateTime,
     updated_at: Field::DateTime,
+    codes_count: Field::Number
   }.freeze
 
   # COLLECTION_ATTRIBUTES
@@ -26,6 +27,7 @@ class AnnotatorStore::LanguageDashboard < Administrate::BaseDashboard
     # :id,
     :name,
     :locale,
+    :codes_count
   ].freeze
 
   # SHOW_PAGE_ATTRIBUTES
