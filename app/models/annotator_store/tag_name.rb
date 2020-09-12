@@ -4,7 +4,7 @@ module AnnotatorStore
     delegate :locale, to: :language
 
     # Associations
-    belongs_to :tag
+    belongs_to :tag, inverse_of: :names
     belongs_to :language
 
     # Validations
@@ -15,6 +15,7 @@ module AnnotatorStore
     # Make sure all localized-tags that might use this tag-name as name or in the path are kept up-to-date.
     after_save { tag.update_localized_tags if name_changed? || language_id_changed? }
     after_destroy { tag.update_localized_tags }
+
 
 
   end

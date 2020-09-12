@@ -13,10 +13,11 @@ module AnnotatorStore
     # Associations
     belongs_to :creator, class_name: '::User'
     has_many :annotations, dependent: :destroy
-    has_many :names, dependent: :delete_all, class_name: 'TagName'
+    has_many :names, dependent: :delete_all, class_name: 'TagName', inverse_of: :tag
     has_many :localized_tags, dependent: :delete_all
 
     accepts_nested_attributes_for :names, allow_destroy: true, reject_if: proc { |attributes| attributes['name'].blank? }
+    validates_associated :names
 
 
     # Validations
@@ -25,6 +26,7 @@ module AnnotatorStore
     validates :names, length: {minimum: 1, too_short: ": One name is required"}
 
     after_save :update_localized_tags
+
 
 
     # --- Class Finder Methods --- #

@@ -1,6 +1,7 @@
 <%
   english = AnnotatorStore::Language.english
-  languages = [english, AnnotatorStore::UserSetting.language_for_user(current_user)].compact
+  #languages = [english, AnnotatorStore::UserSetting.language_for_user(current_user)].compact
+  languages = AnnotatorStore::Language.all
 
   resource.names = resource.names.load.select { |n| n.language.in?(languages) }
 
