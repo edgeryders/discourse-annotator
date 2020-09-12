@@ -1,18 +1,23 @@
 <%
   english = AnnotatorStore::Language.english
-  #languages = [english, AnnotatorStore::UserSetting.language_for_user(current_user)].compact
-  languages = AnnotatorStore::Language.all
-
-  resource.names = resource.names.load.select { |n| n.language.in?(languages) }
-
-  languages.each do |language|
-    resource.names.build(language: language) unless resource.names.find { |n| n.language == language }
+  user_language = AnnotatorStore::UserSetting.language_for_user(current_user)
+  other_languages = AnnotatorStore::Language.where.not(id: [english.id, user_language.id])
+  sorted_languages = [english, user_language] + other_languages
+  # Make sure English is always the first language and the users language is second.
+  sorted_names = []
+  sorted_languages.each do |language|
+    sorted_names << (resource.names.find { |n| n.language == language } || resource.names.build(language: language))
   end
-
-  # Make sure English is always the first language.
-  names = (resource.names.first.language == english) ? resource.names : resource.names.reverse
 %>
 
+<style>
+  <%# Only show English and the users selected language and hide other translations.
+      Important: All translations must be included in the form as excluded translations are automatically deleted. (by the Cocoon plugin?)
+  %>
+  .code-row .code-name:nth-of-type(1n+3) {
+    display: none !important;
+  }
+</style>
 
 <div class="code-row" id="code-row-<%= resource.id %>">
   <%= form_for(resource, url: annotator_annotator_store_tag_path(resource), html: {class: "form"}, remote: true) do |f| %>
@@ -34,11 +39,13 @@
     <table>
       <tr>
         <td class="names">
-          <%= f.fields_for :names, names do |ff| %>
-            <%= ff.hidden_field :language_id %>
-            <div>
-              <%= ff.object.language.name %>
-              <%= ff.text_field :name %>
+          <%= f.fields_for :names, sorted_names do |ff| %>
+            <div class="code-name">
+              <%= ff.hidden_field :language_id %>
+              <div>
+                <%= ff.object.language.name %>
+                <%= ff.text_field :name %>
+              </div>
             </div>
           <% end %>
         </td>
