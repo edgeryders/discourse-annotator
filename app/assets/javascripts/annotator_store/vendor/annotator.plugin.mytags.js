@@ -46,12 +46,13 @@ Annotator.Plugin.MyTags = function (element, message) {
             }
         });
 
-
+        // https://github.com/yairEO/tagify#settings
         var tagify = new Tagify($(this.field).find(':input')[0], {
             whitelist: [],
             editTags: false,
             keepInvalidTags: true,
             dropdown: {
+                fuzzySearch: true,
                 enabled: 0,                 // <- show suggestions on focus
                 // closeOnSelect: false,    // <- do not hide the suggestions dropdown once an item has been selected
             }

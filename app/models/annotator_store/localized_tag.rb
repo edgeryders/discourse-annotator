@@ -19,11 +19,15 @@ module AnnotatorStore
     # Callbacks
     before_validation do
       self.name = tag.name_for_language(language)
-      self.path = tag.path.map { |t| t.name_for_language(language) }.join(' → ')
+      self.path = tag.path.map { |t| t.name_for_language(language) }.join(self.class.path_separator)
     end
 
 
     # --- Class Methods --- #
+
+    def self.path_separator
+      ' → '
+    end
 
     # AnnotatorStore::LocalizedTag.create_or_update_all
     def self.create_or_update_all

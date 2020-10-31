@@ -108,4 +108,4 @@ elsif annotation.image_annotation?
 end
 
 # TODO rename to `codes`. Postponed as it requires extensive testing.
-json.tags annotation.tag.present? ? [annotation.tag.path.map {|t| t.localized_name(language)}.join(' → ')] : []
+json.tags annotation.tag.present? ? [annotation.tag.path.map {|t| t.localized_name(language)}.join(AnnotatorStore::LocalizedTag.path_separator)] : []

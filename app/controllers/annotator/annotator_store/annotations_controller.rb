@@ -249,9 +249,21 @@ class Annotator::AnnotatorStore::AnnotationsController < Annotator::ApplicationC
     )
   end
 
+  # codes in the path can be separated by ` -> ` or ` → `
   def get_code(path)
-    AnnotatorStore::Tag.joins(:localized_tags).where("lower(annotator_store_localized_tags.path) = ?", path&.downcase)&.first ||
-        create_code!(name: path, language: AnnotatorStore::UserSetting.language_for_user(current_user))
+    return if path.blank?
+    normalized_path = path.gsub('->', AnnotatorStore::LocalizedTag.path_separator)
+    language = AnnotatorStore::UserSetting.language_for_user(current_user)
+    path_items = []
+    code = nil
+    normalized_path.split(AnnotatorStore::LocalizedTag.path_separator).map(&:strip).each do |code_name|
+      path_items << code_name
+      code = AnnotatorStore::Tag.
+          joins(:localized_tags).
+          where("lower(annotator_store_localized_tags.path) = ?", path_items.join(AnnotatorStore::LocalizedTag.path_separator))&.first ||
+          create_code!(parent: code, name: code_name, language: language)
+    end
+    code
   end
 
   # Use callbacks to share common setup or constraints between actions.
@@ -267,14 +279,33 @@ class Annotator::AnnotatorStore::AnnotationsController < Annotator::ApplicationC
   # language:
   # parent:
   def create_code!(args = {})
-    tag = AnnotatorStore::Tag.new(parent: args[:parent], creator: current_user)
-    tag.names.build(name: args[:name], language: args[:language])
-    tag.save!
-    tag
+    code = AnnotatorStore::Tag.new(parent: args[:parent], creator: current_user)
+    code.names.build(name: args[:name], language: args[:language])
+    code.save!
+    code
+
   end
 
 
 end
+
+
+
+# code = nil
+# NOTE: Tag and tag-name are not created in one go as this caused a (hard to debug) "duplicate primary key" error.
+# AnnotatorStore::Tag.transaction do
+#   code = AnnotatorStore::Tag.create!(parent: args[:parent], creator: current_user)
+#   code.reload
+# AnnotatorStore::TagName.create!(tag: code, name: args[:name], language: args[:language])
+# code.save! # Required to trigger `update_localized_tags` in the model.
+# end
+# code
+#
+
+# def get_code(path)
+#   AnnotatorStore::Tag.joins(:localized_tags).where("lower(annotator_store_localized_tags.path) = ?", path&.downcase)&.first ||
+#       create_code!(name: path, language: AnnotatorStore::UserSetting.language_for_user(current_user))
+# end
 
 
 # def get_code

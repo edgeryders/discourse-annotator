@@ -123,6 +123,12 @@ module AnnotatorStore
 end
 
 
+
+# Used for debugging to find child-tags with missing parent tags (which shall never happen).
+# with_missing_parent = []
+# AnnotatorStore::Tag.find_each {|t| with_missing_parent << t.id unless !t.parent_id || AnnotatorStore::Tag.exists?(id: t.parent_id) }
+
+
 # NOTE: No longer in use. A counter_cache column is now used instead.
 # def self.with_annotations_count
 #   select('annotator_store_tags.*, count(annotator_store_annotations.id) AS annotations_count')

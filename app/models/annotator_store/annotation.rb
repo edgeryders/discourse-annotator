@@ -42,3 +42,6 @@ module AnnotatorStore
 
   end
 end
+
+# Get all with more than one range (used for debugging).
+# AnnotatorStore::Annotation.select("annotator_store_annotations.*").joins(:ranges).group("annotator_store_annotations.id").having("count(annotator_store_ranges.id) > ?", 1)

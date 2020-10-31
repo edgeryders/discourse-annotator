@@ -18,7 +18,8 @@ class Annotator::AnnotatorStore::TagsController < Annotator::ApplicationControll
                   params[:search].present? ? scoped_resource : scoped_resource.where(ancestry: nil)
                 end
     resources = resources.with_localized_tags(language: language)
-    resources = resources.where("' ' || annotator_store_localized_tags.path ILIKE ?", "% #{params[:search].split.join('%')}%") if params[:search].present?
+    # resources = resources.where("' ' || annotator_store_localized_tags.path ILIKE ?", "% #{params[:search].split.join('%')}%") if params[:search].present?
+    resources = resources.where("annotator_store_localized_tags.path ILIKE ?", "%#{params[:search].split.join('%')}%") if params[:search].present?
     resources = resources.where(creator_id: params[:creator_id]) if params[:creator_id].present?
     resources = case params[:order]
                 when 'created_at'
@@ -52,6 +53,14 @@ class Annotator::AnnotatorStore::TagsController < Annotator::ApplicationControll
     end
   end
 
+  def new
+    resource = resource_class.new
+    resource.creator = current_user
+    authorize_resource(resource)
+    render locals: {
+        page: Administrate::Page::Form.new(dashboard, resource),
+    }
+  end
 
   def show
     respond_to do |format|
