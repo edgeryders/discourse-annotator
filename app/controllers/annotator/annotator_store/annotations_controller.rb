@@ -260,7 +260,7 @@ class Annotator::AnnotatorStore::AnnotationsController < Annotator::ApplicationC
       path_items << code_name
       code = AnnotatorStore::Tag.
           joins(:localized_tags).
-          where("lower(annotator_store_localized_tags.path) = ?", path_items.join(AnnotatorStore::LocalizedTag.path_separator))&.first ||
+          where("lower(annotator_store_localized_tags.path) = ?", path_items.join(AnnotatorStore::LocalizedTag.path_separator).downcase)&.first ||
           create_code!(parent: code, name: code_name, language: language)
     end
     code
@@ -288,60 +288,3 @@ class Annotator::AnnotatorStore::AnnotationsController < Annotator::ApplicationC
 
 
 end
-
-
-
-# code = nil
-# NOTE: Tag and tag-name are not created in one go as this caused a (hard to debug) "duplicate primary key" error.
-# AnnotatorStore::Tag.transaction do
-#   code = AnnotatorStore::Tag.create!(parent: args[:parent], creator: current_user)
-#   code.reload
-# AnnotatorStore::TagName.create!(tag: code, name: args[:name], language: args[:language])
-# code.save! # Required to trigger `update_localized_tags` in the model.
-# end
-# code
-#
-
-# def get_code(path)
-#   AnnotatorStore::Tag.joins(:localized_tags).where("lower(annotator_store_localized_tags.path) = ?", path&.downcase)&.first ||
-#       create_code!(name: path, language: AnnotatorStore::UserSetting.language_for_user(current_user))
-# end
-
-
-# def get_code
-#   language = AnnotatorStore::UserSetting.language_for_user(current_user)
-#   path_items = []
-#   code = nil
-#
-#   params[:tags].join(' ').split(' → ').map(&:strip).each do |code_name|
-#     path_items << code_name
-#     code = AnnotatorStore::Tag.joins(:localized_tags).find_by(
-#         creator_id: current_user.id,
-#         annotator_store_localized_tags: {path: path_items.join(' → ')}
-#     ) || create_code!(parent: code, name: code_name, language: language)
-#   end
-#   code
-# end
-
-
-# def get_code_id
-#   path = params[:tags].join(' ').split(' → ').map(&:strip)
-#   language = AnnotatorStore::UserSetting.language_for_user(current_user)
-#   tag_names = AnnotatorStore::TagName.joins(:tag).where(name: path.last, annotator_store_tags: {creator_id: current_user.id}).all
-#
-#   tag_names.each do |tag_name|
-#     return tag_name.tag_id if path_matches?(tag_name.tag, path)
-#   end
-#   create_code!(name: path.last, language: language).id
-# end
-#
-# # If the path of the tag matches the given path.
-# def path_matches?(tag, path)
-#   return true if tag.blank? && path.blank?
-#
-#   if tag.present? && path.present? && tag.names.exists?(name: path.last)
-#     path_matches?(tag.parent, path.dup[0...-1])
-#   else
-#     false
-#   end
-# end
