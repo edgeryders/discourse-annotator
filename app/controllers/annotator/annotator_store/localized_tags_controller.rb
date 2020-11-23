@@ -4,9 +4,10 @@ class Annotator::AnnotatorStore::LocalizedTagsController < Annotator::Applicatio
   def index
     settings = current_user.annotator_store_settings
 
-    tags = AnnotatorStore::Tag.joins(:localized_tags)
+    tags = AnnotatorStore::Tag
                .select('annotator_store_tags.id, annotator_store_localized_tags.path localized_path')
                .order("LOWER(annotator_store_localized_tags.path) ASC")
+               .joins(:localized_tags)
                .where(annotator_store_localized_tags: {language_id: AnnotatorStore::UserSetting.language_for_user(current_user).id})
 
     if settings&.discourse_tag.present?
@@ -34,28 +35,28 @@ class Annotator::AnnotatorStore::LocalizedTagsController < Annotator::Applicatio
 
 
   def mergeable
-    codes = AnnotatorStore::Tag.joins(:localized_tags).joins(:creator)
-                .select('annotator_store_tags.id, users.username username, annotator_store_localized_tags.path localized_path')
-                .order("LOWER(annotator_store_localized_tags.path) ASC")
-                .where.not(id: params[:code_id])
-                .where(annotator_store_localized_tags: {language_id: AnnotatorStore::UserSetting.language_for_user(current_user).id})
-    # codes = codes.where("' ' || annotator_store_localized_tags.path ILIKE ?", "% #{params[:q].split.join('%')}%") if params[:q].present?
-    codes = codes.where("annotator_store_localized_tags.path ILIKE ?", "%#{params[:q].split.join('%')}%") if params[:q].present?
-    respond_to do |format|
-      format.json {
-        render json: codes.map { |c|
-          {id: c.id, localized_path: "#{c.localized_path} (by #{c.username})"}
-        }.to_json
-      }
-    end
+    list
   end
 
 
   def parent_codes
-    codes = AnnotatorStore::Tag.joins(:localized_tags).joins(:creator)
+    list
+  end
+
+
+  private
+
+  def list
+    codes = AnnotatorStore::Tag
+                .joins(:creator)
+                .joins(:localized_tags)
                 .select('annotator_store_tags.id, users.username username, annotator_store_localized_tags.path localized_path')
                 .order("LOWER(annotator_store_localized_tags.path) ASC")
-                .where(annotator_store_localized_tags: {language_id: AnnotatorStore::UserSetting.language_for_user(current_user).id})
+                .group(%w[annotator_store_tags.id users.username annotator_store_localized_tags.path])
+
+    # Removed. See: https://github.com/edgeryders/annotator_store-gem/issues/200
+    # .where(annotator_store_localized_tags: {language_id: AnnotatorStore::UserSetting.language_for_user(current_user).id})
+
     codes = codes.where.not(id: params[:code_id]) if params[:code_id].present?
     # codes = codes.where("' ' || annotator_store_localized_tags.path ILIKE ?", "% #{params[:q].split.join('%')}%") if params[:q].present?
     codes = codes.where("annotator_store_localized_tags.path ILIKE ?", "%#{params[:q].split.join('%')}%") if params[:q].present?
