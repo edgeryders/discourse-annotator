@@ -9,6 +9,8 @@ json.created_at annotation.created_at
 json.updated_at annotation.updated_at
 
 json.post_id annotation.post_id
+# See: https://github.com/edgeryders/annotator_store-gem/issues/201
+json.post_creator_id annotation.post&.user_id
 json.creator_id annotation.creator_id
 json.type annotation.type
 json.topic_id annotation.topic_id

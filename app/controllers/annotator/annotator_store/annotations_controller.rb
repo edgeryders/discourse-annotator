@@ -44,6 +44,9 @@ class Annotator::AnnotatorStore::AnnotationsController < Annotator::ApplicationC
         }
       }
       format.json {
+        # See: https://github.com/edgeryders/annotator_store-gem/issues/201
+        resources = resources.left_joins(:post).select('annotator_store_annotations.*, posts.user_id as post_creator_id')
+
         # Rename tag_id to code_id
         r = resources.to_a.map(&:attributes).each { |a| a['code_id'] = a.delete('tag_id') }
         render json: JSON.pretty_generate(JSON.parse(r.to_json))
