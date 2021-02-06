@@ -19,6 +19,11 @@
     </script>
 <% end %>
 
+<% if params[:view] == 'bulk_editing' %>
+  <div style="border:1px solid #dfe0e1; background: #F6F7F7; margin:20px 35px; padding:10px;">
+    <%= render 'bulk_editing_form' %>
+  </div>
+<% end %>
 
 
 <div class="tree">

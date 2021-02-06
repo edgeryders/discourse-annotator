@@ -118,6 +118,19 @@ class Annotator::AnnotatorStore::TagsController < Annotator::ApplicationControll
   end
 
 
+  def update_parent
+    fallback_path = annotator_annotator_store_tags_path(creator_id: current_user.id)
+    ids = params[:selected_ids].split(',')
+    redirect_back fallback_location: fallback_path, notice: 'No codes were selected.' and return if ids.blank?
+    status = []
+    ids.each { |id| status << AnnotatorStore::Tag.find(id).update(parent_id: params[:parent_id]) }
+    msg = []
+    msg << "#{status.count(true)} codes were successfully updated." if status.count(true) > 0
+    msg << "#{status.count(false)} codes could not be updated." if status.count(false) > 0
+    redirect_back fallback_location: fallback_path, notice: msg.join(' ')
+  end
+
+
   def copy
     msg = requested_resource.copy ? 'Code was successfully copied.' : 'An error occurred while coping the code!'
     redirect_back fallback_location: annotator_annotator_store_tags_path(creator_id: current_user.id), notice: msg

@@ -1,4 +1,10 @@
+
+
 <li>
+  <% if params[:view] == 'bulk_editing' %>
+    <input type="checkbox" id="code-<%= tag.id %>" data-id="<%= tag.id %>"/>
+  <% end %>
+
   <span>
     <% if tag.children.any? %>
         <i class="fa fa-minus-circle" style="color:#aaa;"></i>
