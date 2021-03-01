@@ -34,7 +34,7 @@
 
 
           let checkboxValues = JSON.parse(localStorage.getItem('checkboxValues')) || {};
-          let $checkboxes = $(".tree :checkbox");
+          let $checkboxes = $("#codes-collection :checkbox");
 
           updateSelectedIdsField();
 
@@ -94,6 +94,9 @@
   <div>
     <select id="bulk-editing-parent-id-field" name="parent_id"></select>
     <%= submit_tag("Save", style: 'vertical-align:top') %>
+  </div>
+  <div style="color:#777; font-size:.8rem;">
+    Leave blank to move selected codes to the top level.
   </div>
   <a href="#" id="uncheck-all">[Uncheck All]</a>
 <% end %>

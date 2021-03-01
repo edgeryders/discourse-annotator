@@ -1,7 +1,9 @@
-<a id="post-number-<%= post.post_number %>"></a>
-<div id="post-<%= post.id %>">
-  <% if (u = post.user) %>
-    <div class='creator'>
+<div style="display:flex; flex-flow: row nowrap; margin-top:4rem;">
+  <div style="">
+    <a id="post-number-<%= post.post_number %>"></a>
+    <div id="post-<%= post.id %>">
+      <% if (u = post.user) %>
+        <div class='creator'>
         <span>
           <a href='<%= Discourse.base_uri %>/u/<%= u.username %>'><b itemprop='author'><%= u.username %></b></a>
           <%= "(#{u.name})" if (SiteSetting.display_name_on_posts && SiteSetting.enable_names? && !u.name.blank?) %>
@@ -13,18 +15,39 @@
             <%= post.created_at %>
           </time>
         </span>
-      <span itemprop='position'>#<%= post.post_number %></span>
-    </div>
-    <div class='post' itemprop='articleBody'>
-      <% if post.hidden? %>
-        <%= t('flagging.user_must_edit').html_safe %>
-      <% else %>
-        <%= markdown(post.raw) %>
+          <span itemprop='position'>#<%= post.post_number %></span>
+        </div>
+        <div class='post' itemprop='articleBody'>
+          <% if post.hidden? %>
+            <%= t('flagging.user_must_edit').html_safe %>
+          <% else %>
+            <%= markdown(post.raw) %>
+          <% end %>
+        </div>
+        <hr>
       <% end %>
     </div>
-    <hr>
-  <% end %>
+  </div>
+  <div style="flex: 0 0 14rem; margin-left:40px; padding-left:20px; border-left: 1px solid #e2e2e2;">
+    <div style="color: #7b808c; font-size: 0.8em; font-weight: 400; letter-spacing: 0.0357em; text-transform: uppercase; margin-bottom:7px;">Used Codes:</div>
+
+    <%
+      language = defined?(@current_user) ? AnnotatorStore::UserSetting.language_for_user(@current_user) : nil
+      tags = post.annotations.map(&:tag).uniq.compact
+      localized_tags = tags.map{|tag| tag.path.map { |t| t.localized_name(language) }.join(AnnotatorStore::LocalizedTag.path_separator)}.sort
+    %>
+
+    <% localized_tags.each do |path| %>
+      <div style="margin-bottom:7px;">
+        <div style="font-weight:bold; background: #E6E6E6; color:#909090; border-radius: 9px; padding:2px 6px;  font-size:.7rem; display:inline-block;">
+          <%= path %>
+        </div>
+      </div>
+    <% end %>
+  </div>
 </div>
+
+
 
 <script>
     loadAnnotator('#post-<%= post.id %> > .post', '/post/<%= post.id %>');

@@ -4,6 +4,7 @@ require_dependency 'annotator/application_controller'
 #
 class Annotator::AnnotatorStore::TagsController < Annotator::ApplicationController
 
+  include Annotator::ApplicationHelper
 
   skip_before_action :ensure_logged_in, :ensure_staff_or_annotator_group_member,
                      if: proc { |c| api_request? && c.action_name == "index" && AnnotatorStore::Setting.instance.public_codes_list_api_endpoint? }
@@ -32,14 +33,7 @@ class Annotator::AnnotatorStore::TagsController < Annotator::ApplicationControll
     # resources = resources.where("' ' || annotator_store_localized_tags.path ILIKE ?", "% #{params[:search].split.join('%')}%") if params[:search].present?
     resources = resources.where("annotator_store_localized_tags.path ILIKE ?", "%#{params[:search].split.join('%')}%") if params[:search].present?
     resources = resources.where(creator_id: params[:creator_id]) if params[:creator_id].present?
-    resources = case params[:order]
-                when 'created_at'
-                  resources.order('annotator_store_tags.created_at DESC')
-                when 'updated_at'
-                  resources.order('annotator_store_tags.updated_at DESC')
-                else
-                  resources.order('LOWER(annotator_store_localized_tags.name) ASC')
-                end
+    resources = order_tags(tags: resources, order: params[:order])
     if params[:discourse_tag].present? && (tag = ::Tag.find_by(name: params[:discourse_tag]))
       resources = resources.where(id: AnnotatorStore::Annotation.where(topic_id: tag.topic_ids).select(:tag_id))
     end

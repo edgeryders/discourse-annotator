@@ -83,6 +83,7 @@ ul, ol {
         padding: 5px 10px;
         text-decoration: none;
         display: block;
+        white-space: nowrap;
 
         &:hover {
           background-color: #F7F7F7;

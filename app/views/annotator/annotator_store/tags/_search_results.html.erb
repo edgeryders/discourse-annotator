@@ -1,6 +1,7 @@
 <table>
   <thead>
   <tr>
+    <th></th>
     <th scope="col">Id</th>
     <th scope="col">Name</th>
     <th scope="col">Creator</th>
@@ -16,6 +17,9 @@
   <tbody>
   <% resources.each do |resource| %>
     <tr>
+      <td>
+        <input type="checkbox" id="code-<%= resource.id %>" data-id="<%= resource.id %>"/>
+      </td>
       <td><%= resource.id %></td>
       <td><%= link_to(resource.name_with_path, [namespace, resource], class: "link-primary") %></td>
       <td><%= "by #{resource.creator.username}" %></td>

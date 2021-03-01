@@ -6,6 +6,21 @@ module Annotator
     require_relative '../../../lib/helpers/markdown_renderer'
     include CurrentUser
 
+    # tags: activerecord-collection of tags
+    # order: created_at | updated_at | annotations_count
+    def order_tags(args = {})
+      case args[:order]
+      when 'created_at'
+        args[:tags].order('annotator_store_tags.created_at DESC')
+      when 'updated_at'
+        args[:tags].order('annotator_store_tags.updated_at DESC')
+      when 'annotations_count'
+        args[:tags].order('annotator_store_tags.annotations_count DESC')
+      else
+        args[:tags].order('LOWER(annotator_store_localized_tags.name) ASC')
+      end
+    end
+
     def markdown(content)
       @markdown ||= Redcarpet::Markdown.new(MarkdownRenderer, autolink: true)
       @markdown.render(content).html_safe
@@ -25,11 +40,10 @@ module Annotator
         JOIN annotator_store_tags t ON ta.id = t.id
         JOIN annotator_store_localized_tags lt ON t.id = lt.tag_id
         JOIN users ON t.creator_id = users.id
-        WHERE lt.language_id = #{language.id}
-        #{args[:created_by].present? ? "AND t.creator_id = #{args[:created_by].id}" : '' }
+        WHERE lt.language_id = #{language.id} #{args[:created_by].present? ? "AND t.creator_id = #{args[:created_by].id}" : '' }
         ORDER BY LOWER(lt.path) ASC
       ")
-      r.map {|t| ["#{t['path']} (#{t['annotations_count']}) by #{t['username']}", t['id']] }
+      r.map { |t| ["#{t['path']} (#{t['annotations_count']}) by #{t['username']}", t['id']] }
     end
 
     def annotation_type_view(type)

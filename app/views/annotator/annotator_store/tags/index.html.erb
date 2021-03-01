@@ -15,20 +15,28 @@
                name: 'Creator',
                filter: :creator_id,
                users: User.where(id: AnnotatorStore::Tag.select(:creator_id).uniq.pluck(:creator_id)).order(:username) %>
-    <%= render '/lib/sort_by', options: {name: 'Name', created_at: 'Newest', updated_at: 'Updated'} %>
+    <%= render '/lib/sort_by', options: {name: 'Name', created_at: 'Newest', updated_at: 'Updated', annotations_count: 'Number of annotations'} %>
 
     <%= render 'lib/codes_view_nav' %>
 
-<!--    <a href="<%#= request.path %>" target="_blank">Export current list</a>-->
+    <!--    <a href="<%#= request.path %>" target="_blank">Export current list</a>-->
   </div>
 
-  <% if params[:search].present? %>
-    <%= render 'search_results', resources: resources, namespace: namespace %>
-  <% elsif params[:view] == 'translate' %>
-    <%= render 'translate', resources: resources, namespace: namespace %>
-  <% else %>
-    <%= render 'tree', tags: resources %>
+  <% if params[:view] != 'translate' %>
+    <div style="border:1px solid #dfe0e1; background: #F6F7F7; margin:20px 35px; padding:10px;">
+      <%= render 'bulk_editing_form' %>
+    </div>
   <% end %>
+
+  <div id="codes-collection">
+    <% if params[:search].present? %>
+      <%= render 'search_results', resources: resources, namespace: namespace %>
+    <% elsif params[:view] == 'translate' %>
+      <%= render 'translate', resources: resources, namespace: namespace %>
+    <% else %>
+      <%= render 'tree', tags: resources %>
+    <% end %>
+  </div>
 
   <%= paginate resources %>
 </section>
