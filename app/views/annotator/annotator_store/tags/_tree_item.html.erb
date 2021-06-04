@@ -13,7 +13,8 @@
       <%= "(#{tag.annotations_count}#{" + #{dc}" if dc > 0 })" %>
     </strong>
   </span>
-  <%= "by #{tag.creator.username}" unless params[:creator_id].present? %>
+  <%# "by #{tag.creator.username}" unless params[:creator_id].present? %>
+  <%= "by #{tag.creator.username}" %>
   <%= link_to('Show', [namespace, tag], class: "action-edit") %> |
   <%= link_to('Edit', [:edit, namespace, tag], class: "action-edit",) %> |
   <%= link_to('Annotations', annotator_annotator_store_annotations_path(code_id: tag.id), class: "action-edit",) %> |
