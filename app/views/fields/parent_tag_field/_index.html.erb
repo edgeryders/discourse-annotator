@@ -1,1 +1,3 @@
-<%= code_view(field.data.localized_name_with_path) %>
+<% if field.data.present? %>
+  <%= code_view(field.data.localized_name_with_path) %>
+<% end %>
