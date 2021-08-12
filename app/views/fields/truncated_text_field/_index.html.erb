@@ -10,4 +10,6 @@ By default, the attribute is rendered as a truncated string.
 [1]: http://www.rubydoc.info/gems/administrate/Administrate/Field/Text
 %>
 
-<%= content_tag :span, ellipsize(field.data, 30, separator: '…'), title: field.data %>
+<% if !field.data.blank? %>
+  <%= content_tag :span, ellipsize(field.data, 30, separator: '…'), title: field.data %>
+<% end %>
