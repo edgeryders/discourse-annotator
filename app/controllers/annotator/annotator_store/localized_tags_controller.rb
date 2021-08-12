@@ -39,7 +39,7 @@ class Annotator::AnnotatorStore::LocalizedTagsController < Annotator::Applicatio
   end
 
 
-  def parent_codes
+  def autosuggest_codes
     list
   end
 

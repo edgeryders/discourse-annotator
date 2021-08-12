@@ -6,7 +6,7 @@ class AnnotatorStore::VideoAnnotationDashboard < AnnotatorStore::AnnotationDashb
   SHOW_PAGE_ATTRIBUTES = [
       :id,
       :type,
-      :tag,
+      :code,
       :container,
       :src,
       :ext,

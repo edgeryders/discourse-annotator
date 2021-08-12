@@ -119,6 +119,30 @@ class Annotator::AnnotatorStore::AnnotationsController < Annotator::ApplicationC
     end
   end
 
+  def update_tag
+    fallback_path = annotator_annotator_store_annotations_path
+    ids = params[:selected_ids].split(',')
+    redirect_back fallback_location: fallback_path, notice: 'No annotations were selected.' and return if ids.blank?
+    status = []
+    ids.each { |id| status << AnnotatorStore::Annotation.find(id).update(tag_id: params[:tag_id]) }
+    msg = []
+    msg << "#{status.count(true)} annotations were successfully moved." if status.count(true) > 0
+    msg << "#{status.count(false)} annotations could not be moved." if status.count(false) > 0
+    redirect_back fallback_location: fallback_path, notice: msg.join(' ')
+  end
+
+  def bulk_destroy
+    fallback_path = annotator_annotator_store_annotations_path
+    ids = params[:selected_ids].split(',')
+    redirect_back fallback_location: fallback_path, notice: 'No annotations were selected.' and return if ids.blank?
+    status = []
+    ids.each { |id| status << !!AnnotatorStore::Annotation.find(id).destroy }
+    msg = []
+    msg << "#{status.count(true)} annotations were destroyed." if status.count(true) > 0
+    msg << "#{status.count(false)} annotations could not be destroyed." if status.count(false) > 0
+    redirect_back fallback_location: fallback_path, notice: msg.join(' ')
+  end
+
   # DELETE /annotations/1
   def destroy
     @annotation.destroy
@@ -275,7 +299,7 @@ class Annotator::AnnotatorStore::AnnotationsController < Annotator::ApplicationC
   end
 
   def valid_action?(name, resource = resource_class)
-    %w[show edit].exclude?(name.to_s)
+    %w[show].exclude?(name.to_s)
   end
 
   # name:

@@ -1,38 +1,33 @@
 <div class="field-unit__label">
-  <%= f.label 'Code to merge into' %>
+  <%= f.label field.attribute %>
 </div>
-<div class="field-unit__field">
+<div class="field-unit__field field-unit--tag-id-field">
+  <%
+    language = AnnotatorStore::UserSetting.language_for_user(current_user)
+    tag = field.resource.tag
+  %>
   <%= f.select(field.permitted_attribute, nil) do %>
-    <%= options_for_select(field.associated_resource_options, field.selected_option) %>
-  <% end %>
-  <div>
-    All annotations of this code will be assigned to the selected code and this code will be deleted.<br/>
-    <span style="color:#f04855; margin-bottom:4px;">Warning: This action cannot be undone.</span>
-  </div>
-
-  <% if false %>
-    <% tags = if current_user.admin?
-                nested_dropdown_tags
-              else
-                nested_dropdown_tags(created_by: field.resource.persisted? ? field.resource.creator : current_user)
-              end
-    %>
-    <%= f.select :merge_into_tag_id, tags, include_blank: true %>
+    <% if tag.present? %>
+      <option value="<%= tag.id %>" selected="selected">
+        <%= "#{tag.localized_name_with_path(language)} (by #{tag.creator&.username})" %>
+      </option>
+    <% end %>
   <% end %>
 </div>
+
 
 
 <script>
     // belongs_to form
     $(function () {
-        $(".field-unit--merge-tag-field select").each(function initializeSelectize(index, element) {
+        $(".field-unit--tag-id-field select").each(function initializeSelectize(index, element) {
             var $element = $(element);
             $element.selectize({
                 valueField: 'id',
                 labelField: 'localized_path',
                 searchField: 'localized_path',
                 create: false,
-                searchUrl: "/annotator/mergeable_codes.json" + '?code_id=<%= field.resource.id %>&q=',
+                searchUrl: "/annotator/autosuggest_codes.json" + '?code_id=<%= field.resource.id %>&q=',
                 load: function (query, callback) {
                     if (!query.length) return callback();
                     var searchUrl = this.settings.searchUrl;
@@ -51,3 +46,4 @@
         });
     });
 </script>
+

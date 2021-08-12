@@ -10,7 +10,7 @@ module AnnotatorStore
     # on pages throughout the dashboard.
     ATTRIBUTE_TYPES = {
       creator: Annotator::UserField,
-      tag: Annotator::ParentTagField.with_options(class_name: 'AnnotatorStore::Tag'),
+      tag: Annotator::TagField.with_options(class_name: 'AnnotatorStore::Tag'),
       id: Field::Number,
       uri: Field::String,
       type: Annotator::AnnotationTypeField,
@@ -20,9 +20,10 @@ module AnnotatorStore
       updated_at: Field::DateTime,
       topic: Annotator::TopicField,
       src: Field::String,
+      code: Annotator::TagField.with_options(class_name: 'AnnotatorStore::Tag'), # quickfix. See: https://github.com/thoughtbot/administrate/issues/1681
       # TextAnnotation
-      text: Field::Text.with_options(truncate: 1000, searchable: true),
-      quote: Field::Text.with_options(truncate: 1000, searchable: true),
+      text: Annotator::TruncatedTextField.with_options(searchable: true),
+      quote: Annotator::TruncatedTextField.with_options(searchable: true),
       version: Field::String,
       # VideoAnnotation
       container: Field::String,
@@ -60,6 +61,7 @@ module AnnotatorStore
     FORM_ATTRIBUTES = [
       # :creator,
       :text,
+      :tag
     ].freeze
 
     # Overwrite this method to customize how tags are displayed

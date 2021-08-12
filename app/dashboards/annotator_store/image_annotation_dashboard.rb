@@ -12,7 +12,7 @@ class AnnotatorStore::ImageAnnotationDashboard < AnnotatorStore::AnnotationDashb
       :shape,
       :units,
       :geometry,
-      :tag,
+      :code,
       :creator,
       :created_at,
       :updated_at,

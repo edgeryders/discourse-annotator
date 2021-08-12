@@ -59,6 +59,19 @@ module Annotator
       end
     end
 
+    def code_view(path)
+      return '' if path.blank?
+      path.split('→').map do |v|
+        content_tag(:span, v, class: 'nowrap')
+      end.join('→').html_safe
+    end
+
+    def ellipsize(string, edge_length, separator: '…')
+      string.truncate(
+          edge_length * 2 + separator.size, omission: "#{separator}#{string.last(edge_length)}"
+      )
+    end
+
 
   end
 end

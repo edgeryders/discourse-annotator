@@ -28,6 +28,13 @@ module AnnotatorStore
 
     # --- Instance Methods --- #
 
+    # Alias. Used by administrate.
+    # Required due to https://github.com/thoughtbot/administrate/issues/1681
+    # An upgrade of administrate is easily possible right now due to dependencies.
+    def code
+      tag
+    end
+
     def text_annotation?
       false
     end

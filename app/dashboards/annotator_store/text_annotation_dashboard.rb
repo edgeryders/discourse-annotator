@@ -9,7 +9,7 @@ class AnnotatorStore::TextAnnotationDashboard < AnnotatorStore::AnnotationDashbo
       :type,
       :quote,
       :text,
-      :tag,
+      :code,
       :creator,
       :created_at,
       :updated_at,
