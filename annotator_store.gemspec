@@ -43,7 +43,7 @@ Gem::Specification.new do |spec|
 
   spec.add_runtime_dependency 'deep_cloneable', '~> 3.0.0'
 
-  spec.add_dependency 'administrate-field-belongs_to_search'
+  spec.add_dependency 'administrate-field-belongs_to_search', '>= 0.7'
 
 
   # @todo It is not possible to have a git branch dependency:
