@@ -32,7 +32,7 @@ Gem::Specification.new do |spec|
 
   # Runtime dependencies
   spec.add_runtime_dependency 'jbuilder'
-  spec.add_runtime_dependency 'rails', '~> 6.1'
+  spec.add_runtime_dependency 'rails'
   spec.add_runtime_dependency 'ancestry', '3.2.1'
   # https://github.com/vmg/redcarpet - The safe Markdown parser.
   spec.add_runtime_dependency 'redcarpet'
