@@ -21,3 +21,5 @@
 
 # Ignore RubyMine settings
 /.idea
+
+.DS_Store
