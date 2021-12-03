@@ -17,7 +17,7 @@ class Annotator::VideosController < Annotator::ApplicationController
 
 
   def namespace
-    'annotator'
+    :annotator
   end
 
 

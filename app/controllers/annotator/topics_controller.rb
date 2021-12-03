@@ -40,7 +40,7 @@ class Annotator::TopicsController < Annotator::ApplicationController
 
 
   def namespace
-    'annotator'
+    :annotator
   end
 
 
