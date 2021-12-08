@@ -17,6 +17,7 @@ class Annotator::AnnotatorStore::TagsController < Annotator::ApplicationControll
                   # Search or Tree view
                   params[:search].present? ? scoped_resource : scoped_resource.where(ancestry: nil)
                 end
+    # resources = scoped_resource
 
     if params[:search].present?
       # See: https://github.com/edgeryders/annotator_store-gem/issues/200
@@ -38,6 +39,9 @@ class Annotator::AnnotatorStore::TagsController < Annotator::ApplicationControll
       resources = resources.where(id: AnnotatorStore::Annotation.where(topic_id: tag.topic_ids).select(:tag_id))
     end
     resources = resources.page(params[:page]).per(records_per_page)
+
+    #
+
 
     search_term = params[:search].to_s.strip
     page = Administrate::Page::Collection.new(dashboard)
