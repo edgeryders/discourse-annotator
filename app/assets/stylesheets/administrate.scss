@@ -1,3 +1,8 @@
+
+.app-container {
+  max-width: none;
+}
+
 tbody tr:hover {
   background-color: transparent;
   cursor: inherit;
@@ -20,6 +25,12 @@ ol {
 ul, ol {
   margin: 0 0 5px 20px;
   padding: 0;
+}
+
+td {
+  &.cell-data--date-time {
+    white-space: nowrap;
+  }
 }
 
 
@@ -240,4 +251,9 @@ ul, ol {
 
 .button-delete {
   background: #d73a49 !important;
+}
+
+// quickfix as pagination is not translated even when the correct translation files are provided. (2021-12-09)
+.pagination .page.gap {
+  display: none;
 }

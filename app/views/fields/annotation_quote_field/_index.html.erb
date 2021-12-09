@@ -1,0 +1,22 @@
+<%#
+# Text Index Partial
+This partial renders a text attribute
+to be displayed on a resource's index page.
+By default, the attribute is rendered as a truncated string.
+## Local variables:
+- `field`:
+  An instance of [Administrate::Field::Text][1].
+  A wrapper around the Text pulled from the database.
+[1]: http://www.rubydoc.info/gems/administrate/Administrate/Field/Text
+%>
+
+<% if !field.data.blank? %>
+  <%= content_tag :span, ellipsize(field.data, 30, separator: '…'), title: field.data %>
+  <br/>
+  <% post = field.resource.post %>
+  <% if post.present? %>
+    <%= link_to 'Show in topic',
+                annotator_topic_path(field.resource.topic_id, anchor: "post-number-#{post.post_number}"),
+                class: 'link-primary' %>
+  <% end %>
+<% end %>

@@ -23,7 +23,7 @@ module AnnotatorStore
       code: Annotator::TagField.with_options(class_name: 'AnnotatorStore::Tag'), # quickfix. See: https://github.com/thoughtbot/administrate/issues/1681
       # TextAnnotation
       text: Annotator::TruncatedTextField.with_options(searchable: true),
-      quote: Annotator::TruncatedTextField.with_options(searchable: true),
+      quote: Annotator::AnnotationQuoteField.with_options(searchable: true),
       version: Field::String,
       # VideoAnnotation
       container: Field::String,
