@@ -11,26 +11,13 @@ class Annotator::AnnotatorStore::TagsController < Annotator::ApplicationControll
 
 
   def index
-    resources = if api_request?
-                  scoped_resource
-                else
-                  # Search or Tree view
-                  params[:search].present? ? scoped_resource : scoped_resource.where(ancestry: nil)
-                end
-    # resources = scoped_resource
-
+    resources = scoped_resource
     if params[:search].present?
-      # See: https://github.com/edgeryders/annotator_store-gem/issues/200
-      resources = resources
-                      .select("annotator_store_tags.*, annotator_store_localized_tags.name, annotator_store_localized_tags.path AS name_with_path")
-                      .joins(:localized_tags)
-                      .group(%w[annotator_store_tags.id annotator_store_localized_tags.name annotator_store_localized_tags.path])
+      resources = resources.with_localized_path
     else
       language = (current_user.present? && api_request?) ? AnnotatorStore::UserSetting.language_for_user(current_user) : AnnotatorStore::Language.english
       resources = resources.with_localized_tags(language: language)
     end
-
-
     # resources = resources.where("' ' || annotator_store_localized_tags.path ILIKE ?", "% #{params[:search].split.join('%')}%") if params[:search].present?
     resources = resources.where("annotator_store_localized_tags.path ILIKE ?", "%#{params[:search].split.join('%')}%") if params[:search].present?
     resources = resources.where(creator_id: params[:creator_id]) if params[:creator_id].present?
@@ -39,13 +26,8 @@ class Annotator::AnnotatorStore::TagsController < Annotator::ApplicationControll
       resources = resources.where(id: AnnotatorStore::Annotation.where(topic_id: tag.topic_ids).select(:tag_id))
     end
     resources = resources.page(params[:page]).per(records_per_page)
-
-    #
-
-
     search_term = params[:search].to_s.strip
     page = Administrate::Page::Collection.new(dashboard)
-
     respond_to do |format|
       format.html {
         render locals: {resources: resources, search_term: search_term, page: page, show_search_bar: show_search_bar?}

@@ -45,7 +45,6 @@ Gem::Specification.new do |spec|
 
   # spec.add_dependency 'administrate-field-belongs_to_search', '>= 0.7'
 
-
   # @todo It is not possible to have a git branch dependency:
   #   https://stackoverflow.com/questions/6499410/ruby-gemspec-dependency-is-possible-have-a-git-branch-dependency
   #   Right now we specify the dependency in the Gemfile.

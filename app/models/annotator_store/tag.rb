@@ -1,6 +1,5 @@
 require 'deep_cloneable'
 
-
 module AnnotatorStore
   class Tag < ActiveRecord::Base
 
@@ -19,28 +18,32 @@ module AnnotatorStore
     accepts_nested_attributes_for :names, allow_destroy: true, reject_if: proc { |attributes| attributes['name'].blank? }
     validates_associated :names
 
-
     # Validations
     # validates :name, presence: true, uniqueness: {scope: [:ancestry, :creator_id], case_sensitive: false}
     validates :creator, presence: true
-    validates :names, length: {minimum: 1, too_short: ": One name is required"}
+    validates :names, length: { minimum: 1, too_short: ": One name is required" }
 
     after_save :update_localized_tags
-
-
 
     # --- Class Finder Methods --- #
 
     # language:
     def self.with_localized_tags(args = {})
       select("annotator_store_tags.*, annotator_store_localized_tags.name, annotator_store_localized_tags.path AS name_with_path")
-          .joins(:localized_tags)
-          .where(annotator_store_localized_tags: {language_id: args[:language]})
+        .joins(:localized_tags)
+        .where(annotator_store_localized_tags: { language_id: args[:language] })
+    end
+
+    # See: https://github.com/edgeryders/annotator_store-gem/issues/200
+    def self.with_localized_path
+      select("annotator_store_tags.*, annotator_store_localized_tags.name, annotator_store_localized_tags.path AS name_with_path")
+        .joins(:localized_tags)
+        .group(%w[annotator_store_tags.id annotator_store_localized_tags.name annotator_store_localized_tags.path])
     end
 
     def self.without_names
       joins('LEFT OUTER JOIN annotator_store_tag_names ON annotator_store_tag_names.tag_id = annotator_store_tags.id')
-          .where('annotator_store_tag_names.tag_id IS NULL')
+        .where('annotator_store_tag_names.tag_id IS NULL')
     end
 
 
@@ -55,7 +58,6 @@ module AnnotatorStore
           WHERE annotator_store_annotations.tag_id = annotator_store_tags.id)
       SQL
     end
-
 
     # --- Instance Methods --- #
 
@@ -86,20 +88,19 @@ module AnnotatorStore
 
     def name_for_language(language)
       names.find_by(language_id: language.id)&.name ||
-          names.find_by(language_id: AnnotatorStore::Language.english.id)&.name ||
-          names.order(created_at: :asc).first&.name
+        names.find_by(language_id: AnnotatorStore::Language.english.id)&.name ||
+        names.order(created_at: :asc).first&.name
     end
 
     def copy
       # https://github.com/moiristo/deep_cloneable
-      new = deep_clone include: [:names, {annotations: :ranges}] do |original, kopy|
+      new = deep_clone include: [:names, { annotations: :ranges }] do |original, kopy|
         if kopy.is_a?(AnnotatorStore::TagName)
           kopy.name = "#{original.name} (COPY)"
         end
       end
       new.save
     end
-
 
     def merge_into(merge_into_tag)
       raise ArgumentError.new("Can't merge code with self.") if merge_into_tag == self
@@ -118,16 +119,12 @@ module AnnotatorStore
       destroy if annotations.none? && is_childless?
     end
 
-
   end
 end
-
-
 
 # Used for debugging to find child-tags with missing parent tags (which shall never happen).
 # with_missing_parent = []
 # AnnotatorStore::Tag.find_each {|t| with_missing_parent << t.id unless !t.parent_id || AnnotatorStore::Tag.exists?(id: t.parent_id) }
-
 
 # NOTE: No longer in use. A counter_cache column is now used instead.
 # def self.with_annotations_count

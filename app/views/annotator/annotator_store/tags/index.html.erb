@@ -29,12 +29,18 @@
   <% end %>
 
   <div id="codes-collection">
+    <%
+      # See: https://github.com/edgeryders/annotator_store-gem/issues/217
+      root_ids = resources.map {|r| r.path_ids[0] }.uniq
+      root_resources = AnnotatorStore::Tag.where(id: root_ids)
+    %>
+
     <% if params[:search].present? %>
       <%= render 'search_results', resources: resources, namespace: namespace %>
     <% elsif params[:view] == 'translate' %>
-      <%= render 'translate', resources: resources, namespace: namespace %>
+      <%= render 'translate', resources: root_resources, namespace: namespace %>
     <% else %>
-      <%= render 'tree', tags: resources %>
+      <%= render 'tree', tags: root_resources %>
     <% end %>
   </div>
 
