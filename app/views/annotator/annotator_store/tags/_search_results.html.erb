@@ -16,7 +16,7 @@
 
   <tbody>
   <% resources.each do |resource| %>
-    <tr>
+    <tr id="code-row-<%= resource.id %>">
       <td>
         <input type="checkbox" id="code-<%= resource.id %>" data-id="<%= resource.id %>"/>
       </td>
@@ -35,13 +35,7 @@
       </td>
       <td>
         <% if resource.is_childless? %>
-          <%= link_to(
-                  'Delete',
-                  [namespace, resource],
-                  class: "text-color-red",
-                  method: :delete,
-                  data: {confirm: "Are you sure? This code has #{resource.annotations_count} annotations which will also be deleted."}
-              ) %>
+          <%= render 'action_delete', namespace: namespace, tag: resource %>
         <% end %>
       </td>
       <td>

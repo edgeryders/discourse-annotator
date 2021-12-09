@@ -9,7 +9,6 @@ class Annotator::AnnotatorStore::TagsController < Annotator::ApplicationControll
   skip_before_action :ensure_logged_in, :ensure_staff_or_annotator_group_member,
                      if: proc { |c| api_request? && c.action_name == "index" && AnnotatorStore::Setting.instance.public_codes_list_api_endpoint? }
 
-
   def index
     resources = scoped_resource
     if params[:search].present?
@@ -30,15 +29,15 @@ class Annotator::AnnotatorStore::TagsController < Annotator::ApplicationControll
     page = Administrate::Page::Collection.new(dashboard)
     respond_to do |format|
       format.html {
-        render locals: {resources: resources, search_term: search_term, page: page, show_search_bar: show_search_bar?}
+        render locals: { resources: resources, search_term: search_term, page: page, show_search_bar: show_search_bar? }
       }
       format.json {
         render json: JSON.pretty_generate(
-            JSON.parse(
-                resources.to_json(
-                    except: [:name_legacy], include: {names: {only: [:name], methods: [:locale]}}
-                )
+          JSON.parse(
+            resources.to_json(
+              except: [:name_legacy], include: { names: { only: [:name], methods: [:locale] } }
             )
+          )
         )
       }
     end
@@ -49,25 +48,24 @@ class Annotator::AnnotatorStore::TagsController < Annotator::ApplicationControll
     resource.creator = current_user
     authorize_resource(resource)
     render locals: {
-        page: Administrate::Page::Form.new(dashboard, resource),
+      page: Administrate::Page::Form.new(dashboard, resource),
     }
   end
 
   def show
     respond_to do |format|
-      format.html { render locals: {page: Administrate::Page::Show.new(dashboard, requested_resource)} }
+      format.html { render locals: { page: Administrate::Page::Show.new(dashboard, requested_resource) } }
       format.json {
         render json: JSON.pretty_generate(
-            JSON.parse(
-                requested_resource.to_json(
-                    except: [:name_legacy], include: {names: {only: [:name], methods: [:locale]}}
-                )
+          JSON.parse(
+            requested_resource.to_json(
+              except: [:name_legacy], include: { names: { only: [:name], methods: [:locale] } }
             )
+          )
         )
       }
     end
   end
-
 
   def create
     resource = resource_class.new(resource_params)
@@ -76,10 +74,9 @@ class Annotator::AnnotatorStore::TagsController < Annotator::ApplicationControll
     if resource.save
       redirect_to [namespace, resource], notice: 'Code was successfully created.'
     else
-      render :new, locals: {page: Administrate::Page::Form.new(dashboard, resource)}
+      render :new, locals: { page: Administrate::Page::Form.new(dashboard, resource) }
     end
   end
-
 
   def update
     respond_to do |format|
@@ -90,13 +87,12 @@ class Annotator::AnnotatorStore::TagsController < Annotator::ApplicationControll
         format.js {}
       else
         format.html {
-          render :edit, locals: {page: Administrate::Page::Form.new(dashboard, requested_resource)}
+          render :edit, locals: { page: Administrate::Page::Form.new(dashboard, requested_resource) }
         }
         format.js {}
       end
     end
   end
-
 
   def update_parent
     fallback_path = annotator_annotator_store_tags_path(creator_id: current_user.id)
@@ -110,40 +106,39 @@ class Annotator::AnnotatorStore::TagsController < Annotator::ApplicationControll
     redirect_back fallback_location: fallback_path, notice: msg.join(' ')
   end
 
-
   def copy
     msg = requested_resource.copy ? 'Code was successfully copied.' : 'An error occurred while coping the code!'
     redirect_back fallback_location: annotator_annotator_store_tags_path(creator_id: current_user.id), notice: msg
   end
 
-
   def merge
     render locals: {
-        page: Administrate::Page::Form.new(dashboard, requested_resource),
+      page: Administrate::Page::Form.new(dashboard, requested_resource)
     }
   end
-
 
   def merge_into
     if requested_resource.merge_into(AnnotatorStore::Tag.find(params[:tag][:merge_into_tag_id]))
       redirect_to annotator_annotator_store_tags_path(creator_id: current_user.id), notice: 'Codes were successfully merged.'
     else
-      render :merge, locals: {page: Administrate::Page::Form.new(dashboard, requested_resource)}
+      render :merge, locals: { page: Administrate::Page::Form.new(dashboard, requested_resource) }
     end
   end
 
-
   def destroy
     requested_resource.destroy
-    flash[:notice] = 'Code was successfully destroyed.'
-    redirect_to action: :index
+    respond_to do |format|
+      format.html {
+        flash[:notice] = 'Code was successfully destroyed.'
+        redirect_to action: :index
+      }
+      format.js
+    end
   end
-
 
   def records_per_page
     params[:per_page] || 300
   end
-
 
   private
 
@@ -152,7 +147,6 @@ class Annotator::AnnotatorStore::TagsController < Annotator::ApplicationControll
   end
 
 end
-
 
 # Overwrite any of the RESTful controller actions to implement custom behavior
 # For example, you may want to send an email after a foo is updated.
@@ -170,7 +164,6 @@ end
 # def find_resource(param)
 #   Foo.find_by!(slug: param)
 # end
-
 
 # scope = scope.joins(:names).where(annotator_store_tag_names: {name: params[:search] }) if params[:search].present?
 # resources = Administrate::Search.new(scope, dashboard_class, search_term).run

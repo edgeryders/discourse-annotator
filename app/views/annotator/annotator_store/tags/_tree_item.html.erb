@@ -1,4 +1,4 @@
-<li>
+<li id="code-row-<%= tag.id %>">
   <% if params[:view] != 'translate' %>
     <input type="checkbox" id="code-<%= tag.id %>" data-id="<%= tag.id %>"/>
   <% end %>
@@ -22,13 +22,7 @@
   <%= link_to('Copy', copy_annotator_annotator_store_tag_path(tag.id), method: :put, class: "action-edit") %>
   <% if tag.is_childless? %>
     |
-    <%= link_to(
-            'Delete',
-            [namespace, tag],
-            class: "text-color-red",
-            method: :delete,
-            data: {confirm: "Are you sure? This code has #{tag.annotations_count} annotations which will also be deleted."}
-        ) %>
+    <%= render 'action_delete', namespace: namespace, tag: tag %>
   <% end %>
 
   <% if tag.children.any? %>
