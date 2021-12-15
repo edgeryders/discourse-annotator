@@ -30,7 +30,7 @@ module AnnotatorStore
 
     # Alias. Used by administrate.
     # Required due to https://github.com/thoughtbot/administrate/issues/1681
-    # An upgrade of administrate is easily possible right now due to dependencies.
+    # An upgrade of administrate is not easily possible right now due to dependencies.
     def code
       tag
     end

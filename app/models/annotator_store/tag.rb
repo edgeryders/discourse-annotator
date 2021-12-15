@@ -46,7 +46,6 @@ module AnnotatorStore
         .where('annotator_store_tag_names.tag_id IS NULL')
     end
 
-
     # --- Class Methods --- #
 
     # AnnotatorStore::Tag.fix_annotations_count
@@ -94,11 +93,14 @@ module AnnotatorStore
 
     def copy
       # https://github.com/moiristo/deep_cloneable
-      new = deep_clone include: [:names, { annotations: :ranges }] do |original, kopy|
-        if kopy.is_a?(AnnotatorStore::TagName)
-          kopy.name = "#{original.name} (COPY)"
-        end
-      end
+      new = deep_clone include: [:names, { annotations: :ranges }],
+                       preprocessor: ->(original, kopy) {
+                         # See: https://github.com/edgeryders/annotator_store-gem/issues/220
+                         kopy.annotations_count = 0 if kopy.respond_to?(:annotations_count)
+                       },
+                       postprocessor: ->(original, kopy) {
+                         kopy.name = "#{original.name} (COPY)" if kopy.is_a?(AnnotatorStore::TagName)
+                       }
       new.save
     end
 
