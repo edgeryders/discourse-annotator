@@ -3,6 +3,7 @@
     <input type="checkbox" id="code-<%= tag.id %>" data-id="<%= tag.id %>"/>
   <% end %>
 
+<!--  <span style="<%#= 'opacity: 0.5' if no_match %>">-->
   <span>
     <% if tag.children.any? %>
         <i class="fa fa-minus-circle" style="color:#aaa;"></i>

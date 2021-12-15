@@ -7,7 +7,8 @@ module Annotator
     include CurrentUser
 
     # tags: activerecord-collection of tags
-    # order: created_at | updated_at | annotations_count
+    # order: created_at | updated_at | annotations_count | name
+    # Default order is `annotator_store_localized_tags.path`
     def order_tags(args = {})
       case args[:order]
       when 'created_at'
@@ -16,8 +17,10 @@ module Annotator
         args[:tags].order('annotator_store_tags.updated_at DESC')
       when 'annotations_count'
         args[:tags].order('annotator_store_tags.annotations_count DESC')
-      else
+      when 'name'
         args[:tags].order('LOWER(annotator_store_localized_tags.name) ASC')
+      else
+        args[:tags].order('LOWER(annotator_store_localized_tags.path) ASC')
       end
     end
 

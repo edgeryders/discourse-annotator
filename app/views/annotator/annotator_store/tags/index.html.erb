@@ -15,7 +15,7 @@
                name: 'Creator',
                filter: :creator_id,
                users: User.where(id: AnnotatorStore::Tag.select(:creator_id).uniq.pluck(:creator_id)).order(:username) %>
-    <%= render '/lib/sort_by', options: {name: 'Name', created_at: 'Newest', updated_at: 'Updated', annotations_count: 'Number of annotations'} %>
+    <%= render '/lib/sort_by', options: {path: 'Name', created_at: 'Newest', updated_at: 'Updated', annotations_count: 'Number of annotations'} %>
 
     <%= render 'lib/codes_view_nav' %>
 
@@ -29,18 +29,12 @@
   <% end %>
 
   <div id="codes-collection">
-    <%
-      # See: https://github.com/edgeryders/annotator_store-gem/issues/217
-      root_ids = resources.map {|r| r.path_ids[0] }.uniq
-      root_resources = AnnotatorStore::Tag.where(id: root_ids)
-    %>
-
     <% if params[:search].present? %>
       <%= render 'search_results', resources: resources, namespace: namespace %>
     <% elsif params[:view] == 'translate' %>
-      <%= render 'translate', resources: root_resources, namespace: namespace %>
+      <%= render 'translate', resources: resources, namespace: namespace %>
     <% else %>
-      <%= render 'tree', tags: root_resources %>
+      <%= render 'tree', tags: resources %>
     <% end %>
   </div>
 

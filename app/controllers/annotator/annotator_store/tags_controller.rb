@@ -11,25 +11,45 @@ class Annotator::AnnotatorStore::TagsController < Annotator::ApplicationControll
 
   def index
     resources = scoped_resource
+    # 1. Apply filter
+    resources = resources.where(creator_id: params[:creator_id]) if params[:creator_id].present?
+    if params[:discourse_tag].present? && (tag = ::Tag.find_by(name: params[:discourse_tag]))
+      resources = resources.where(id: AnnotatorStore::Annotation.where(topic_id: tag.topic_ids).select(:tag_id))
+    end
     if params[:search].present?
+      resources = resources.where("annotator_store_localized_tags.path ILIKE ?", "%#{params[:search].split.join('%')}%")
+    end
+    # 2. For the tree-view get and limit the results to the root codes of matching codes.
+    # Note: Must be done before pagination is applied.
+    if !params[:search].present? && request.format.html?
+      # See: https://github.com/edgeryders/annotator_store-gem/issues/217
+      root_ids = resources.select('id, ancestry').map { |r| r.ancestry ? r.ancestry.split('/')[0] : r.id }.uniq
+      resources = scoped_resource.where(id: root_ids)
+    end
+    # 3. Sorting
+    resources = order_tags(tags: resources, order: params[:order])
+    # 4. Select & Joins
+    if params[:search].present?
+      # See: https://github.com/edgeryders/annotator_store-gem/issues/200#issuecomment-728110668
       resources = resources.with_localized_path
     else
       language = (current_user.present? && api_request?) ? AnnotatorStore::UserSetting.language_for_user(current_user) : AnnotatorStore::Language.english
       resources = resources.with_localized_tags(language: language)
     end
-    # resources = resources.where("' ' || annotator_store_localized_tags.path ILIKE ?", "% #{params[:search].split.join('%')}%") if params[:search].present?
-    resources = resources.where("annotator_store_localized_tags.path ILIKE ?", "%#{params[:search].split.join('%')}%") if params[:search].present?
-    resources = resources.where(creator_id: params[:creator_id]) if params[:creator_id].present?
-    resources = order_tags(tags: resources, order: params[:order])
-    if params[:discourse_tag].present? && (tag = ::Tag.find_by(name: params[:discourse_tag]))
-      resources = resources.where(id: AnnotatorStore::Annotation.where(topic_id: tag.topic_ids).select(:tag_id))
-    end
+    # 5. Pagination
     resources = resources.page(params[:page]).per(records_per_page)
+
     search_term = params[:search].to_s.strip
     page = Administrate::Page::Collection.new(dashboard)
+
     respond_to do |format|
       format.html {
-        render locals: { resources: resources, search_term: search_term, page: page, show_search_bar: show_search_bar? }
+        render locals: {
+          resources: resources,
+          search_term: search_term,
+          page: page,
+          show_search_bar: show_search_bar?
+        }
       }
       format.json {
         render json: JSON.pretty_generate(
