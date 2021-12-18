@@ -4,7 +4,7 @@
 <div class="field-unit__field field-unit--parent-id-field">
   <%# f.select :parent_id, nested_dropdown_tags, include_blank: true %>
   <%
-    language = AnnotatorStore::UserSetting.language_for_user(current_user)
+    language = DiscourseAnnotator::UserSetting.language_for_user(current_user)
     parent = field.resource.parent
   %>
   <%= f.select(field.permitted_attribute, nil) do %>

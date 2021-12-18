@@ -2,8 +2,8 @@ require_dependency "annotator_constraint"
 
 Rails.application.routes.draw do
 
-  get '/annotator/codes', to: 'annotator/annotator_store/tags#index', format: :json,
-      constraints: lambda { |req| AnnotatorStore::Setting.instance.public_codes_list_api_endpoint? }
+  get '/annotator/codes', to: 'annotator/discourse_annotator/tags#index', format: :json,
+      constraints: lambda { |req| DiscourseAnnotator::Setting.instance.public_codes_list_api_endpoint? }
 
   namespace :annotator, constraints: AnnotatorConstraint.new do
 
@@ -11,7 +11,7 @@ Rails.application.routes.draw do
     resources :topics, only: [:index, :show]
     resources :videos, only: [:show]
 
-    namespace :annotator_store, path: '' do
+    namespace :discourse_annotator, path: '' do
       resources :tags, path: 'codes' do
         collection do
           post :update_parent

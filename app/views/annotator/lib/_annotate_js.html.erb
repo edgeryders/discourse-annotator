@@ -46,8 +46,8 @@
 
 
     function annotationAutocompleteTags(selector) {
-        <%# language = AnnotatorStore::UserSetting.language_for_user(current_user) %>
-        <%# var availableTags = <%= AnnotatorStore::Tag.with_localized_tags(language: language).where(creator_id: current_user.id).order(name_with_path: :asc).map(&:name_with_path).to_json.html_safe -% >;  %>
+        <%# language = DiscourseAnnotator::UserSetting.language_for_user(current_user) %>
+        <%# var availableTags = <%= DiscourseAnnotator::Tag.with_localized_tags(language: language).where(creator_id: current_user.id).order(name_with_path: :asc).map(&:name_with_path).to_json.html_safe -% >;  %>
 
         jQuery(document).ready(function ($) {
             $(selector).data('annotator').plugins.Tags.input.autocomplete({

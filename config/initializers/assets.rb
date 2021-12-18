@@ -5,8 +5,8 @@ Rails.application.config.assets.precompile += %w(administrate.scss)
 Rails.application.config.assets.precompile += %w[administrate/application.css]
 Rails.application.config.assets.precompile += %w[administrate/application.js]
 
-Rails.application.config.assets.precompile += %w[annotator_store/application.css]
-Rails.application.config.assets.precompile += %w[annotator_store/application.js]
+Rails.application.config.assets.precompile += %w[discourse-annotator/application.css]
+Rails.application.config.assets.precompile += %w[discourse-annotator/application.js]
 
 Rails.application.config.assets.precompile += %w[administrate-field-nested_has_many/application.css]
 Rails.application.config.assets.precompile += %w[administrate-field-nested_has_many/application.js]

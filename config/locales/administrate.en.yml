@@ -6,6 +6,6 @@ en:
       topic:
         user_annotations_count: Your Annotations
         annotations_count: Total Annotations
-      annotator_store/annotation:
+      discourse_annotator/annotation:
         tag: Code
         type: Content type

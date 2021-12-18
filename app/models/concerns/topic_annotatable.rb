@@ -7,7 +7,7 @@ module TopicAnnotatable
 
 
 
-    scope :with_annotations, -> {includes(posts: :annotations).where.not(annotator_store_annotations: {id: nil})}
+    scope :with_annotations, -> {includes(posts: :annotations).where.not(discourse_annotator_annotations: {id: nil})}
 
 
     def self.with_annotations_count

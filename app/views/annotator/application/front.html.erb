@@ -7,7 +7,7 @@
 <section class="main-content__body">
   <div>
     <h3 style="margin-bottom:.4rem;">Topics most recently annotated by you</h3>
-    <% annotations = AnnotatorStore::Annotation.where(creator_id: current_user.id).order(created_at: :desc).limit(20) %>
+    <% annotations = DiscourseAnnotator::Annotation.where(creator_id: current_user.id).order(created_at: :desc).limit(20) %>
     <% # @todo Use a DB query instead
       topics = annotations.map {|a| a.post&.topic }.uniq.compact
     %>

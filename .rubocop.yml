@@ -30,7 +30,7 @@ Style/SingleSpaceBeforeFirstArg:
 
 Style/SpecialGlobalVars:
   Exclude:
-    - 'annotator_store.gemspec'
+    - 'discourse-annotator.gemspec'
 
 Style/StringLiterals:
   Exclude:

@@ -10,7 +10,7 @@ v1.0.0
 v1.0.0.pre
 ----------
 
-* Rename gem from `annotator-store` to `annotator_store`
+* Rename gem from `annotator-store` to `discourse_annotator`
 * Fix issue with explicit require needed in main application
 
 

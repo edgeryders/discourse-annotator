@@ -19,7 +19,7 @@ before_script:
   - psql -c 'create database travis_ci_test;' -U postgres
   - cd spec/dummy/
   - cp config/database.travis.yml config/database.yml
-  - bundle exec rake annotator_store:install:migrations
+  - bundle exec rake discourse_annotator:install:migrations
   - bundle exec rake db:migrate
   - cd ../../
 script: bundle exec rspec spec

@@ -1,0 +1,128 @@
+<% content_for(:javascript) do %>
+  <script>
+      $('#bulk-editing-tag-id-field').selectize();
+
+      // belongs_to form
+      $(function () {
+          $("#bulk-editing-tag-id-field").each(function initializeSelectize(index, element) {
+              let $element = $(element);
+              $element.selectize({
+                  valueField: 'id',
+                  labelField: 'localized_path',
+                  searchField: 'localized_path',
+                  create: false,
+                  searchUrl: "/annotator/autosuggest_codes.json" + '?q=',
+                  load: function (query, callback) {
+                      if (!query.length) return callback();
+                      let searchUrl = this.settings.searchUrl;
+                      $.ajax({
+                          url: searchUrl + encodeURIComponent(query),
+                          type: 'GET',
+                          error: function () {
+                              callback();
+                          },
+                          success: function (res) {
+                              callback(res);
+                          }
+                      });
+                  },
+              });
+          });
+
+
+          let annotationsCheckboxValues = JSON.parse(localStorage.getItem('annotationsCheckboxValues')) || {};
+          let $checkboxes = $("#annotations-collection :checkbox");
+
+          updateSelectedIdsField();
+
+          $.each(annotationsCheckboxValues, function (key, value) {
+              $("#annotation-" + key).prop('checked', value);
+          });
+
+          $checkboxes.on("change", function () {
+              updateStorage();
+          });
+
+          $("#uncheck-all").on("click", function () {
+              $checkboxes.prop("checked", false)
+              updateStorage();
+          });
+
+          $("#check-all").on("click", function () {
+              $checkboxes.prop("checked", true)
+              updateStorage();
+          });
+
+          function updateStorage() {
+              $checkboxes.each(function () {
+                  annotationsCheckboxValues[$(this).data('id')] = this.checked;
+              });
+              localStorage.setItem("annotationsCheckboxValues", JSON.stringify(annotationsCheckboxValues));
+              updateSelectedIdsField();
+          }
+
+          function updateSelectedIdsField() {
+              let checked = Object.keys(annotationsCheckboxValues).filter(k => annotationsCheckboxValues[k]);
+              document.getElementById("bulk-editing-selected-ids").value = checked.join(',')
+              document.getElementById("bulk-destroy-selected-ids").value = checked.join(',')
+          }
+
+      })
+
+      function handleBulkEditSubmit() {
+          localStorage.setItem("annotationsCheckboxValues", null);
+      }
+  </script>
+<% end %>
+
+
+<style type="text/css">
+  .actions-table td {
+    padding: 0 1rem .5rem 0.5rem;
+    vertical-align: bottom;
+  }
+
+  .selectize-control {
+    width: 500px;
+    display: inline-block;
+  }
+
+  .selectize-input {
+    z-index: auto;
+  }
+
+  #check-all, #uncheck-all {
+    font-size: .8em;
+  }
+</style>
+
+
+<table class="actions-table">
+  <tr>
+    <td>
+      Move selected to code:
+      <div>
+        <%= form_tag update_tag_annotator_discourse_annotator_annotations_path, method: :post, remote: false, id: 'bulk-editing-form', onSubmit: 'handleBulkEditSubmit();' do %>
+          <input id="bulk-editing-selected-ids" type="hidden" name="selected_ids">
+          <select id="bulk-editing-tag-id-field" name="tag_id"></select>
+          <%= submit_tag("Move selected", style: 'vertical-align:top') %>
+        <% end %>
+      </div>
+    </td>
+    <td>
+      <%= form_tag bulk_destroy_annotator_discourse_annotator_annotations_path, method: :delete, remote: false, id: 'bulk-destroy-form', onSubmit: 'handleBulkEditSubmit();' do %>
+        <input id="bulk-destroy-selected-ids" type="hidden" name="selected_ids">
+        <%= submit_tag "Destroy selected", style: 'vertical-align:bottom; align:right; margin-bottom:4px;', onclick: "return confirm('Are you sure?')" %>
+      <% end %>
+    </td>
+  </tr>
+</table>
+
+
+<div style="padding-top:4px;">
+  <a href="#" id="check-all">[Check All]</a>
+  <a href="#" id="uncheck-all">[Uncheck All]</a>
+  <div style="color:#777; font-size:.8rem;">
+    Only applied to annotations on the current page.
+  </div>
+</div>

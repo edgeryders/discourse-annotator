@@ -15,7 +15,7 @@ class Annotator::ApplicationController < Administrate::ApplicationController
 
 
   def namespace
-    :annotator_annotator_store
+    :annotator_discourse_annotator
   end
 
   # See: https://github.com/thoughtbot/administrate/issues/442

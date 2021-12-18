@@ -1,8 +1,8 @@
 Annotator Store
 ===============
 
-[![Gem Version](https://badge.fury.io/rb/annotator_store.svg)][5]
-[![Build Status](https://travis-ci.org/itsmrwave/annotator_store-gem.svg?branch=master)][13]
+[![Gem Version](https://badge.fury.io/rb/discourse_annotator.svg)][5]
+[![Build Status](https://travis-ci.org/itsmrwave/discourse_annotator-gem.svg?branch=master)][13]
 
 Rails engine to implement a [Ruby on Rails][18] backend store implementation for
 [Annotator][annotator].
@@ -72,7 +72,7 @@ Installation
 
 Add this line to your application's Gemfile:
 
-    gem 'annotator_store'
+    gem 'discourse_annotator'
 
 And then from the `APP_ROOT` execute:
 
@@ -82,7 +82,7 @@ Configure your database credentials in your `config/database.yml` file and then 
 migrations to create the tables to store the annotations.
 
     # Copy migrations over from the engine
-    $ rake annotator_store:install:migrations
+    $ rake discourse_annotator:install:migrations
 
     # To run the copied migration
     $ rake db:migrate
@@ -90,10 +90,10 @@ migrations to create the tables to store the annotations.
 Then mount it in `config/routes.rb`:
 
     # Configures store endpoint in your app
-    mount AnnotatorStore::Engine, at: '/annotator_store'
+    mount DiscourseAnnotator::Engine, at: '/discourse_annotator'
 
 Now it should be ready for use. All the endpoints will be available at
-`http://0.0.0.0:3000/annotator_store` in your app.
+`http://0.0.0.0:3000/discourse_annotator` in your app.
 
 
 Annotation Format
@@ -132,35 +132,35 @@ API Endpoints
 
 Returns (example):
 
-    $ curl http://example.com/annotator_store
+    $ curl http://example.com/discourse_annotator
     {
       "name": "Annotator Store API",
       "version": "2.0.0",
       "links": {
         "annotation": {
           "create": {
-            "url": "http://example.com/annotator_store/annotations",
+            "url": "http://example.com/discourse-annotator/annotations",
             "method": "POST",
             "description": "Create or add new annotations."
           },
           "read": {
-            "url": "http://example.com/annotator_store/annotations/:id",
+            "url": "http://example.com/discourse-annotator/annotations/:id",
             "method": "GET",
             "description": "Read, retrieve or view existing annotation."
           },
           "update": {
-            "url": "http://example.com/annotator_store/annotations/:id",
+            "url": "http://example.com/discourse-annotator/annotations/:id",
             "method": "PUT/PATCH",
             "description": "Update or edit existing annotation."
           },
           "delete": {
-            "url": "http://example.com/annotator_store/annotations/:id",
+            "url": "http://example.com/discourse-annotator/annotations/:id",
             "method": "DELETE",
             "description": "Delete or deactivate existing annotation."
           }
       },
       "search": {
-          "url": "http://example.com/annotator_store/search",
+          "url": "http://example.com/discourse-annotator/search",
           "method": "GET",
           "description": "Search for annotations"
         }
@@ -178,7 +178,7 @@ Receives an annotation object in the proper annotation format, sent with `Conten
 
 Returns (example):
 
-    $ curl http://example.com/annotator_store/annotations
+    $ curl http://example.com/discourse-annotator/annotations
     {
       "id": 1,
       "text": "Annotation text",
@@ -194,7 +194,7 @@ Returns (example):
 
 Returns (example):
 
-    $ curl http://example.com/annotator_store/annotations/d41d8cd98f00b204e9800998ecf8427e
+    $ curl http://example.com/discourse-annotator/annotations/d41d8cd98f00b204e9800998ecf8427e
     {
       "id": 1,
       "text": "Annotation text",
@@ -212,7 +212,7 @@ Receives attributes in the proper annotation format, sent with `Content-Type: ap
 
 Returns (example):
 
-    $ curl http://example.com/annotator_store/annotations/d41d8cd98f00b204e9800998ecf8427e
+    $ curl http://example.com/discourse-annotator/annotations/d41d8cd98f00b204e9800998ecf8427e
     {
       "id": 1,
       "text": "Annotation text",
@@ -244,7 +244,7 @@ _Ps: Pagination with limit and offset not yet implemented. See [issue #1][15]._
 
 Returns (example):
 
-    $ curl http://example.com/annotator_store/search?text=annotation
+    $ curl http://example.com/discourse-annotator/search?text=annotation
     {
       "total": 43127,
       "rows": [
@@ -298,7 +298,7 @@ your specs.
   	#=> Run only model specs example ...
   	$ bundle exec rspec spec/models
 
-  	#=> Run only specs for AnnotatorStore::AnnotationsController ...
+  	#=> Run only specs for DiscourseAnnotator::AnnotationsController ...
   	$ bundle exec rspec spec/controllers/annotations_controller_spec.rb
 
 These will run the tests as per your local default configuration.
@@ -385,18 +385,18 @@ long as they provide attribution and waive liability.
 [2]: http://kingori.co/
 [3]: http://bundler.io/gemfile.html
 [4]: http://bundler.io
-[5]: https://rubygems.org/gems/annotator_store
-[6]: http://rubydoc.info/gems/annotator_store/frames/
-[7]: https://github.com/itsmrwave/annotator_store-gem/blob/master/CHANGELOG.md
-[9]: https://github.com/itsmrwave/annotator_store-gem/blob/master/CONTRIBUTING.md
-[8]: https://github.com/itsmrwave/annotator_store-gem/releases
+[5]: https://rubygems.org/gems/discourse_annotator
+[6]: http://rubydoc.info/gems/discourse-annotator/frames/
+[7]: https://github.com/itsmrwave/discourse_annotator-gem/blob/master/CHANGELOG.md
+[9]: https://github.com/itsmrwave/discourse_annotator-gem/blob/master/CONTRIBUTING.md
+[8]: https://github.com/itsmrwave/discourse_annotator-gem/releases
 [10]: http://docs.annotatorjs.org/en/v1.2.x/storage.html
 [11]: http://docs.annotatorjs.org/en/v1.2.x/plugins/store.html
-[12]: https://github.com/itsmrwave/annotator_store-gem/graphs/contributors
-[13]: https://travis-ci.org/itsmrwave/annotator_store-gem
+[12]: https://github.com/itsmrwave/discourse_annotator-gem/graphs/contributors
+[13]: https://travis-ci.org/itsmrwave/discourse_annotator-gem
 [14]: https://github.com/itsmrwave/annotator-store-demo
-[15]: https://github.com/itsmrwave/annotator_store-gem/issues/1
+[15]: https://github.com/itsmrwave/discourse_annotator-gem/issues/1
 [16]: http://rubygems.org/gems/appraisal
 [17]: http://www.rubydoc.info/gems/appraisal
 [18]: http://rubyonrails.org
-[19]: https://github.com/itsmrwave/annotator_store-gem/issues/new
+[19]: https://github.com/itsmrwave/discourse_annotator-gem/issues/new

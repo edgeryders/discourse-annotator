@@ -2,7 +2,7 @@ module UserAnnotatable
   extend ActiveSupport::Concern
   included do
 
-    has_one :annotator_store_settings, class_name: 'AnnotatorStore::UserSetting', foreign_key: 'discourse_user_id'
+    has_one :discourse_annotator_settings, class_name: 'DiscourseAnnotator::UserSetting', foreign_key: 'discourse_user_id'
 
 
     def self.annotators

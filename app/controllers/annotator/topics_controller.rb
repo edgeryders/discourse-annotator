@@ -52,7 +52,7 @@ class Annotator::TopicsController < Annotator::ApplicationController
   # this will be used to set the records shown on the `index` action.
   def scoped_resource
     user_counts = topics_with_annotations_count(
-        posts: Post.with_annotations_count.where(annotator_store_annotations: {creator_id: current_user.id})
+        posts: Post.with_annotations_count.where(discourse_annotator_annotations: {creator_id: current_user.id})
     )
     total_counts = topics_with_annotations_count(posts: Post.with_annotations_count)
 
@@ -63,7 +63,7 @@ class Annotator::TopicsController < Annotator::ApplicationController
     resources = resources.listable_topics # Exclude private messages.
 
     if params[:annotator_id].present?
-      resources = resources.where(id: Post.select(:topic_id).with_annotations.where(annotator_store_annotations: {creator_id: params[:annotator_id]}))
+      resources = resources.where(id: Post.select(:topic_id).with_annotations.where(discourse_annotator_annotations: {creator_id: params[:annotator_id]}))
     end
 
     resources = if params.dig(:topic, :order).blank?
@@ -97,11 +97,11 @@ class Annotator::TopicsController < Annotator::ApplicationController
 end
 
 
-# .joins("LEFT OUTER JOIN annotator_store_annotations ON annotator_store_annotations.post_id = posts_with_counts.id")
+# .joins("LEFT OUTER JOIN discourse_annotator_annotations ON discourse_annotator_annotations.post_id = posts_with_counts.id")
 # scope = Topic.select("topics.*, count(posts_with_counts.id) AS annotations_count")
 #             .joins("LEFT OUTER JOIN (#{Post.with_annotations_count.to_sql}) posts_with_counts ON topics.id = posts_with_counts.topic_id")
-#             .joins("LEFT OUTER JOIN annotator_store_annotations ON annotator_store_annotations.post_id = posts_with_counts.id")
+#             .joins("LEFT OUTER JOIN discourse_annotator_annotations ON discourse_annotator_annotations.post_id = posts_with_counts.id")
 #             .group('topics.id')
 #             .order("annotations_count DESC")
-# scope = scope.where(annotator_store_annotations: {creator_id: 3})
+# scope = scope.where(discourse_annotator_annotations: {creator_id: 3})
 # scope.to_sql

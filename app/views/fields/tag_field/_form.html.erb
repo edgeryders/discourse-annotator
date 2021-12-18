@@ -3,7 +3,7 @@
 </div>
 <div class="field-unit__field field-unit--tag-id-field">
   <%
-    language = AnnotatorStore::UserSetting.language_for_user(current_user)
+    language = DiscourseAnnotator::UserSetting.language_for_user(current_user)
     tag = field.resource.tag
   %>
   <%= f.select(field.permitted_attribute, nil) do %>

@@ -1,3 +1,3 @@
 Dummy::Application.routes.draw do
-  mount AnnotatorStore::Engine => '/annotator_store'
+  mount DiscourseAnnotator::Engine => '/discourse_annotator'
 end

@@ -1,0 +1,50 @@
+
+
+<header class="main-content__header" role="banner">
+  <h1 class="main-content__page-title">
+    Merge <%= page.page_title %> into another code
+  </h1>
+
+  <div></div>
+</header>
+
+<section class="main-content__body">
+
+  <% content_for(:javascript) do %>
+    <script>
+        $('#tag_merge_into_tag_id').selectize();
+    </script>
+  <% end %>
+
+
+  <%= form_for([namespace, page.resource], url: merge_into_annotator_discourse_annotator_tag_path(page.resource), method: :put, html: {class: "form"}) do |f| %>
+    <% if page.resource.errors.any? %>
+      <div id="error_explanation">
+        <h2>
+          <%= pluralize(page.resource.errors.count, "error") %>
+          prohibited this <%= page.resource_name %> from being saved:
+        </h2>
+
+        <ul>
+          <% page.resource.errors.full_messages.each do |message| %>
+            <li class="flash-error"><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <% attributes = page.attributes.select {|a| a.name == 'merge_into_tag'} %>
+
+    <% attributes.each do |attribute| -%>
+      <div class="field-unit field-unit--<%= attribute.html_class %>">
+        <%= render_field attribute, f: f, resource: page.resource %>
+      </div>
+    <% end -%>
+
+    <div class="form-actions">
+      <%= f.submit 'Merge' %>
+    </div>
+  <% end %>
+
+
+</section>

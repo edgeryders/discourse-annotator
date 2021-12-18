@@ -6,8 +6,8 @@
       ) %>
   <%= link_to(
           'Codes',
-          annotator_annotator_store_tags_path(creator_id: current_user.id, discourse_tag: current_user.annotator_store_settings&.discourse_tag&.name),
-          class: "navigation__link navigation__link--#{nav_link_state('annotator_store__tags')}"
+          annotator_discourse_annotator_tags_path(creator_id: current_user.id, discourse_tag: current_user.discourse_annotator_settings&.discourse_tag&.name),
+          class: "navigation__link navigation__link--#{nav_link_state('discourse_annotator__tags')}"
       ) %>
   <%= link_to(
           'Topics',
@@ -16,29 +16,29 @@
       ) %>
 
   <% annotations_link_state = [
-      nav_link_state('annotator_store__text_annotations'),
-      nav_link_state('annotator_store__image_annotations'),
-      nav_link_state('annotator_store__video_annotations')
+      nav_link_state('discourse_annotator__text_annotations'),
+      nav_link_state('discourse_annotator__image_annotations'),
+      nav_link_state('discourse_annotator__video_annotations')
   ].include?(:active) ? :active : :inactive
   %>
   <%= link_to(
           'Annotations',
-          [:annotator_annotator_store, :annotations],
+          [:annotator_discourse_annotator, :annotations],
           class: "navigation__link navigation__link--#{annotations_link_state}"
       ) %>
   <%= link_to(
           'Languages',
-          [:annotator_annotator_store, :languages],
-          class: "navigation__link navigation__link--#{nav_link_state('annotator_store__languages')}"
+          [:annotator_discourse_annotator, :languages],
+          class: "navigation__link navigation__link--#{nav_link_state('discourse_annotator__languages')}"
       ) %>
   <%= link_to(
           'User Settings',
-          [:annotator_annotator_store, :user_settings],
-          class: "navigation__link navigation__link--#{nav_link_state('annotator_store__user_settings')}"
+          [:annotator_discourse_annotator, :user_settings],
+          class: "navigation__link navigation__link--#{nav_link_state('discourse_annotator__user_settings')}"
       ) %>
   <%= link_to(
           'Settings',
-          [:annotator_annotator_store, :setting],
-          class: "navigation__link navigation__link--#{nav_link_state('annotator_store__settings')}"
+          [:annotator_discourse_annotator, :setting],
+          class: "navigation__link navigation__link--#{nav_link_state('discourse_annotator__settings')}"
       ) %>
 </nav>

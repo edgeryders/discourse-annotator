@@ -32,9 +32,9 @@
     <div style="color: #7b808c; font-size: 0.8em; font-weight: 400; letter-spacing: 0.0357em; text-transform: uppercase; margin-bottom:7px;">Used Codes:</div>
 
     <%
-      language = defined?(@current_user) ? AnnotatorStore::UserSetting.language_for_user(@current_user) : nil
+      language = defined?(@current_user) ? DiscourseAnnotator::UserSetting.language_for_user(@current_user) : nil
       tags = post.annotations.map(&:tag).uniq.compact
-      localized_tags = tags.map{|tag| tag.path.map { |t| t.localized_name(language) }.join(AnnotatorStore::LocalizedTag.path_separator)}.sort
+      localized_tags = tags.map{|tag| tag.path.map { |t| t.localized_name(language) }.join(DiscourseAnnotator::LocalizedTag.path_separator)}.sort
     %>
 
     <% localized_tags.each do |path| %>
