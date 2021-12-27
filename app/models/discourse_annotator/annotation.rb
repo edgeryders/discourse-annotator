@@ -2,7 +2,7 @@ module DiscourseAnnotator
   class Annotation < ActiveRecord::Base
 
     # Associations
-    belongs_to :tag, counter_cache: true
+    belongs_to :code, counter_cache: true
     belongs_to :creator, class_name: '::User'
     belongs_to :post
     belongs_to :topic
@@ -15,7 +15,7 @@ module DiscourseAnnotator
         in: %w(DiscourseAnnotator::TextAnnotation DiscourseAnnotator::ImageAnnotation DiscourseAnnotator::VideoAnnotation)
     }
     validates :creator, presence: true
-    validates :tag, presence: true
+    validates :code, presence: true
 
     validates_length_of :ranges, maximum: 1
 
@@ -27,13 +27,6 @@ module DiscourseAnnotator
 
 
     # --- Instance Methods --- #
-
-    # Alias. Used by administrate.
-    # Required due to https://github.com/thoughtbot/administrate/issues/1681
-    # An upgrade of administrate is not easily possible right now due to dependencies.
-    def code
-      tag
-    end
 
     def text_annotation?
       false

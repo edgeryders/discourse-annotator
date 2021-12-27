@@ -1,0 +1,47 @@
+<table>
+  <thead>
+  <tr>
+    <th></th>
+    <th scope="col">Id</th>
+    <th scope="col">Name</th>
+    <th scope="col">Creator</th>
+    <th scope="col">Annotations</th>
+    <th scope="col"></th>
+    <th scope="col"></th>
+    <th scope="col"></th>
+    <th scope="col"></th>
+    <th scope="col"></th>
+  </tr>
+  </thead>
+
+  <tbody>
+  <% resources.each do |resource| %>
+    <tr id="code-row-<%= resource.id %>">
+      <td>
+        <input type="checkbox" id="code-<%= resource.id %>" data-id="<%= resource.id %>"/>
+      </td>
+      <td><%= resource.id %></td>
+      <td><%= link_to(resource.name_with_path, [namespace, resource], class: "link-primary") %></td>
+      <td><%= "by #{resource.creator.username}" %></td>
+      <td><%= resource.annotations_count %></td>
+      <td>
+        <%= link_to('Edit', [:edit, namespace, resource], class: "link-primary",) %>
+      </td>
+      <td>
+        <%= link_to('Merge', merge_annotator_discourse_annotator_code_path(resource.id), class: "link-primary") %>
+      </td>
+      <td>
+        <%= link_to('Copy', copy_annotator_discourse_annotator_code_path(resource.id), method: :put, class: "link-primary") %>
+      </td>
+      <td>
+        <% if resource.is_childless? %>
+          <%= render 'action_delete', namespace: namespace, code: resource %>
+        <% end %>
+      </td>
+      <td>
+        <%= link_to('Annotations', annotator_discourse_annotator_annotations_path(code_id: resource.id), class: "link-primary",) %>
+      </td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>

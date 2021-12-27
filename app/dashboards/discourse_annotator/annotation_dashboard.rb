@@ -10,17 +10,16 @@ module DiscourseAnnotator
     # on pages throughout the dashboard.
     ATTRIBUTE_TYPES = {
       creator: Annotator::UserField,
-      tag: Annotator::TagField.with_options(class_name: 'DiscourseAnnotator::Tag'),
+      code: Annotator::CodeField.with_options(class_name: 'DiscourseAnnotator::Code'), # quickfix. See: https://github.com/thoughtbot/administrate/issues/1681
       id: Field::Number,
       uri: Field::String,
       type: Annotator::AnnotationTypeField,
-      tag_id: Field::Number,
+      code_id: Field::Number,
       creator_id: Field::Number,
       created_at: Field::DateTime,
       updated_at: Field::DateTime,
       topic: Annotator::TopicField,
       src: Field::String,
-      code: Annotator::TagField.with_options(class_name: 'DiscourseAnnotator::Tag'), # quickfix. See: https://github.com/thoughtbot/administrate/issues/1681
       # TextAnnotation
       text: Annotator::TruncatedTextField.with_options(searchable: true),
       quote: Annotator::AnnotationQuoteField.with_options(searchable: true),
@@ -44,7 +43,7 @@ module DiscourseAnnotator
     COLLECTION_ATTRIBUTES = [
       :id,
       :type,
-      :tag,
+      :code,
       :text,
       :quote,
       :creator,
@@ -61,13 +60,13 @@ module DiscourseAnnotator
     FORM_ATTRIBUTES = [
       # :creator,
       :text,
-      :tag
+      :code
     ].freeze
 
-    # Overwrite this method to customize how tags are displayed
+    # Overwrite this method to customize how codes are displayed
     # across all pages of the admin dashboard.
-    def display_resource(tag)
-      "Annotation ##{tag.id}"
+    def display_resource(code)
+      "Annotation ##{code.id}"
     end
 
 

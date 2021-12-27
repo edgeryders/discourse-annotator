@@ -33,11 +33,11 @@
 
     <%
       language = defined?(@current_user) ? DiscourseAnnotator::UserSetting.language_for_user(@current_user) : nil
-      tags = post.annotations.map(&:tag).uniq.compact
-      localized_tags = tags.map{|tag| tag.path.map { |t| t.localized_name(language) }.join(DiscourseAnnotator::LocalizedTag.path_separator)}.sort
+      codes = post.annotations.map(&:code).uniq.compact
+      localized_codes = codes.map{|code| code.path.map { |t| t.localized_name(language) }.join(DiscourseAnnotator::LocalizedCode.path_separator)}.sort
     %>
 
-    <% localized_tags.each do |path| %>
+    <% localized_codes.each do |path| %>
       <div style="margin-bottom:7px;">
         <div style="font-weight:bold; background: #E6E6E6; color:#909090; border-radius: 9px; padding:2px 6px;  font-size:.7rem; display:inline-block;">
           <%= path %>

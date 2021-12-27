@@ -1,10 +1,10 @@
 <% content_for(:javascript) do %>
   <script>
-      $('#bulk-editing-tag-id-field').selectize();
+      $('#bulk-editing-code-id-field').selectize();
 
       // belongs_to form
       $(function () {
-          $("#bulk-editing-tag-id-field").each(function initializeSelectize(index, element) {
+          $("#bulk-editing-code-id-field").each(function initializeSelectize(index, element) {
               let $element = $(element);
               $element.selectize({
                   valueField: 'id',
@@ -102,9 +102,9 @@
     <td>
       Move selected to code:
       <div>
-        <%= form_tag update_tag_annotator_discourse_annotator_annotations_path, method: :post, remote: false, id: 'bulk-editing-form', onSubmit: 'handleBulkEditSubmit();' do %>
+        <%= form_tag update_code_annotator_discourse_annotator_annotations_path, method: :post, remote: false, id: 'bulk-editing-form', onSubmit: 'handleBulkEditSubmit();' do %>
           <input id="bulk-editing-selected-ids" type="hidden" name="selected_ids">
-          <select id="bulk-editing-tag-id-field" name="tag_id"></select>
+          <select id="bulk-editing-code-id-field" name="code_id"></select>
           <%= submit_tag("Move selected", style: 'vertical-align:top') %>
         <% end %>
       </div>

@@ -26,7 +26,7 @@ It renders the `_table` partial to display details about the resources.
 <% content_for(:title) do %>
   Annotations
   <% if params[:code_id].present? %>
-    > <%= DiscourseAnnotator::Tag.find_by(id: params[:code_id]).name %>
+    > <%= DiscourseAnnotator::Code.find_by(id: params[:code_id]).name %>
   <% end %>
 <% end %>
 

@@ -2,10 +2,10 @@ en:
   helpers:
     label:
       annotation:
-        tag: Code
+        code: Code
       topic:
         user_annotations_count: Your Annotations
         annotations_count: Total Annotations
       discourse_annotator/annotation:
-        tag: Code
+        code: Code
         type: Content type

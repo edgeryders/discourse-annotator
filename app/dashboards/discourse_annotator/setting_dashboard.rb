@@ -16,7 +16,7 @@ module DiscourseAnnotator
       :public_codes_list_api_endpoint,
     ].freeze
 
-    def display_resource(tag_name)
+    def display_resource(code_name)
       "Settings"
     end
 

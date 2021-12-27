@@ -1,0 +1,28 @@
+
+<% content_for(:javascript) do %>
+    <script>
+        jQuery(function ($) {
+            $('.tree li:has(ul)').addClass('parent_li').find(' > span').attr('title', 'Collapse this branch');
+            $('.tree li.parent_li > span').on('click', function (e) {
+                var children;
+                children = $(this).parent('li.parent_li').find(' > ul > li');
+                if (children.is(':visible')) {
+                    children.hide('fast');
+                    $(this).attr('title', 'Expand this branch').find(' > i').addClass('fa-plus-circle').removeClass('fa-minus-circle');
+                } else {
+                    children.show('fast');
+                    $(this).attr('title', 'Collapse this branch').find(' > i').addClass('fa-minus-circle').removeClass('fa-plus-circle');
+                }
+                e.stopPropagation();
+            });
+        });
+    </script>
+<% end %>
+
+<div class="tree">
+  <ul>
+    <% codes.each do |code| %>
+        <%= render 'tree_item', code: code %>
+    <% end %>
+  </ul>
+</div>

@@ -1,0 +1,40 @@
+<li id="code-row-<%= code.id %>">
+  <% if params[:view] != 'translate' %>
+    <input type="checkbox" id="code-<%= code.id %>" data-id="<%= code.id %>"/>
+  <% end %>
+
+<!--  <span style="<%#= 'opacity: 0.5' if no_match %>">-->
+  <span>
+    <% if code.children.any? %>
+        <i class="fa fa-minus-circle" style="color:#aaa;"></i>
+    <% end %>
+    <% dc = code.descendants_annotations_count %>
+    <strong class="item" title="<%= "#{code.annotations_count} annotations use this code#{" + #{dc} descendant annotations use this code" if dc > 0}." %>">
+      <%= code.name %>
+      <%= "(#{code.annotations_count}#{" + #{dc}" if dc > 0 })" %>
+    </strong>
+  </span>
+  <%# "by #{code.creator.username}" unless params[:creator_id].present? %>
+  <%= "by #{code.creator.username}" %>
+  <%= link_to('Show', [namespace, code], class: "action-edit") %> |
+  <%= link_to('Edit', [:edit, namespace, code], class: "action-edit",) %> |
+  <%= link_to('Annotations', annotator_discourse_annotator_annotations_path(code_id: code.id), class: "action-edit",) %> |
+  <%= link_to('Merge', merge_annotator_discourse_annotator_code_path(code.id), class: "action-edit") %> |
+  <%= link_to('Copy', copy_annotator_discourse_annotator_code_path(code.id), method: :put, class: "action-edit") %>
+  <% if code.is_childless? %>
+    |
+    <%= render 'action_delete', namespace: namespace, code: code %>
+  <% end %>
+
+  <% if code.children.any? %>
+    <% children = code.children.with_localized_codes(language: DiscourseAnnotator::UserSetting.language_for_user(current_user))
+       children = order_codes(codes: children, order: params[:order])
+    %>
+
+    <ul>
+      <% children.each do |code| %>
+        <%= render 'tree_item', code: code %>
+      <% end %>
+    </ul>
+  <% end %>
+</li>

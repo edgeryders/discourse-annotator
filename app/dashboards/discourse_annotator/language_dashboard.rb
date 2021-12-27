@@ -8,7 +8,7 @@ class DiscourseAnnotator::LanguageDashboard < Administrate::BaseDashboard
   # which determines how the attribute is displayed
   # on pages throughout the dashboard.
   ATTRIBUTE_TYPES = {
-    tag_names: Field::HasMany,
+    code_names: Field::HasMany,
     id: Field::Number,
     name: Field::String,
     locale: Annotator::LocaleField,
@@ -23,7 +23,7 @@ class DiscourseAnnotator::LanguageDashboard < Administrate::BaseDashboard
   # By default, it's limited to four items to reduce clutter on index pages.
   # Feel free to add, remove, or rearrange items.
   COLLECTION_ATTRIBUTES = [
-    # :tag_names,
+    # :code_names,
     # :id,
     :name,
     :locale,
@@ -33,7 +33,7 @@ class DiscourseAnnotator::LanguageDashboard < Administrate::BaseDashboard
   # SHOW_PAGE_ATTRIBUTES
   # an array of attributes that will be displayed on the model's show page.
   SHOW_PAGE_ATTRIBUTES = [
-    # :tag_names,
+    # :code_names,
     :id,
     :name,
     :locale,
@@ -45,7 +45,7 @@ class DiscourseAnnotator::LanguageDashboard < Administrate::BaseDashboard
   # an array of attributes that will be displayed
   # on the model's form (`new` and `edit`) pages.
   FORM_ATTRIBUTES = [
-    # :tag_names,
+    # :code_names,
     :name,
     :locale,
   ].freeze

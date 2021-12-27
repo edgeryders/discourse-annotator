@@ -1,0 +1,73 @@
+<%
+  english = DiscourseAnnotator::Language.english
+  user_language = DiscourseAnnotator::UserSetting.language_for_user(current_user)
+  other_languages = DiscourseAnnotator::Language.where.not(id: [english.id, user_language.id])
+  sorted_languages = [english, user_language] + other_languages
+  # Make sure English is always the first language and the users language is second.
+  sorted_names = []
+  sorted_languages.each do |language|
+    sorted_names << (resource.names.find { |n| n.language == language } || resource.names.build(language: language))
+  end
+%>
+
+<style>
+  <%# Only show English and the users selected language and hide other translations.
+      Important: All translations must be included in the form as excluded translations are automatically deleted. (by the Cocoon plugin?)
+  %>
+  .code-row .code-name:nth-of-type(1n+3) {
+    display: none !important;
+  }
+</style>
+
+<div class="code-row" id="code-row-<%= resource.id %>">
+  <%= form_for(resource, url: annotator_discourse_annotator_code_path(resource), html: {class: "form"}, remote: true) do |f| %>
+    <% if resource.errors.any? %>
+      <div class="error-explanation">
+        <h2>
+          <%= pluralize(resource.errors.count, "error") %>
+          prohibited this code from being saved:
+        </h2>
+
+        <ul>
+          <% resource.errors.full_messages.each do |message| %>
+            <li class="flash-error"><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <table>
+      <tr>
+        <td class="names">
+          <%= f.fields_for :names, sorted_names do |ff| %>
+            <div class="code-name">
+              <%= ff.hidden_field :language_id %>
+              <div>
+                <%= ff.object.language.name %>
+                <%= ff.text_field :name %>
+              </div>
+            </div>
+          <% end %>
+        </td>
+        <td class="description">
+          Code Description
+          <%= f.text_area :description, rows: 4 %>
+        </td>
+
+        <td class="submit">
+          <%= f.submit 'Save' %>
+          <% if local_assigns[:saved] %>
+            <div class="saved-notification">Saved!</div>
+          <% end %>
+        </td>
+      </tr>
+    </table>
+  <% end %>
+
+
+  <% if resource.children.any? %>
+    <% resource.children.with_localized_codes(language: DiscourseAnnotator::UserSetting.language_for_user(current_user)).each do |r| %>
+      <%= render 'translate_row', resource: r %>
+    <% end %>
+  <% end %>
+</div>

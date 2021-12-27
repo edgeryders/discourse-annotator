@@ -1,0 +1,8 @@
+<%= link_to(
+      'Delete',
+      [namespace, code],
+      class: "text-color-red",
+      method: :delete,
+      remote: true,
+      data: { confirm: "Are you sure? This code has #{code.annotations_count} annotations which will also be deleted." }
+    ) %>

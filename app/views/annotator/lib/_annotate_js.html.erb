@@ -47,11 +47,11 @@
 
     function annotationAutocompleteTags(selector) {
         <%# language = DiscourseAnnotator::UserSetting.language_for_user(current_user) %>
-        <%# var availableTags = <%= DiscourseAnnotator::Tag.with_localized_tags(language: language).where(creator_id: current_user.id).order(name_with_path: :asc).map(&:name_with_path).to_json.html_safe -% >;  %>
+        <%# var availableCodes = <%= DiscourseAnnotator::Code.with_localized_codes(language: language).where(creator_id: current_user.id).order(name_with_path: :asc).map(&:name_with_path).to_json.html_safe -% >;  %>
 
         jQuery(document).ready(function ($) {
             $(selector).data('annotator').plugins.Tags.input.autocomplete({
-                // source: availableTags,
+                // source: availableCodes,
                 <%# See: https://stackoverflow.com/questions/9656523/jquery-autocomplete-with-callback-ajax-json %>
                 source: function (request, response) {
                     $.ajax({

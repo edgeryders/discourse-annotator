@@ -2,19 +2,19 @@ module DiscourseAnnotator
   class Language < ActiveRecord::Base
 
     # Associations
-    has_many :tag_names, dependent: :restrict_with_exception
-    has_many :localized_tags, dependent: :delete_all
+    has_many :code_names, dependent: :restrict_with_exception
+    has_many :localized_codes, dependent: :delete_all
 
     # Validations
     validates :name, presence: true, uniqueness: {case_sensitive: false}
     validates :locale, presence: true, uniqueness: {case_sensitive: false}
 
     # Callbacks
-    after_create :create_localized_tags
+    after_create :create_localized_codes
 
     # Scopes
     scope :with_codes_count, -> {
-      select('discourse_annotator_languages.*, count(discourse_annotator_tag_names.id) AS codes_count').left_joins(:tag_names).group('discourse_annotator_languages.id')
+      select('discourse_annotator_languages.*, count(discourse_annotator_code_names.id) AS codes_count').left_joins(:code_names).group('discourse_annotator_languages.id')
     }
 
 
@@ -29,10 +29,10 @@ module DiscourseAnnotator
 
     private
 
-    def create_localized_tags
+    def create_localized_codes
       ActiveRecord::Base.connection.execute("
-        INSERT INTO discourse_annotator_localized_tags(name, path, tag_id, language_id, created_at, updated_at)
-        SELECT name, path, tag_id, #{id}, now(), now() FROM discourse_annotator_localized_tags
+        INSERT INTO discourse_annotator_localized_codes(name, path, code_id, language_id, created_at, updated_at)
+        SELECT name, path, code_id, #{id}, now(), now() FROM discourse_annotator_localized_codes
           WHERE language_id = #{DiscourseAnnotator::Language.english.id};
       ")
     end

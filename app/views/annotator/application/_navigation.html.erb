@@ -6,8 +6,8 @@
       ) %>
   <%= link_to(
           'Codes',
-          annotator_discourse_annotator_tags_path(creator_id: current_user.id, discourse_tag: current_user.discourse_annotator_settings&.discourse_tag&.name),
-          class: "navigation__link navigation__link--#{nav_link_state('discourse_annotator__tags')}"
+          annotator_discourse_annotator_codes_path(creator_id: current_user.id, discourse_tag: current_user.discourse_annotator_settings&.discourse_tag&.name),
+          class: "navigation__link navigation__link--#{nav_link_state('discourse_annotator__codes')}"
       ) %>
   <%= link_to(
           'Topics',
