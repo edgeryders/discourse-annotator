@@ -1,0 +1,24 @@
+<% labels = {
+  with_annotations: 'With Annotations',
+  without_annotations: 'Without Annotations',
+  any_annotations: 'Any number of Annotations',
+} %>
+
+<div class="dropdown">
+  <div class="dropdown-btn" aria-haspopup="true" role="button" tabindex="0">
+    <div class="dropdown-btn-text">
+      <% if params[:with_annotations].present?  %>
+        <%= params[:with_annotations] === '1' ? labels[:with_annotations] : labels[:without_annotations] %>
+      <% else %>
+        <%= labels[:any_annotations] %>
+      <% end %>
+    </div>
+    <span class="dropdown-arrow"></span>
+  </div>
+
+  <div class="dropdown-content">
+    <%= link_to labels[:with_annotations], request.query_parameters.except(:page).merge('with_annotations' => '1'), class: (params[:with_annotations] === '1' ? 'active' : '') %>
+    <%= link_to labels[:without_annotations], request.query_parameters.except(:page).merge('with_annotations' => '0'), class: (params[:with_annotations] === '0' ? 'active' : '') %>
+    <%= link_to labels[:any_annotations], request.query_parameters.except(:page).merge('with_annotations' => nil), class: (!params[:with_annotations].present? ? 'active' : '') %>
+  </div>
+</div>

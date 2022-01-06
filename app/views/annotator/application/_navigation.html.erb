@@ -1,44 +1,52 @@
 <nav class="navigation" role="navigation">
   <%= link_to(
-          'Overview',
-          [:annotator, :root],
-          class: "navigation__link navigation__link--#{annotator_root_path == request.path ? 'active' : 'inactive'}"
+        'Overview',
+        [:annotator, :root],
+        class: "navigation__link navigation__link--#{annotator_root_path == request.path ? 'active' : 'inactive'}"
       ) %>
   <%= link_to(
-          'Codes',
-          annotator_discourse_annotator_codes_path(creator_id: current_user.id, discourse_tag: current_user.discourse_annotator_settings&.discourse_tag&.name),
-          class: "navigation__link navigation__link--#{nav_link_state('discourse_annotator__codes')}"
+        'Codes',
+        annotator_discourse_annotator_codes_path(creator_id: current_user.id, discourse_tag: current_user.discourse_annotator_settings&.discourse_tag&.name),
+        class: "navigation__link navigation__link--#{nav_link_state('discourse_annotator__codes')}"
       ) %>
   <%= link_to(
-          'Topics',
-          [:annotator, :topics],
-          class: "navigation__link navigation__link--#{nav_link_state('topics')}"
+        'Topics',
+        annotator_topics_path(with_annotations: 1),
+        class: "navigation__link navigation__link--#{nav_link_state('topics')}"
       ) %>
 
   <% annotations_link_state = [
-      nav_link_state('discourse_annotator__text_annotations'),
-      nav_link_state('discourse_annotator__image_annotations'),
-      nav_link_state('discourse_annotator__video_annotations')
+    nav_link_state('discourse_annotator__text_annotations'),
+    nav_link_state('discourse_annotator__image_annotations'),
+    nav_link_state('discourse_annotator__video_annotations')
   ].include?(:active) ? :active : :inactive
   %>
   <%= link_to(
-          'Annotations',
-          [:annotator_discourse_annotator, :annotations],
-          class: "navigation__link navigation__link--#{annotations_link_state}"
+        'Annotations',
+        [:annotator_discourse_annotator, :annotations],
+        class: "navigation__link navigation__link--#{annotations_link_state}"
       ) %>
-  <%= link_to(
-          'Languages',
-          [:annotator_discourse_annotator, :languages],
-          class: "navigation__link navigation__link--#{nav_link_state('discourse_annotator__languages')}"
-      ) %>
-  <%= link_to(
-          'User Settings',
-          [:annotator_discourse_annotator, :user_settings],
-          class: "navigation__link navigation__link--#{nav_link_state('discourse_annotator__user_settings')}"
-      ) %>
-  <%= link_to(
-          'Settings',
-          [:annotator_discourse_annotator, :setting],
-          class: "navigation__link navigation__link--#{nav_link_state('discourse_annotator__settings')}"
-      ) %>
+
+  <br/>
+  <br/>
+  <details <%= 'open' if current_controller?(%w[languages user_settings settings]) %> style="cursor:pointer">
+    <summary style="padding:8px 0;">Settings</summary>
+    <div style="padding-left:18px;">
+      <%= link_to(
+            'General',
+            [:annotator_discourse_annotator, :setting],
+            class: "navigation__link navigation__link--#{nav_link_state('discourse_annotator__settings')}"
+          ) %>
+      <%= link_to(
+            'User Preferences',
+            [:annotator_discourse_annotator, :user_settings],
+            class: "navigation__link navigation__link--#{nav_link_state('discourse_annotator__user_settings')}"
+          ) %>
+      <%= link_to(
+            'Languages',
+            [:annotator_discourse_annotator, :languages],
+            class: "navigation__link navigation__link--#{nav_link_state('discourse_annotator__languages')}"
+          ) %>
+    </div>
+  </details>
 </nav>

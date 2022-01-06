@@ -13,7 +13,6 @@ class Annotator::ApplicationController < Administrate::ApplicationController
   def front
   end
 
-
   def namespace
     :annotator_discourse_annotator
   end
@@ -52,6 +51,5 @@ class Annotator::ApplicationController < Administrate::ApplicationController
   def ensure_staff_or_annotator_group_member
     raise Discourse::InvalidAccess.new unless current_user && (current_user.staff? || current_user.groups.pluck(:name).map(&:downcase).include?('annotator'))
   end
-
 
 end

@@ -12,7 +12,7 @@ class TopicDashboard < Administrate::BaseDashboard
   # on pages throughout the dashboard.
   ATTRIBUTE_TYPES = {
     id: Field::Number,
-    title: Field::String,
+    title: Field::String.with_options(truncate: nil),
     created_at: Field::DateTime,
     updated_at: Field::DateTime,
     user_annotations_count: Field::Number,

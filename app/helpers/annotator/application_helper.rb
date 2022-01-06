@@ -75,6 +75,11 @@ module Annotator
       )
     end
 
+    # https://stackoverflow.com/a/4354547/16030926
+    def current_controller?(names)
+      names.include?(controller.controller_name)
+    end
+
 
   end
 end
