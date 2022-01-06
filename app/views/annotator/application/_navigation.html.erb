@@ -28,10 +28,9 @@
       ) %>
 
   <br/>
-  <br/>
   <details <%= 'open' if current_controller?(%w[languages user_settings settings]) %> style="cursor:pointer">
-    <summary style="padding:8px 0;">Settings</summary>
-    <div style="padding-left:18px;">
+    <summary style="padding:8px 0; color:#999;">Settings</summary>
+    <div>
       <%= link_to(
             'General',
             [:annotator_discourse_annotator, :setting],
