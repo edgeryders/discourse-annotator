@@ -268,3 +268,9 @@ td {
 .pagination .page.gap {
   display: none;
 }
+
+#annotations-collection {
+  .cell-data--annotation-quote-field {
+    min-width: 20rem;
+  }
+}

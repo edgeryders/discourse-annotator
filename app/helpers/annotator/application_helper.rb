@@ -66,7 +66,7 @@ module Annotator
       return '' if path.blank?
       path.split('→').map do |v|
         content_tag(:span, v, class: 'nowrap')
-      end.join('→').html_safe
+      end.join('→ ').html_safe # NOTE: whitespace after the arrow is required.
     end
 
     def ellipsize(string, edge_length, separator: '…')
