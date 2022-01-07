@@ -1,0 +1,15 @@
+<li id="code-<%= code.id %>">
+  <strong><%= code.name %></strong>.
+  <span style="color:#999;"><%= code.description %></span>
+
+  <% if code.children.any? %>
+    <% children = code.children.with_localized_codes(language: DiscourseAnnotator::UserSetting.language_for_user(current_user))
+       children = order_codes(codes: children, order: params[:order])
+    %>
+    <ul>
+      <% children.each do |code| %>
+        <%= render 'list_item', code: code %>
+      <% end %>
+    </ul>
+  <% end %>
+</li>
