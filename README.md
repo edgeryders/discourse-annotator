@@ -2,9 +2,11 @@
 
 *(aka Open Ethnographer)*
 
-[1. Overview](#1-overview)
-[2. Features](#2-features)
-[3. Architecture](#3-architecture)
+**[1. Overview](#1-overview)**
+
+**[2. Features](#2-features)**
+
+**[3. Architecture](#3-architecture)**
 
 
 ## 1. Overview
