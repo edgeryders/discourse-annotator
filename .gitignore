@@ -1,25 +1,27 @@
-## Bundler
+# Bundler
 /.bundle
 /vendor/bundle
 
-## Dummy app
+# Dummy app
 /spec/dummy/db/*rb
 /spec/dummy/log/*.log
 /spec/dummy/tmp/
 
-## Gem
+# Gem
 /log/*
 /pkg/*
 /tmp/*
 /Gemfile.lock
 
-## Appraisal
+# Appraisal
 /gemfiles/*.gemfile.lock
 
-## Ruby
+# Ruby
 /.ruby-version
 
-# Ignore RubyMine settings
+# IDE settings (IDEA RubyMine, Code, …)
 /.idea
+/*.code-workspace
 
+# Misc
 .DS_Store
