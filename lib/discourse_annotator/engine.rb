@@ -8,6 +8,7 @@ module DiscourseAnnotator
       Topic.send :include, TopicAnnotatable
       Post.send :include, PostAnnotatable
       User.send :include, UserAnnotatable
+      PostRevision.send :include, PostRevisionAnnotatable
     end
 
 

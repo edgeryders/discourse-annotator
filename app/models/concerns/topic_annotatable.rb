@@ -2,13 +2,9 @@ module TopicAnnotatable
   extend ActiveSupport::Concern
   included do
 
-
     has_many :annotations, through: :posts
 
-
-
     scope :with_annotations, -> {includes(posts: :annotations).where.not(discourse_annotator_annotations: {id: nil})}
-
 
     def self.with_annotations_count
       select("topics.*, count(posts.id) AS annotations_count")
@@ -16,7 +12,6 @@ module TopicAnnotatable
           .group('topics.id')
           .order("annotations_count DESC")
     end
-
 
   end
 end

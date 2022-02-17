@@ -1,3 +1,23 @@
+<%
+  # Annotations must refer to post revisions. Otherwise when a post is edited the XPath anchoring mechanism to refer to the first
+  # and last word of an annotation's quote text may not be able to anchor the XPath expressions to the edited version of the post.
+  # See: https://github.com/edgeryders/discourse-annotator/issues/6
+  #
+  # All annotations that belong to the same post are required to refer to the same post-revision.
+  # To get the revision_number we can therefore just use the first annotation.
+  if post.annotations.any? && (revision_number = post.annotations.first.revision_number)
+    annotated_revision = post.revisions.find_by(number: revision_number)
+    content = annotated_revision.modifications[:raw].first
+  else
+    content = post.raw
+  end
+
+  language = defined?(@current_user) ? DiscourseAnnotator::UserSetting.language_for_user(@current_user) : nil
+  codes = post.annotations.map(&:code).uniq.compact
+  localized_codes = codes.map { |code| code.path.map { |t| t.localized_name(language) }.join(DiscourseAnnotator::LocalizedCode.path_separator) }.sort
+%>
+
+
 <div style="display:flex; flex-flow: row nowrap; margin-top:4rem;">
   <div style="flex:1;">
     <a id="post-number-<%= post.post_number %>"></a>
@@ -17,11 +37,14 @@
         </span>
           <span itemprop='position'>#<%= post.post_number %></span>
         </div>
+        <% if revision_number.present? %>
+          <div style="color:#fe7a15; margin:5px 0;">ⓘ The posts revision of <%= annotated_revision.created_at %> is displayed. This revision is used because the post was edited after it was annotated.</div>
+        <% end %>
         <div class='post' itemprop='articleBody'>
           <% if post.hidden? %>
             <%= t('flagging.user_must_edit').html_safe %>
           <% else %>
-            <%= markdown(post.raw) %>
+            <%= markdown(content) %>
           <% end %>
         </div>
         <hr>
@@ -29,14 +52,9 @@
     </div>
   </div>
   <div style="flex: 0 0 14rem; margin-left:40px; padding-left:20px; border-left: 1px solid #e2e2e2;">
-    <div style="color: #7b808c; font-size: 0.8em; font-weight: 400; letter-spacing: 0.0357em; text-transform: uppercase; margin-bottom:7px;">Used Codes:</div>
-
-    <%
-      language = defined?(@current_user) ? DiscourseAnnotator::UserSetting.language_for_user(@current_user) : nil
-      codes = post.annotations.map(&:code).uniq.compact
-      localized_codes = codes.map{|code| code.path.map { |t| t.localized_name(language) }.join(DiscourseAnnotator::LocalizedCode.path_separator)}.sort
-    %>
-
+    <div style="color: #7b808c; font-size: 0.8em; font-weight: 400; letter-spacing: 0.0357em; text-transform: uppercase; margin-bottom:7px;">Used
+      Codes:
+    </div>
     <% localized_codes.each do |path| %>
       <div style="margin-bottom:7px;">
         <div style="font-weight:bold; background: #E6E6E6; color:#909090; border-radius: 9px; padding:2px 6px;  font-size:.7rem; display:inline-block;">
@@ -46,7 +64,6 @@
     <% end %>
   </div>
 </div>
-
 
 
 <script>
