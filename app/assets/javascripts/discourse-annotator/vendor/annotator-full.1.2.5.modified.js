@@ -859,7 +859,7 @@
             }
         };
 
-        Annotator.prototype.highlightRange = function(normedRange, cssClass, id = '') {
+        Annotator.prototype.highlightRange = function(normedRange, cssClass, id ) {
             var hl, node, white, _k, _len3, _ref2, _results;
             if (cssClass == null) cssClass = 'annotator-hl';
             white = /^\s*$/;
