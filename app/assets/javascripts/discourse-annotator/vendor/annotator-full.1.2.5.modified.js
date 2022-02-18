@@ -800,7 +800,8 @@
                 normed = normedRanges[_l];
                 annotation.quote.push($.trim(normed.text()));
                 annotation.ranges.push(normed.serialize(this.wrapper[0], '.annotator-hl'));
-                $.merge(annotation.highlights, this.highlightRange(normed));
+                // 2022-02-18 / damingo / Add code CSS class.
+                $.merge(annotation.highlights, this.highlightRange(normed, `annotator-hl`, annotation.code_id));
             }
             annotation.quote = annotation.quote.join(' / ');
             $(annotation.highlights).data('annotation', annotation);
@@ -858,11 +859,11 @@
             }
         };
 
-        Annotator.prototype.highlightRange = function(normedRange, cssClass) {
+        Annotator.prototype.highlightRange = function(normedRange, cssClass, id = '') {
             var hl, node, white, _k, _len3, _ref2, _results;
             if (cssClass == null) cssClass = 'annotator-hl';
             white = /^\s*$/;
-            hl = $("<span class='" + cssClass + "'></span>");
+            hl = $("<span class='" + cssClass + "' data-code-id='"+id+"'></span>");
             _ref2 = normedRange.textNodes();
             _results = [];
             for (_k = 0, _len3 = _ref2.length; _k < _len3; _k++) {

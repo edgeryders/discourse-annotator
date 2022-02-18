@@ -5,14 +5,34 @@
 <% end %>
 
 <% content_for :stylesheet do %>
-  <style type="text/css">
+  <style>
     <% annotations = DiscourseAnnotator::Annotation.where(topic_id: @topic_view.topic.id).where.not(creator_id: @current_user.id) %>
     <% if annotations.present? %>
     <%= annotations.map {|annotation| "[data-annotation-id=\"#{annotation.id}\"]"}.join(', ').html_safe + "{ background-color: rgba(182, 223, 236, 0.3) !important; }" %>
     <% end %>
+
+    .code {
+        font-weight: bold;
+        background: #E6E6E6;
+        color: #909090;
+        border-radius: 9px;
+        padding: 2px 6px;
+        font-size: .7rem;
+        display: inline-block;
+        border-top: 2px solid transparent;
+        border-bottom: 2px solid transparent;
+        cursor: pointer;
+    }
+
+    /* NOTE: CSS class can't be used as then annotator no longer opens the modal. */
+    /* NOTE: Background can't be used as it is overwritten by nested annotations. */
+    [data-code-highlighted="1"] {
+        border: 2px solid deeppink;
+        margin-left: -2px;
+        margin-right: -2px;
+    }
   </style>
 <% end %>
-
 
 
 <header class="main-content__header" role="banner">
@@ -25,12 +45,11 @@
   </script>
 </header>
 
-<section class="main-content__body">
 
+<section class="main-content__body">
   <% @topic_view.posts.each do |post| %>
     <%= render '/annotator/posts/post', post: post %>
   <% end %>
-
 
   <% if @topic_view.prev_page || @topic_view.next_page %>
     <div role='navigation' itemscope itemtype='http://schema.org/SiteNavigationElement'>
@@ -42,6 +61,27 @@
       <% end %>
     </div>
   <% end %>
-
 </section>
+
+
+<script>
+    let codes = document.getElementsByClassName("code")
+
+    for (let i = 0; i < codes.length; i++) {
+        codes[i].addEventListener('click', handleCodeClick, false)
+    }
+
+    function handleCodeClick(e) {
+        if (e.target.hasAttribute("data-code-highlighted")) {
+            jQuery("[data-code-highlighted]").removeAttr("data-code-highlighted")
+        } else {
+            let codeId = e.target.getAttribute("data-code-id")
+            let codeElements = document.querySelectorAll(`[data-code-id='${codeId}']`)
+            jQuery("[data-code-highlighted]").removeAttr("data-code-highlighted")
+            for (let i = 0; i < codeElements.length; i++) {
+                codeElements[i].setAttribute('data-code-highlighted', '1');
+            }
+        }
+    }
+</script>
 
