@@ -801,7 +801,7 @@
                 annotation.quote.push($.trim(normed.text()));
                 annotation.ranges.push(normed.serialize(this.wrapper[0], '.annotator-hl'));
                 // 2022-02-18 / damingo / Add code CSS class.
-                $.merge(annotation.highlights, this.highlightRange(normed, `annotator-hl`, annotation.code_id));
+                $.merge(annotation.highlights, this.highlightRange(normed, 'annotator-hl', annotation.code_id));
             }
             annotation.quote = annotation.quote.join(' / ');
             $(annotation.highlights).data('annotation', annotation);
