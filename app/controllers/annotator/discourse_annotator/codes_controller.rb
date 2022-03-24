@@ -145,6 +145,12 @@ class Annotator::DiscourseAnnotator::CodesController < Annotator::ApplicationCon
     end
   end
 
+  def tree_item
+    @code = requested_resource
+    @show_children = params[:show_children] == 'true'
+    respond_to :js
+  end
+
   def destroy
     requested_resource.destroy
     respond_to do |format|

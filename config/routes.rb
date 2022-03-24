@@ -20,6 +20,7 @@ Rails.application.routes.draw do
           get :merge
           put :merge_into
           put :copy
+          get :tree_item, constraints: { format: :json }
         end
       end
       match 'localized_codes', to: 'localized_codes#index', via: [:get], defaults: { format: :json }, constraints: { format: :json }

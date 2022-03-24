@@ -1,0 +1,2 @@
+$("#code-row-<%= @code.id %>").replaceWith('<%= j render('tree_item', code: @code, show_children: @show_children) %>');
+initCodeCheckboxes();
