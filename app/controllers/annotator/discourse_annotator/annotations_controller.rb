@@ -47,7 +47,7 @@ class Annotator::DiscourseAnnotator::AnnotationsController < Annotator::Applicat
         # See: https://github.com/edgeryders/discourse-annotator/issues/201
         resources = resources.left_joins(:post).select('discourse_annotator_annotations.*, posts.user_id as post_creator_id')
 
-        render json: JSON.pretty_generate(JSON.parse(r.to_json))
+        render json: JSON.pretty_generate(JSON.parse(resources.to_json))
       }
     end
   end
