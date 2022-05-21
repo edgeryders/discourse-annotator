@@ -7,6 +7,7 @@ class DiscourseAnnotator::VideoAnnotationDashboard < DiscourseAnnotator::Annotat
       :id,
       :type,
       :code,
+      :discourse_tags,
       :container,
       :src,
       :ext,

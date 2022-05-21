@@ -13,6 +13,7 @@ class DiscourseAnnotator::ImageAnnotationDashboard < DiscourseAnnotator::Annotat
       :units,
       :geometry,
       :code,
+      :discourse_tags,
       :creator,
       :created_at,
       :updated_at,
