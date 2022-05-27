@@ -1,6 +1,72 @@
 <% content_for(:javascript) do %>
   <script>
-      $('#bulk-editing-parent-id-field').selectize();
+      function initCodeCheckboxes() {
+          $("#bulk-editing-parent-id-field").each(function initializeSelectize(index, element) {
+              let $element = $(element);
+              $element.selectize({
+                  valueField: 'id',
+                  labelField: 'localized_path',
+                  searchField: 'localized_path',
+                  create: false,
+                  searchUrl: "/annotator/autosuggest_codes.json" + '?q=',
+                  load: function (query, callback) {
+                      if (!query.length) return callback();
+                      let searchUrl = this.settings.searchUrl;
+                      $.ajax({
+                          url: searchUrl + encodeURIComponent(query),
+                          type: 'GET',
+                          error: function () {
+                              callback();
+                          },
+                          success: function (res) {
+                              callback(res);
+                          }
+                      });
+                  },
+              });
+          });
+
+          let checkboxValues = JSON.parse(localStorage.getItem('checkboxValues')) || {};
+          let $checkboxes = $("#codes-collection :checkbox");
+
+          updateSelectedIdsField();
+
+          $.each(checkboxValues, function (key, value) {
+              $("#code-" + key).prop('checked', value);
+          });
+
+          $checkboxes.on("change", function () {
+              updateStorage();
+          });
+
+          $("#uncheck-all").on("click", function () {
+              $checkboxes.prop("checked", false)
+              updateStorage();
+          });
+
+          $("#check-all").on("click", function () {
+              $checkboxes.prop("checked", true)
+              updateStorage();
+          });
+
+          function updateStorage() {
+              $checkboxes.each(function () {
+                  checkboxValues[$(this).data('id')] = this.checked;
+              });
+              localStorage.setItem("checkboxValues", JSON.stringify(checkboxValues));
+              updateSelectedIdsField();
+          }
+
+          function updateSelectedIdsField() {
+              let checked = Object.keys(checkboxValues).filter(k => checkboxValues[k]);
+              document.getElementById("bulk-editing-selected-ids").value = checked.join(',')
+          }
+
+      }
+
+      $(document).ready(initCodeCheckboxes);
+
+      // $('#bulk-editing-parent-id-field').selectize();
 
       function handleBulkEditSubmit() {
           localStorage.setItem("checkboxValues", null);

@@ -21,7 +21,7 @@ class Annotator::DiscourseAnnotator::CodesController < Annotator::ApplicationCon
     end
     # 2. For the tree-view get and limit the results to the root codes of matching codes.
     # Note: Must be done before pagination is applied.
-    if !params[:search].present? && request.format.html?
+    if !params[:search].present? && params[:view] != 'table' && request.format.html?
       # See: https://github.com/edgeryders/discourse-annotator/issues/217
       root_ids = resources.select('id, ancestry').map { |r| r.ancestry ? r.ancestry.split('/')[0] : r.id }.uniq
       resources = scoped_resource.where(id: root_ids)

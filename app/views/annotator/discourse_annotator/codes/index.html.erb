@@ -15,12 +15,12 @@
                name: 'Creator',
                filter: :creator_id,
                users: User.where(id: DiscourseAnnotator::Code.select(:creator_id).uniq.pluck(:creator_id)).order(:username) %>
-    <%= render '/lib/sort_by', options: {path: 'Name', created_at: 'Newest', updated_at: 'Updated', annotations_count: 'Number of annotations'} %>
+    <%= render '/lib/sort_by', options: { path: 'Path', name: 'Name', created_at: 'Newest', updated_at: 'Updated', annotations_count: 'Number of annotations' } %>
     <%= render 'lib/codes_view_nav' %>
     <!--    <a href="<%#= request.path %>" target="_blank">Export current list</a>-->
   </div>
 
-  <% if params[:view] != 'list' && params[:view] != 'translate' %>
+  <% if !params[:view] ||  params[:search].present? %>
     <div style="border:1px solid #dfe0e1; background: #F6F7F7; margin:20px 35px; padding:10px;">
       <%= render 'bulk_editing_form' %>
     </div>
@@ -33,6 +33,8 @@
       <%= render 'translate', resources: resources, namespace: namespace %>
     <% elsif params[:view] == 'list' %>
       <%= render 'list', codes: resources %>
+    <% elsif params[:view] == 'table' %>
+      <%= render 'table', codes: resources %>
     <% else %>
       <%= render 'tree', codes: resources %>
     <% end %>

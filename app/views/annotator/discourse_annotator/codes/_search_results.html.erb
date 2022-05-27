@@ -15,31 +15,31 @@
   </thead>
 
   <tbody>
-  <% resources.each do |resource| %>
-    <tr id="code-row-<%= resource.id %>">
+  <% resources.each do |code| %>
+    <tr id="code-row-<%= code.id %>">
       <td>
-        <input type="checkbox" id="code-<%= resource.id %>" data-id="<%= resource.id %>"/>
+        <input type="checkbox" id="code-<%= code.id %>" data-id="<%= code.id %>"/>
       </td>
-      <td><%= resource.id %></td>
-      <td><%= link_to(resource.name_with_path, [namespace, resource], class: "link-primary") %></td>
-      <td><%= "by #{resource.creator.username}" %></td>
-      <td><%= resource.annotations_count %></td>
+      <td><%= code.id %></td>
+      <td><%= link_to(code.name_with_path, [namespace, code], class: "link-primary") %></td>
+      <td><%= "by #{code.creator.username}" %></td>
+      <td><%= code.annotations_count %></td>
       <td>
-        <%= link_to('Edit', [:edit, namespace, resource], class: "link-primary",) %>
-      </td>
-      <td>
-        <%= link_to('Merge', merge_annotator_discourse_annotator_code_path(resource.id), class: "link-primary") %>
+        <%= link_to('Edit', [:edit, namespace, code], class: "link-primary",) %>
       </td>
       <td>
-        <%= link_to('Copy', copy_annotator_discourse_annotator_code_path(resource.id), method: :put, class: "link-primary") %>
+        <%= link_to('Merge', merge_annotator_discourse_annotator_code_path(code.id), class: "link-primary") %>
       </td>
       <td>
-        <% if resource.is_childless? %>
-          <%= render 'action_delete', namespace: namespace, code: resource %>
+        <%= link_to('Copy', copy_annotator_discourse_annotator_code_path(code.id), method: :put, class: "link-primary") %>
+      </td>
+      <td>
+        <% if code.is_childless? %>
+          <%= render 'action_delete', namespace: namespace, code: code %>
         <% end %>
       </td>
       <td>
-        <%= link_to('Annotations', annotator_discourse_annotator_annotations_path(code_id: resource.id), class: "link-primary",) %>
+        <%= link_to('Annotations', annotator_discourse_annotator_annotations_path(code_id: code.id), class: "link-primary",) %>
       </td>
     </tr>
   <% end %>

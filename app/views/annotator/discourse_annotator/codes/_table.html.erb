@@ -1,0 +1,45 @@
+<% english = DiscourseAnnotator::Language.find_by(locale: 'en') %>
+<table>
+  <thead>
+  <tr>
+    <th>Name, description</th>
+    <th>Path</th>
+    <th>Other code names</th>
+    <th>Descendant codes</th>
+    <th>Annotations</th>
+    <th>Annotations of descendant codes</th>
+    <th>Code author</th>
+  </tr>
+  </thead>
+
+  <tbody>
+  <% codes.each do |code| %>
+    <tr id="code-row-<%= code.id %>">
+      <td>
+        <strong><%= code.name %></strong>.
+        <span style="color:#999;"><%= code.description %></span>
+      </td>
+      <td>
+        <%= code.name_with_path %>
+      </td>
+      <td>
+        <%  code.names.where.not(language_id: english.id).each do |code_name| %>
+         <strong><%= code_name.language.locale %>:</strong> <%= code_name.name %><br/>
+        <% end %>
+      </td>
+      <td>
+        <%= code.descendants.count %>
+      </td>
+      <td>
+        <%= code.annotations_count %>
+      </td>
+      <td>
+        <%= code.descendants_annotations_count %>
+      </td>
+      <td>
+        <%= code.creator.username %>
+      </td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>
