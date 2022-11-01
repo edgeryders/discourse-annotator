@@ -5,6 +5,7 @@ Rails.application.routes.draw do
   get '/annotator/codes', to: 'annotator/discourse_annotator/codes#index', format: :json,
       constraints: lambda { |req| DiscourseAnnotator::Setting.instance.public_codes_list_api_endpoint? }
 
+
   namespace :annotator, constraints: AnnotatorConstraint.new do
 
     root to: 'application#front'

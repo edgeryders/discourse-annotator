@@ -9,6 +9,15 @@ class Annotator::ApplicationController < Administrate::ApplicationController
   before_action :ensure_staff_or_annotator_group_member
   before_action :set_headers
 
+  unless Rails.application.config.consider_all_requests_local
+    # NOTE: The order is important.
+    # http://stackoverflow.com/questions/9119066/how-do-i-determine-which-exception-handler-rescue-from-will-choose-in-rails
+    # rescue_from Exception, with: :render_500
+    rescue_from ActionController::UnknownFormat, with: :render_404
+    rescue_from ActionController::RoutingError, with: :render_404
+    rescue_from AbstractController::ActionNotFound, with: :render_404
+    rescue_from ActiveRecord::RecordNotFound, with: :render_404
+  end
 
   def front
   end
@@ -20,11 +29,20 @@ class Annotator::ApplicationController < Administrate::ApplicationController
   # See: https://github.com/thoughtbot/administrate/issues/442
   def order
     @order ||= Administrate::Order.new(
-        params.fetch(resource_name, {}).fetch(:order, 'created_at'),
-        params.fetch(resource_name, {}).fetch(:direction, 'desc'),
-        )
+      params.fetch(resource_name, {}).fetch(:order, 'created_at'),
+      params.fetch(resource_name, {}).fetch(:direction, 'desc'),
+    )
   end
 
+  # Page not found
+  # https://stackoverflow.com/questions/2385799/how-to-redirect-to-a-404-in-rails
+  def render_404
+    respond_to do |format|
+      format.html { render template: 'annotator/errors/not_found', status: 404 }
+      format.xml { head :not_found }
+      format.any { head :not_found }
+    end
+  end
 
   private
 
