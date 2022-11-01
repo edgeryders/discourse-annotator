@@ -2,6 +2,7 @@
 
 class Annotator::ApplicationController < Administrate::ApplicationController
   include ::CurrentUser
+  helper :all
 
   protect_from_forgery prepend: true
 
@@ -39,7 +40,8 @@ class Annotator::ApplicationController < Administrate::ApplicationController
   def render_404
     respond_to do |format|
       format.html { render template: 'annotator/errors/not_found', status: 404 }
-      format.json { render json: { status: 404, error: "Not Found" }.to_json, status: 404 }
+      format.json { render template: 'annotator/errors/not_found', status: 404 }
+      # format.json { render json: { status: 404, error: "Not Found" }.to_json, status: 404 }
       format.xml { head :not_found }
       format.any { head :not_found }
     end
