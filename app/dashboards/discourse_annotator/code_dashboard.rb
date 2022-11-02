@@ -20,7 +20,7 @@ module DiscourseAnnotator
         parent_id: Field::Number,
         created_at: Field::DateTime,
         updated_at: Field::DateTime,
-        annotations: Field::HasMany.with_options(class_name: 'DiscourseAnnotator::Annotation', limit: 100),
+        annotations: Annotator::HasManyAnnotationsField.with_options(class_name: 'DiscourseAnnotator::Annotation', limit: 100),
         names: Field::NestedHasMany.with_options(class_name: 'DiscourseAnnotator::CodeName', association_name: 'names', skip: :code),
         localized_codes: Field::NestedHasMany.with_options(class_name: 'DiscourseAnnotator::LocalizedCode', skip: :code, limit: 100),
     }.freeze

@@ -41,7 +41,6 @@ class Annotator::ApplicationController < Administrate::ApplicationController
     respond_to do |format|
       format.html { render template: 'annotator/errors/not_found', status: 404 }
       format.json { render template: 'annotator/errors/not_found', status: 404 }
-      # format.json { render json: { status: 404, error: "Not Found" }.to_json, status: 404 }
       format.xml { head :not_found }
       format.any { head :not_found }
     end
