@@ -7,7 +7,7 @@ module DiscourseAnnotator
       discourse_user: Field::BelongsTo.with_options(class_name: '::User', order: 'username ASC', scope: -> { ::User.annotators }),
       discourse_tag: Annotator::DiscourseTagField.with_options(class_name: '::Tag', order: 'name ASC', scope: -> { ::Tag.where('lower(name) LIKE ?', "ethno-%") }),
       propose_codes_from_users: Annotator::ProposeCodesFromUsersField,
-      language: Field::BelongsTo.with_options(class_name: 'DiscourseAnnotator::Language'),
+      language: Annotator::LanguageField.with_options(class_name: 'DiscourseAnnotator::Language'),
       id: Field::Number,
     }.freeze
 

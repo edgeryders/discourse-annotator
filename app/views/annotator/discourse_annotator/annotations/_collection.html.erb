@@ -31,19 +31,23 @@ to display a collection of resources in an HTML table.
           scope="col"
           role="columnheader"
           aria-sort="<%= sort_order(collection_presenter.ordered_html_class(attr_name)) %>">
-        <%= link_to(sanitized_order_params(page, collection_field_name).merge(
+        <% if attr_name === :discourse_tags %>
+          <%= attr_name.to_s.titleize %>
+        <% else %>
+          <%= link_to(sanitized_order_params(page, collection_field_name).merge(
             collection_presenter.order_params_for(attr_name, key: collection_field_name)
-        )) do %>
-          <%= t(
+          )) do %>
+            <%= t(
                   "helpers.label.#{collection_presenter.resource_name}.#{attr_name}",
                   default: attr_name.to_s,
-                  ).titleize %>
-          <% if collection_presenter.ordered_by?(attr_name) %>
+                ).titleize %>
+            <% if collection_presenter.ordered_by?(attr_name) %>
               <span class="cell-label__sort-indicator cell-label__sort-indicator--<%= collection_presenter.ordered_html_class(attr_name) %>">
                 <svg aria-hidden="true">
-                  <use xlink:href="#icon-up-caret" />
+                  <use xlink:href="#icon-up-caret"/>
                 </svg>
               </span>
+            <% end %>
           <% end %>
         <% end %>
       </th>
@@ -78,19 +82,19 @@ to display a collection of resources in an HTML table.
 
       <% if valid_action? :edit, collection_presenter.resource_name %>
         <td><%= link_to(
-                    t("administrate.actions.edit"),
-                    [:edit, namespace, resource],
-                    class: "action-edit",
-                    ) if show_action? :edit, resource%></td>
+                  t("administrate.actions.edit"),
+                  [:edit, namespace, resource],
+                  class: "action-edit",
+                ) if show_action? :edit, resource %></td>
       <% end %>
 
       <% if valid_action? :destroy, collection_presenter.resource_name %>
         <td><%= link_to(
-                    t("administrate.actions.destroy"),
-                    [namespace, resource],
-                    class: "text-color-red",
-                    method: :delete,
-                    data: { confirm: t("administrate.actions.confirm") }
+                  t("administrate.actions.destroy"),
+                  [namespace, resource],
+                  class: "text-color-red",
+                  method: :delete,
+                  data: { confirm: t("administrate.actions.confirm") }
                 ) if show_action? :destroy, resource %></td>
       <% end %>
     </tr>

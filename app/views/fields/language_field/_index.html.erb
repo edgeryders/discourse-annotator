@@ -1,1 +1,3 @@
-<%= field.to_s %>
+<% if field.data %>
+  <%= field.display_associated_resource %>
+<% end %>

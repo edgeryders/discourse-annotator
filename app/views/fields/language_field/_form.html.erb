@@ -1,6 +1,11 @@
 <div class="field-unit__label">
-  <%= f.label field.attribute %>
+  <%= f.label 'Language' %>
 </div>
 <div class="field-unit__field">
-  <%= f.text_field field.attribute %>
+  <%= f.select(field.permitted_attribute, nil) do %>
+    <%= options_for_select(field.associated_resource_options, field.selected_option) %>
+  <% end %>
+  <div style="margin-top:5px;">
+    The language is used in the codes <a href="/annotator/codes?view=translate">Translate View</a> as the target language for translations.
+  </div>
 </div>
