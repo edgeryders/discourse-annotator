@@ -4,13 +4,13 @@
     <%= render('search', search_term: params[:search], resource_name: 'Codes') %>
   <% end %>
   <div>
-    <%= link_to("New Code", [:new, namespace, :code], class: "button") %>
+    <%= link_to("New Code", [:new, namespace, @project, :code], class: "button") %>
   </div>
 </header>
 
 <section class="main-content__body main-content__body--flush">
   <div class="annotator-filter-nav">
-    <%= render '/lib/filter_discourse_tag' %>
+    <%#= render '/lib/filter_discourse_tag' %>
     <%= render '/lib/filter_user',
                name: 'Creator',
                filter: :creator_id,

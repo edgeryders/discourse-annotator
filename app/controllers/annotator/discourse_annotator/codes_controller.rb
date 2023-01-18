@@ -6,16 +6,16 @@ class Annotator::DiscourseAnnotator::CodesController < Annotator::ApplicationCon
 
   include Annotator::ApplicationHelper
 
+  before_action :set_project
+
   skip_before_action :ensure_logged_in, :ensure_staff_or_annotator_group_member,
                      if: proc { |c| api_request? && c.action_name == "index" && DiscourseAnnotator::Setting.instance.public_codes_list_api_endpoint? }
 
   def index
     resources = scoped_resource
     # 1. Apply filter
+    resources = resources.where(project_id: params[:project_id]) if params[:project_id].present?
     resources = resources.where(creator_id: params[:creator_id]) if params[:creator_id].present?
-    if params[:discourse_tag].present? && (discourse_tag = ::Tag.find_by(name: params[:discourse_tag]))
-      resources = resources.where(id: DiscourseAnnotator::Annotation.where(topic_id: discourse_tag.topic_ids).select(:code_id))
-    end
     if params[:search].present?
       resources = resources.where("discourse_annotator_localized_codes.path ILIKE ?", "%#{params[:search].split.join('%')}%")
     end
@@ -90,9 +90,10 @@ class Annotator::DiscourseAnnotator::CodesController < Annotator::ApplicationCon
   def create
     resource = resource_class.new(resource_params)
     resource.creator = current_user
+    resource.project = @project
 
     if resource.save
-      redirect_to [namespace, resource], notice: 'Code was successfully created.'
+      redirect_to [namespace, @project, resource], notice: 'Code was successfully created.'
     else
       render :new, locals: { page: Administrate::Page::Form.new(dashboard, resource) }
     end
@@ -102,7 +103,7 @@ class Annotator::DiscourseAnnotator::CodesController < Annotator::ApplicationCon
     respond_to do |format|
       if requested_resource.update(resource_params)
         format.html {
-          redirect_to [namespace, requested_resource], notice: 'Code was successfully updated.'
+          redirect_to [namespace, @project, requested_resource], notice: 'Code was successfully updated.'
         }
         format.js {}
       else
@@ -115,7 +116,7 @@ class Annotator::DiscourseAnnotator::CodesController < Annotator::ApplicationCon
   end
 
   def update_parent
-    fallback_path = annotator_discourse_annotator_codes_path(creator_id: current_user.id)
+    fallback_path = annotator_discourse_annotator_project_codes_path(project_id: @project.id)
     ids = params[:selected_ids].split(',')
     redirect_back fallback_location: fallback_path, notice: 'No codes were selected.' and return if ids.blank?
     status = []
@@ -127,8 +128,20 @@ class Annotator::DiscourseAnnotator::CodesController < Annotator::ApplicationCon
   end
 
   def copy
-    msg = requested_resource.copy ? 'Code was successfully copied.' : 'An error occurred while coping the code!'
-    redirect_back fallback_location: annotator_discourse_annotator_codes_path(creator_id: current_user.id), notice: msg
+    render locals: {
+      page: Administrate::Page::Form.new(dashboard, requested_resource)
+    }
+  end
+
+  def create_copy
+    copy = requested_resource.create_copy(params[:code][:project_id])
+    if copy
+      msg = "Code was successfully copied."
+      msg += ' ' + (helpers.link_to 'Show copy', annotator_discourse_annotator_project_code_path(id: copy.id, project_id: params[:code][:project_id]))
+    else
+      msg = 'An error occurred while copying the code!'
+    end
+    redirect_back fallback_location: annotator_discourse_annotator_project_codes_path(project_id: @project.id), notice: msg
   end
 
   def merge
@@ -139,7 +152,7 @@ class Annotator::DiscourseAnnotator::CodesController < Annotator::ApplicationCon
 
   def merge_into
     if requested_resource.merge_into(DiscourseAnnotator::Code.find(params[:code][:merge_into_code_id]))
-      redirect_to annotator_discourse_annotator_codes_path(creator_id: current_user.id), notice: 'Codes were successfully merged.'
+      redirect_to annotator_discourse_annotator_project_codes_path(project_id: @project.id), notice: 'Codes were successfully merged.'
     else
       render :merge, locals: { page: Administrate::Page::Form.new(dashboard, requested_resource) }
     end
@@ -156,7 +169,7 @@ class Annotator::DiscourseAnnotator::CodesController < Annotator::ApplicationCon
     respond_to do |format|
       format.html {
         flash[:notice] = 'Code was successfully destroyed.'
-        redirect_to action: :index
+        redirect_to annotator_discourse_annotator_project_codes_path(project_id: @project.id)
       }
       format.js
     end
@@ -172,7 +185,15 @@ class Annotator::DiscourseAnnotator::CodesController < Annotator::ApplicationCon
     request.format.json? || request.format.xml?
   end
 
+  def set_project
+    @project = DiscourseAnnotator::Project.find(params[:project_id])
+  end
+
 end
+
+# if params[:discourse_tag].present? && (discourse_tag = ::Tag.find_by(name: params[:discourse_tag]))
+#   resources = resources.where(id: DiscourseAnnotator::Annotation.where(topic_id: discourse_tag.topic_ids).select(:code_id))
+# end
 
 # Overwrite any of the RESTful controller actions to implement custom behavior
 # For example, you may want to send an email after a foo is updated.

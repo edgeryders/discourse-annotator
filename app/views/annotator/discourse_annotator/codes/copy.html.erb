@@ -1,0 +1,34 @@
+
+<%= render "header", page_title: "Copy code \"#{page.resource.localized_name_with_path}\"",  action: :copy, page: page %>
+
+
+<section class="main-content__body">
+  <%= form_for([namespace, page.resource], url: create_copy_annotator_discourse_annotator_project_code_path(project_id: @project.id, id:page.resource.id), method: :put, html: {class: "form"}) do |f| %>
+    <% if page.resource.errors.any? %>
+      <div id="error_explanation">
+        <h2>
+          <%= pluralize(page.resource.errors.count, "error") %>
+          prohibited this <%= page.resource_name %> from being saved:
+        </h2>
+
+        <ul>
+          <% page.resource.errors.full_messages.each do |message| %>
+            <li class="flash-error"><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <% attributes = page.attributes.select {|a| a.name == 'project'} %>
+
+    <% attributes.each do |attribute| -%>
+      <div class="field-unit field-unit--<%= attribute.html_class %>">
+        <%= render_field attribute, f: f, resource: page.resource %>
+      </div>
+    <% end -%>
+
+    <div class="form-actions">
+      <%= f.submit 'Create Copy' %>
+    </div>
+  <% end %>
+</section>

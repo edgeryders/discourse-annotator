@@ -10,6 +10,7 @@ module DiscourseAnnotator
     has_ancestry orphan_strategy: :adopt
 
     # Associations
+    belongs_to :project
     belongs_to :creator, class_name: '::User'
     has_many :annotations, dependent: :destroy
     has_many :names, dependent: :delete_all, class_name: 'CodeName', inverse_of: :code
@@ -22,6 +23,7 @@ module DiscourseAnnotator
     # validates :name, presence: true, uniqueness: {scope: [:ancestry, :creator_id], case_sensitive: false}
     validates :creator, presence: true
     validates :names, length: { minimum: 1, too_short: ": One name is required" }
+    validates :project_id, presence: true
 
     after_save :update_localized_codes
 
@@ -60,6 +62,11 @@ module DiscourseAnnotator
 
     # --- Instance Methods --- #
 
+    # Alias.
+    def sub_codes
+      children
+    end
+
     # Alias. Used by administrate
     def name
       localized_name
@@ -91,17 +98,21 @@ module DiscourseAnnotator
         names.order(created_at: :asc).first&.name
     end
 
-    def copy
+    def create_copy(project_id)
+      project_id = nil if project_id.to_i == self.project_id
       # https://github.com/moiristo/deep_cloneable
+      # NOTE: localized_codes must not be included as they are created by a callback (after_save :update_localized_codes).
       new = deep_clone include: [:names, { annotations: :ranges }],
                        preprocessor: ->(original, kopy) {
                          # See: https://github.com/edgeryders/discourse-annotator/issues/220
                          kopy.annotations_count = 0 if kopy.respond_to?(:annotations_count)
+                         kopy.project_id = project_id if project_id && kopy.is_a?(DiscourseAnnotator::Code)
                        },
                        postprocessor: ->(original, kopy) {
-                         kopy.name = "#{original.name} (COPY)" if kopy.is_a?(DiscourseAnnotator::CodeName)
+                         kopy.name = "#{original.name} (COPY)" if kopy.is_a?(DiscourseAnnotator::CodeName) && !project_id
                        }
       new.save
+      new
     end
 
     def merge_into(merge_into_code)

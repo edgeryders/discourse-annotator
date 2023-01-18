@@ -8,7 +8,8 @@ module DiscourseAnnotator
     belongs_to :topic
     # Note: Only text-annotations use ranges. The declaration is kept here to simplify copying codes with all associated
     # objects. This requires that all annotations respond to a `ranges` attribute.
-    has_many :ranges, foreign_key: 'annotation_id', dependent: :destroy, autosave: true
+    has_many :ranges, foreign_key: 'annotation_id', dependent: :delete_all, autosave: true
+
 
     # Validations
     validates :type, presence: true, inclusion: {
@@ -16,13 +17,13 @@ module DiscourseAnnotator
     }
     validates :creator, presence: true
     validates :code, presence: true
-
     validates_length_of :ranges, maximum: 1
+
 
     # Callbacks
     before_validation on: :create do
       # NOTE: All annotations that belong to the same post must reference the same post revision.
-      if self.post_id.present? && self.post.annotations.any?
+      if self.post_id.present? && self.post && self.post.annotations.any?
         self.revision_number = self.post.annotations.first.revision_number
       end
 
@@ -30,6 +31,10 @@ module DiscourseAnnotator
     end
 
     # --- Instance Methods --- #
+
+    def topic_id_and_post_id
+      "#{topic_id}/#{post_id}"
+    end
 
     def text_annotation?
       false

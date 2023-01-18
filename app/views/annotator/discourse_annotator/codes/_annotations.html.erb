@@ -42,13 +42,13 @@
     <tr class="js-table-row"
         tabindex="0"
         <% if valid_action? :show, collection_presenter.resource_name %>
-        <%= %(role=link data-url=#{polymorphic_path([namespace, resource])}) %>
+        <%= %(role=link data-url=#{polymorphic_path([namespace, @project, resource])}) %>
         <% end %>
         >
       <% collection_presenter.attributes_for(resource).each do |attribute| %>
         <td class="cell-data cell-data--<%= attribute.html_class %>">
           <% if show_action? :show, resource -%>
-            <a href="<%= polymorphic_path([namespace, resource]) -%>" class="action-show">
+            <a href="<%= polymorphic_path([namespace, @project, resource]) -%>" class="action-show">
               <%= render_field attribute %>
             </a>
           <% end -%>
@@ -57,7 +57,7 @@
 
       <td><%= link_to(
                 t("administrate.actions.destroy"),
-                [namespace, resource],
+                [namespace, @project, resource],
                 class: "text-color-red",
                 method: :delete,
                 data: { confirm: t("administrate.actions.confirm") }

@@ -1,0 +1,14 @@
+
+<% if field.resources.any? %>
+  <% order = field.order_from_params(params.fetch(field.name, {})) %>
+  <% page_number = params.fetch(field.name, {}).fetch(:page, nil) %>
+
+  <% field.resources(page_number, order).each do |code_name| %>
+    <div>
+       <%= code_name.language.name %>: <%= code_name.name %>
+    </div>
+  <% end %>
+
+<% else %>
+  <%= t("administrate.fields.has_many.none", default: "–") %>
+<% end %>

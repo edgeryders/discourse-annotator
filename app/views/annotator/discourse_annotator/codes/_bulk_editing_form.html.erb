@@ -8,7 +8,7 @@
                   labelField: 'localized_path',
                   searchField: 'localized_path',
                   create: false,
-                  searchUrl: "/annotator/autosuggest_codes.json" + '?q=',
+                  searchUrl: "/annotator/projects/<%= @project.id %>/autosuggest_codes.json" + '?q=',
                   load: function (query, callback) {
                       if (!query.length) return callback();
                       let searchUrl = this.settings.searchUrl;
@@ -91,7 +91,7 @@
 </style>
 
 
-<%= form_tag update_parent_annotator_discourse_annotator_codes_path, method: :post, remote: false, id: 'bulk-editing-form', onSubmit: 'handleBulkEditSubmit();' do %>
+<%= form_tag update_parent_annotator_discourse_annotator_project_codes_path(project_id: @project.id), method: :post, remote: false, id: 'bulk-editing-form', onSubmit: 'handleBulkEditSubmit();' do %>
   <input id="bulk-editing-selected-ids" type="hidden" name="selected_ids">
   Assign selected to parent:
   <div>

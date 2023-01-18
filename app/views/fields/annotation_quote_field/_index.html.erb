@@ -16,7 +16,7 @@ By default, the attribute is rendered as a truncated string.
   <% post = field.resource.post %>
   <% if post.present? %>
     <%= link_to 'Show in topic',
-                annotator_topic_path(field.resource.topic_id, anchor: "post-number-#{post.post_number}"),
+                annotator_discourse_annotator_project_topic_path(project_id: field.resource.code.project_id, id: field.resource.topic_id, anchor: "post-number-#{post.post_number}"),
                 class: 'link-primary' %>
   <% end %>
 <% end %>

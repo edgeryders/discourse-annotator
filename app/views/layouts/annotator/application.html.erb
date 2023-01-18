@@ -25,16 +25,21 @@ By default, it renders:
   <%= csrf_meta_tags %>
   <%= render "javascript" %>
 
+  <%- if SiteSetting.site_favicon_url.present? %>
+    <link rel="icon" type="image/png" href="<%= SiteSetting.site_favicon_url %>">
+  <%- end %>
 </head>
 <body>
-  <%= render "icons" %>
-  <div class="app-container">
-    <%= render "navigation" -%>
+<%= render "icons" %>
 
-    <main class="main-content" role="main">
-      <%= render "flashes" -%>
-      <%= yield %>
-    </main>
-  </div>
+<div class="app-container">
+  <%= render "navigation" -%>
+
+  <main class="main-content" role="main">
+    <%= render "flashes" -%>
+    <%= yield %>
+  </main>
+</div>
+
 </body>
 </html>

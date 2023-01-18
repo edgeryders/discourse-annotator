@@ -1,7 +1,7 @@
 <% content_for :javascript do %>
   <%= stylesheet_link_tag "discourse-annotator/application", media: "all" %>
   <%= javascript_include_tag "discourse-annotator/application" %>
-  <%= render 'annotator/lib/annotate_js', current_user: @current_user %>
+  <%= render 'annotator/lib/annotate_js', current_user: @current_user, project_id: @project.id %>
 <% end %>
 
 <% content_for :stylesheet do %>

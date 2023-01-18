@@ -1,0 +1,29 @@
+<div class="field-unit">
+  <div class="field-unit__label">
+    <label for="tag_parent"><%= f.label field.attribute %></label>
+  </div>
+  <div class="field-unit__field">
+
+    <%= f.fields_for field.association_name do |nested_form| %>
+      <%= render(
+            partial: "fields/nested_has_many/fields",
+            locals: {
+              f: nested_form,
+              field: field,
+            },
+            ) %>
+    <% end %>
+
+    <div>
+      <%= link_to_add_association(
+            'Add',
+            f,
+            field.association_name,
+            class: 'button',
+            partial: "fields/nested_has_many/fields",
+            render_options: { locals: { field: field } },
+            ) %>
+    </div>
+
+  </div>
+</div>

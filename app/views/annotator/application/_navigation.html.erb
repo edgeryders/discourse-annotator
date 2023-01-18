@@ -1,34 +1,45 @@
 <nav class="navigation" role="navigation">
-  <%= link_to(
+
+  <%# link_to(
         'Overview',
         [:annotator, :root],
         class: "navigation__link navigation__link--#{annotator_root_path == request.path ? 'active' : 'inactive'}"
       ) %>
-  <%= link_to(
-        'Codes',
-        annotator_discourse_annotator_codes_path(creator_id: current_user.id, discourse_tag: current_user.discourse_annotator_settings&.discourse_tag&.name),
-        class: "navigation__link navigation__link--#{nav_link_state('discourse_annotator__codes')}"
-      ) %>
-  <%= link_to(
-        'Topics',
-        annotator_topics_path(with_annotations: 1),
-        class: "navigation__link navigation__link--#{nav_link_state('topics')}"
-      ) %>
 
-  <% annotations_link_state = [
-    nav_link_state('discourse_annotator__text_annotations'),
-    nav_link_state('discourse_annotator__image_annotations'),
-    nav_link_state('discourse_annotator__video_annotations')
-  ].include?(:active) ? :active : :inactive
-  %>
-  <%= link_to(
-        'Annotations',
-        [:annotator_discourse_annotator, :annotations],
-        class: "navigation__link navigation__link--#{annotations_link_state}"
-      ) %>
+  <div style="margin-left:-10px;">
+    <%= render 'annotator/application/project_selector' %>
+  </div>
+
+  <% if @project %>
+    <div style="padding-left:15px;">
+      <%= link_to(
+            'Codes',
+            annotator_discourse_annotator_project_codes_path(project_id: @project.id),
+            class: "navigation__link navigation__link--#{nav_link_state('discourse_annotator__codes')}"
+          ) %>
+      <%= link_to(
+            'Topics',
+            annotator_discourse_annotator_project_topics_path(project_id: @project.id, with_annotations: 1),
+            class: "navigation__link navigation__link--#{nav_link_state('discourse_annotator__topics')}"
+          ) %>
+      <% annotations_link_state = [
+        nav_link_state('discourse_annotator__annotations'),
+        nav_link_state('discourse_annotator__text_annotations'),
+        nav_link_state('discourse_annotator__image_annotations'),
+        nav_link_state('discourse_annotator__video_annotations')
+      ].include?(:active) ? :active : :inactive
+      %>
+      <%= link_to(
+            'Annotations',
+            annotator_discourse_annotator_project_annotations_path(project_id: @project.id),
+            class: "navigation__link navigation__link--#{annotations_link_state}"
+          ) %>
+    </div>
+  <% end %>
+
 
   <br/>
-  <details <%= 'open' if current_controller?(%w[languages user_settings settings]) %> style="cursor:pointer">
+  <details <%= 'open' if current_controller?(%w[languages user_settings projects settings]) %> style="cursor:pointer">
     <summary style="padding:8px 0; color:#999;">Settings</summary>
     <div>
       <%= link_to(
@@ -41,6 +52,13 @@
             [:annotator_discourse_annotator, :user_settings],
             class: "navigation__link navigation__link--#{nav_link_state('discourse_annotator__user_settings')}"
           ) %>
+
+      <%= link_to(
+            'Projects',
+            [:annotator_discourse_annotator, :projects],
+            class: "navigation__link navigation__link--#{nav_link_state('discourse_annotator__projects')}"
+          ) %>
+
       <%= link_to(
             'Languages',
             [:annotator_discourse_annotator, :languages],

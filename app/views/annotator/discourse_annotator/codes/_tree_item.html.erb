@@ -13,7 +13,7 @@
     %>
 
     <% if code.children.any? %>
-        <%= link_to tree_item_annotator_discourse_annotator_code_path(code.id, show_children: !@show_children), remote: true, class: 'item', title: title do %>
+        <%= link_to tree_item_annotator_discourse_annotator_project_code_path(project_id: @project.id, id: code.id, show_children: !@show_children), remote: true, class: 'item', title: title do %>
           <%= (@show_children ? '▼' : '▶') if code.children.any? %>
         <%= label %>
         <% end %>
@@ -24,12 +24,12 @@
 
   <%# "by #{code.creator.username}" unless params[:creator_id].present? %>
   <%= "by #{code.creator.username}" %>
-  <%= link_to('Show', [namespace, code], class: "action-edit") %> |
-  <%= link_to('Edit', [:edit, namespace, code], class: "action-edit",) %> |
-  <%= link_to('Annotations', annotator_discourse_annotator_annotations_path(code_id: code.id), class: "action-edit",) %>
+  <%= link_to 'Show', [namespace, @project, code] %> |
+  <%= link_to 'Edit', [:edit, namespace, @project, code] %> |
+  <%= link_to 'Annotations', annotator_discourse_annotator_project_annotations_path(project_id: @project.id, code_id: code.id)  %>
   |
-  <%= link_to('Merge', merge_annotator_discourse_annotator_code_path(code.id), class: "action-edit") %> |
-  <%= link_to('Copy', copy_annotator_discourse_annotator_code_path(code.id), method: :put, class: "action-edit") %>
+  <%= link_to 'Merge', [:merge, namespace, @project, code] %> |
+  <%= link_to 'Copy', [:copy, namespace, @project, code] %>
   <% if code.is_childless? %>
     |
     <%= render 'action_delete', namespace: namespace, code: code %>

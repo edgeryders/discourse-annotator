@@ -10,7 +10,6 @@ class DiscourseAnnotator::TextAnnotationDashboard < DiscourseAnnotator::Annotati
       :quote,
       :text,
       :code,
-      :discourse_tags,
       :creator,
       :created_at,
       :updated_at,

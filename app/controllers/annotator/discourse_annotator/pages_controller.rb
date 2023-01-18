@@ -7,7 +7,7 @@ class Annotator::DiscourseAnnotator::PagesController < Annotator::ApplicationCon
   end
 
   def search
-    @annotations = DiscourseAnnotator::Annotation.where(search_params)
+    @annotations = DiscourseAnnotator::Project.find(params[:project_id]).annotations.where(search_params)
     @total = @annotations.size
     @current_user = current_user
   end

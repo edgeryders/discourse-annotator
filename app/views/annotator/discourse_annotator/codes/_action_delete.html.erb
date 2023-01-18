@@ -1,6 +1,6 @@
 <%= link_to(
       'Delete',
-      [namespace, code],
+      [namespace, @project, code],
       class: "text-color-red",
       method: :delete,
       remote: true,

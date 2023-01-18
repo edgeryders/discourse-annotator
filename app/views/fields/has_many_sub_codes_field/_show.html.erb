@@ -1,0 +1,10 @@
+<% if field.resources.any? %>
+  <% sub_codes = field.resources.with_localized_codes(language: DiscourseAnnotator::UserSetting.language_for_user(current_user)) %>
+  <% order_codes(codes: sub_codes, order: 'name').each do |code| %>
+    <div>
+      <%= link_to code.name, [namespace, @project, code] %>
+    </div>
+  <% end %>
+<% else %>
+  <%= t("administrate.fields.has_many.none", default: "–") %>
+<% end %>

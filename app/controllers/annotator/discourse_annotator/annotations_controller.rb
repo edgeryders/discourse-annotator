@@ -2,24 +2,20 @@ require_dependency 'annotator/application_controller'
 
 class Annotator::DiscourseAnnotator::AnnotationsController < Annotator::ApplicationController
 
+  before_action :set_project, only: [:index, :show, :create, :edit, :update]
   before_action :set_annotation, only: [:show, :update, :destroy]
   before_action :set_current_user, only: [:create, :show, :update, :destroy]
 
 
   def index
     scope = scoped_resource
+
+    if params[:project_id].present?
+      scope = scope.where(code_id: DiscourseAnnotator::Code.where(project_id: params[:project_id]).select(:id))
+    end
     scope = scope.where(post_id: ::Topic.find(params[:topic_id]).try(:post_ids)) if params[:topic_id].present?
     scope = scope.where(post_id: params[:post_id]) if params[:post_id].present?
     scope = scope.where(creator_id: params[:creator_id]) if params[:creator_id].present?
-
-    # Only annotations where the posts topics are tagged with the given discourse tag.
-    if params[:discourse_tag].present?
-      if (tag = ::Tag.find_by(name: params[:discourse_tag]))
-        scope = scope.where(post_id: Post.where(topic_id: tag.topic_ids).ids)
-      else
-        scope = scope.none
-      end
-    end
 
     # Only annotations that are tagged with the given Open Ethnographer code(s).
     if params[:code_id].present?
@@ -30,7 +26,12 @@ class Annotator::DiscourseAnnotator::AnnotationsController < Annotator::Applicat
     search_term = params[:search].to_s.strip
     resources = Administrate::Search.new(scope, DiscourseAnnotator::AnnotationDashboard, search_term).run
     resources = apply_collection_includes(resources)
-    resources = order.apply(resources)
+    resources = if params.dig(:discourse_annotator__annotation, :order) == 'topic_id_and_post_id'
+                  direction = params[:discourse_annotator__annotation][:direction]
+                  resources.order(topic_id: direction, post_id: direction)
+                else
+                  order.apply(resources)
+                end
     resources = resources.page(params[:page]).per(records_per_page)
     page = Administrate::Page::Collection.new(dashboard, order: order)
 
@@ -63,7 +64,7 @@ class Annotator::DiscourseAnnotator::AnnotationsController < Annotator::Applicat
     success = true
     # Create one annotation for each provided code-name.
     params[:codes].each do |path|
-      code = get_code(path)
+      code = get_code(path, @project)
       format_client_input_to_rails_convention_for_create(code)
 
       # Determine the class based on the attributes that are set.
@@ -109,7 +110,7 @@ class Annotator::DiscourseAnnotator::AnnotationsController < Annotator::Applicat
       }
       format.html {
         if @annotation.update(annotation_params)
-          redirect_to([namespace, @annotation], notice: translate_with_resource("update.success"))
+          redirect_to([namespace, @project, @annotation], notice: translate_with_resource("update.success"))
         else
           render :edit, locals: {page: Administrate::Page::Form.new(dashboard, requested_resource)}
         end
@@ -275,7 +276,7 @@ class Annotator::DiscourseAnnotator::AnnotationsController < Annotator::Applicat
   end
 
   # codes in the path can be separated by ` -> ` or ` → `
-  def get_code(path)
+  def get_code(path, project = nil)
     return if path.blank?
     normalized_path = path.gsub('->', DiscourseAnnotator::LocalizedCode.path_separator)
     language = DiscourseAnnotator::UserSetting.language_for_user(current_user)
@@ -286,14 +287,17 @@ class Annotator::DiscourseAnnotator::AnnotationsController < Annotator::Applicat
       code = DiscourseAnnotator::Code.
           joins(:localized_codes).
           where("lower(discourse_annotator_localized_codes.path) = ?", path_items.join(DiscourseAnnotator::LocalizedCode.path_separator).downcase)&.first ||
-          create_code!(parent: code, name: code_name, language: language)
+          create_code!(parent: code, name: code_name, language: language, project: project)
     end
     code
   end
 
-  # Use callbacks to share common setup or constraints between actions.
   def set_annotation
     @annotation = DiscourseAnnotator::Annotation.find(params[:id])
+  end
+
+  def set_project
+    @project = DiscourseAnnotator::Project.find(params[:project_id])
   end
 
   def valid_action?(name, resource = resource_class)
@@ -303,13 +307,23 @@ class Annotator::DiscourseAnnotator::AnnotationsController < Annotator::Applicat
   # name:
   # language:
   # parent:
+  # project:
   def create_code!(args = {})
-    code = DiscourseAnnotator::Code.new(parent: args[:parent], creator: current_user)
+    code = DiscourseAnnotator::Code.new(parent: args[:parent], creator: current_user, project: args[:project])
     code.names.build(name: args[:name], language: args[:language])
     code.save!
     code
-
   end
 
-
 end
+
+
+
+# Only annotations where the posts topics are tagged with the given discourse tag.
+# if params[:discourse_tag].present?
+#   if (tag = ::Tag.find_by(name: params[:discourse_tag]))
+#     scope = scope.where(post_id: Post.where(topic_id: tag.topic_ids).ids)
+#   else
+#     scope = scope.none
+#   end
+# end

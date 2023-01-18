@@ -3,9 +3,10 @@ en:
     label:
       annotation:
         code: Code
-      topic:
+      discourse_annotator/topic:
         user_annotations_count: Your Annotations
-        annotations_count: Total Annotations
+        annotations_count: Total Project Annotations
       discourse_annotator/annotation:
+        topic_id_and_post_id: Topic/Post
         code: Code
         type: Content type

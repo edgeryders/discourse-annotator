@@ -10,8 +10,8 @@
             content.annotator('addPlugin', 'MyTags');
             content.annotator('addPlugin', 'Store', {
                 prefix: '/annotator',
-                annotationData: {'annotator_schema_version': "v1.0", 'uri': uri },
-                loadFromSearch: {'uri': uri}
+                annotationData: {'annotator_schema_version': "v1.0", 'uri': uri, 'project_id': '<%= project_id %>' },
+                loadFromSearch: {'uri': uri, 'project_id': '<%= project_id %>'}
             });
 
             $(selector + " .annotator-adder").on("click", function () {
@@ -34,7 +34,7 @@
                             'annotator_schema_version': "v1.0",
                             'uri': '/video/' + video_id,
                         },
-                        loadFromSearch: {'uri': '/video/' + video_id},
+                        loadFromSearch: {'uri': '/video/' + video_id, 'project_id': '<%= project_id %>'},
                     },
                 },
             }
@@ -55,7 +55,7 @@
                 <%# See: https://stackoverflow.com/questions/9656523/jquery-autocomplete-with-callback-ajax-json %>
                 source: function (request, response) {
                     $.ajax({
-                        url: "/annotator/localized_codes.json",
+                        url: "/annotator/projects/<%= project_id %>/localized_codes.json",
                         dataType: "json",
                         data: {
                             q: request.term

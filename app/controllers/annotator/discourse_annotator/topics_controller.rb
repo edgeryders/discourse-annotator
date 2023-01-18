@@ -1,6 +1,8 @@
 require_dependency 'annotator/application_controller'
 
-class Annotator::TopicsController < Annotator::ApplicationController
+class Annotator::DiscourseAnnotator::TopicsController < Annotator::ApplicationController
+
+  before_action :set_project, only: [:index, :show]
 
   def show
     opts = params.slice(:username_filters, :filter, :page, :post_number, :show_deleted)
@@ -12,74 +14,77 @@ class Annotator::TopicsController < Annotator::ApplicationController
     end
   end
 
-
   # disable 'edit' and 'destroy' links
   def valid_action?(name, resource = resource_class)
     %w[edit destroy].exclude?(name.to_s) && super
   end
 
-
-  def namespace
-    :annotator
-  end
-
-
   def show_search_bar?
     true
   end
 
-
   # Override this if you have certain roles that require a subset
   # this will be used to set the records shown on the `index` action.
   def scoped_resource
-    user_counts = topics_with_annotations_count(
-        posts: Post.with_annotations_count.where(discourse_annotator_annotations: {creator_id: current_user.id})
-    )
-    total_counts = topics_with_annotations_count(posts: Post.with_annotations_count)
+    user_counts = topics_with_annotations_count(@project.annotations.select('id').where(discourse_annotator_annotations: { creator_id: current_user.id }))
+    total_counts = topics_with_annotations_count(@project.annotations.select('id'))
 
-    resources = Topic.select("topics.*, tu.annotations_count AS user_annotations_count, tc.annotations_count AS annotations_count")
-                    .joins("LEFT OUTER JOIN (#{user_counts.to_sql}) tu ON topics.id = tu.id")
-                    .joins("LEFT OUTER JOIN (#{total_counts.to_sql}) tc ON topics.id = tc.id")
+    resources = Topic.select("topics.*, COALESCE(tu.annotations_count,0) AS user_annotations_count, COALESCE(tc.annotations_count,0) AS annotations_count")
+                     .joins("LEFT OUTER JOIN (#{user_counts.to_sql}) tu ON topics.id = tu.id")
+                     .joins("LEFT OUTER JOIN (#{total_counts.to_sql}) tc ON topics.id = tc.id")
 
     resources = resources.listable_topics # Exclude private messages.
 
     if params[:annotator_id].present?
-      resources = resources.where(id: Post.select(:topic_id).with_annotations.where(discourse_annotator_annotations: {creator_id: params[:annotator_id]}))
+      resources = resources.where(id: @project.posts.with_annotations.select(:topic_id).where(discourse_annotator_annotations: { creator_id: params[:annotator_id] }))
     end
 
     if params[:with_annotations].present?
       resources = resources.where(params[:with_annotations] === '1' ? 'tc.annotations_count > 0' : 'tc.annotations_count = 0')
     end
 
-    resources = if params.dig(:topic, :order).blank?
+    resources = if params.dig(:discourse_annotator__topic, :order).blank?
                   resources.order("annotations_count DESC")
-                elsif params.dig(:topic, :order) == 'user_annotations_count'
-                  resources.order("user_annotations_count #{params[:topic][:direction]}")
-                elsif params.dig(:topic, :order) == 'annotations_count'
-                  resources.order("annotations_count #{params[:topic][:direction]}")
+                elsif params.dig(:discourse_annotator__topic, :order) == 'user_annotations_count'
+                  resources.order("user_annotations_count #{params[:discourse_annotator__topic][:direction]}")
+                elsif params.dig(:discourse_annotator__topic, :order) == 'annotations_count'
+                  resources.order("annotations_count #{params[:discourse_annotator__topic][:direction]}")
                 else
                   order.apply(resources)
                 end
     resources
   end
 
-
   def records_per_page
     params[:per_page] || 50
   end
 
-
   private
 
-  # posts:
-  def topics_with_annotations_count(args = {})
-    Topic.select("topics.id, SUM(COALESCE(posts_with_counts.annotations_count,0))::bigint AS annotations_count")
-        .joins("LEFT OUTER JOIN (#{args[:posts].to_sql}) posts_with_counts ON topics.id = posts_with_counts.topic_id")
-        .group('topics.id')
+  def set_project
+    @project = DiscourseAnnotator::Project.find(params[:project_id])
+  end
+
+  def topics_with_annotations_count(annotations)
+    DiscourseAnnotator::Annotation.select('topic_id AS id, count(id) AS annotations_count').where(id: annotations).group('topic_id')
   end
 
 end
 
+
+
+
+# posts:
+# def topics_with_annotations_count(args = {})
+#   Topic.select("topics.id, SUM(COALESCE(posts_with_counts.annotations_count,0))::bigint AS annotations_count")
+#       .joins("LEFT OUTER JOIN (#{args[:posts].to_sql}) posts_with_counts ON topics.id = posts_with_counts.topic_id")
+#       .group('topics.id')
+# end
+
+
+# def namespace
+#   :annotator
+# end
 
 # def index
 #   search_term = params[:search].to_s.strip
@@ -96,7 +101,6 @@ end
 #     show_search_bar: show_search_bar?,
 #   }
 # end
-
 
 # .joins("LEFT OUTER JOIN discourse_annotator_annotations ON discourse_annotator_annotations.post_id = posts_with_counts.id")
 # scope = Topic.select("topics.*, count(posts_with_counts.id) AS annotations_count")

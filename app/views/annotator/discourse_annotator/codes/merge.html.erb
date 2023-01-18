@@ -1,23 +1,15 @@
 
+<%= render "header", page_title: "Merge code \"#{page.resource.localized_name_with_path}\" into another code",  action: :merge, page: page %>
 
-<header class="main-content__header" role="banner">
-  <h1 class="main-content__page-title">
-    Merge <%= page.page_title %> into another code
-  </h1>
-
-  <div></div>
-</header>
 
 <section class="main-content__body">
-
   <% content_for(:javascript) do %>
     <script>
         $('#code_merge_into_code_id').selectize();
     </script>
   <% end %>
 
-
-  <%= form_for([namespace, page.resource], url: merge_into_annotator_discourse_annotator_code_path(page.resource), method: :put, html: {class: "form"}) do |f| %>
+  <%= form_for([namespace, page.resource], url: merge_into_annotator_discourse_annotator_project_code_path(project_id: @project.id, id:page.resource.id), method: :put, html: {class: "form"}) do |f| %>
     <% if page.resource.errors.any? %>
       <div id="error_explanation">
         <h2>
@@ -45,6 +37,5 @@
       <%= f.submit 'Merge' %>
     </div>
   <% end %>
-
 
 </section>

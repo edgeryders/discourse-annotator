@@ -20,7 +20,7 @@
 </style>
 
 <div class="code-row" id="code-row-<%= resource.id %>">
-  <%= form_for(resource, url: annotator_discourse_annotator_code_path(resource), html: {class: "form"}, remote: true) do |f| %>
+  <%= form_for(resource, url: annotator_discourse_annotator_project_code_path(project_id: @project.id, id: resource.id), html: {class: "form"}, remote: true) do |f| %>
     <% if resource.errors.any? %>
       <div class="error-explanation">
         <h2>

@@ -27,7 +27,7 @@
                 labelField: 'localized_path',
                 searchField: 'localized_path',
                 create: false,
-                searchUrl: "/annotator/autosuggest_codes.json" + '?code_id=<%= field.resource.id %>&q=',
+                searchUrl: "/annotator/projects/<%= @project.id %>/autosuggest_codes.json" + '?code_id=<%= field.resource.id %>&q=',
                 load: function (query, callback) {
                     if (!query.length) return callback();
                     var searchUrl = this.settings.searchUrl;

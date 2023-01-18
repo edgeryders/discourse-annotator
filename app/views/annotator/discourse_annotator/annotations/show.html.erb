@@ -26,7 +26,7 @@ as well as a link to its edit page.
   <div>
     <%= link_to(
       "#{t("administrate.actions.edit")} #{page.page_title}",
-      [:edit, namespace, page.resource],
+      [:edit, namespace, @project, page.resource],
       class: "button",
     ) if current_user.admin?  %>
   </div>

@@ -192,9 +192,10 @@ td {
     padding: 3px 8px;
     text-decoration: none
   }
+
   li > span a {
-    color:inherit;
-    text-decoration:none;
+    color: inherit;
+    text-decoration: none;
   }
 
   li.parent_li > span {
@@ -281,4 +282,48 @@ td {
 
 .navigation__link {
   text-decoration: none;
+}
+
+.navigation {
+  padding-top: 10px;
+}
+
+div[role=navigation] {
+  & > span {
+    display: inline-block;
+    padding-right: 15px;
+  }
+}
+
+.field-unit--has-many-code-names-field {
+  .nested-fields {
+    &::after {
+      clear: both;
+      content: "";
+      display: block;
+    }
+
+    margin-bottom: 15px;
+    background: #f3f3f3;
+    padding: 15px;
+  }
+
+  .remove_fields, .add_fields {
+    float: right;
+  }
+}
+
+.page-actions {
+  & > * {
+    display: inline-block;
+    margin-left: 5px;
+  }
+}
+
+button, input[type="button"], input[type="reset"], input[type="submit"], .button {
+  font-weight: normal;
+}
+
+.main-content__header {
+  padding: 1rem;
 }

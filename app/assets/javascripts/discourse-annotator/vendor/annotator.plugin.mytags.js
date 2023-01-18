@@ -85,15 +85,20 @@ Annotator.Plugin.MyTags = function (element, message) {
             controller = new AbortController();
             // show loading animation and hide the suggestions dropdown
             tagify.loading(true).dropdown.hide.call(tagify)
-
-            fetch('/annotator/localized_codes.json?q=' + value, {signal: controller.signal})
+            const projectId = window.location.href.match(/annotator\/projects\/(.+)\/topics\//i)[1]
+            fetch(`/annotator/projects/${projectId}/localized_codes.json?q=${value}`, {signal: controller.signal})
                 .then(function (result) {
                     return result.json()
                 })
                 .then(function (results) {
                     var whitelist = [];
                     for (var i = 0; i < results.length; i++) {
-                        whitelist.push(results[i]['localized_path']);
+                        whitelist.push(
+                            {
+                                value: results[i]['localized_path'],
+                                title: results[i]['description']
+                            },
+                        );
                     }
                     // update whitelist Array in-place
                     // Causes this error https://github.com/lautis/uglifier/issues/127 but `Uglifier.new(harmony: true)`

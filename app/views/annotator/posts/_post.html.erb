@@ -1,11 +1,14 @@
 <%
+
+  annotations = @project.annotations.where(post: post)
+
   # Annotations must refer to post revisions. Otherwise when a post is edited the XPath anchoring mechanism to refer to the first
   # and last word of an annotation's quote text may not be able to anchor the XPath expressions to the edited version of the post.
   # See: https://github.com/edgeryders/discourse-annotator/issues/6
   #
   # All annotations that belong to the same post are required to refer to the same post-revision.
   # To get the revision_number we can therefore just use the first annotation.
-  if post.annotations.any? && (revision_number = post.annotations.first.revision_number)
+  if annotations.any? && (revision_number = annotations.first.revision_number)
     annotated_revision = post.revisions.find_by(number: revision_number)
     content = annotated_revision.modifications[:raw].first
   else
@@ -13,7 +16,7 @@
   end
 
   language = defined?(@current_user) ? DiscourseAnnotator::UserSetting.language_for_user(@current_user) : nil
-  codes = post.annotations.map(&:code).uniq.compact
+  codes = annotations.map(&:code).uniq.compact
   localized_codes = codes.map { |code|
     {
       id: code.id,

@@ -1,3 +1,3 @@
 <% if field.data.present? %>
-  <%= link_to code_view(field.data.localized_name_with_path), annotator_discourse_annotator_code_path(field.data) %>
+  <%= link_to code_view(field.data.localized_name_with_path), annotator_discourse_annotator_project_code_path(project_id: field.data.project_id, id: field.data.id) %>
 <% end %>

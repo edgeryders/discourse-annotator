@@ -9,16 +9,6 @@
     All annotations of this code will be assigned to the selected code and this code will be deleted.<br/>
     <span style="color:#f04855; margin-bottom:4px;">Warning: This action cannot be undone.</span>
   </div>
-
-  <% if false %>
-    <% codes = if current_user.admin?
-                nested_dropdown_codes
-              else
-                nested_dropdown_codes(created_by: field.resource.persisted? ? field.resource.creator : current_user)
-              end
-    %>
-    <%= f.select :merge_into_code_id, codes, include_blank: true %>
-  <% end %>
 </div>
 
 
@@ -28,11 +18,14 @@
         $(".field-unit--merge-code-field select").each(function initializeSelectize(index, element) {
             var $element = $(element);
             $element.selectize({
+                placeholder: 'Search by code name...',
                 valueField: 'id',
                 labelField: 'localized_path',
                 searchField: 'localized_path',
                 create: false,
-                searchUrl: "/annotator/mergeable_codes.json" + '?code_id=<%= field.resource.id %>&q=',
+                openOnFocus: true,
+                preload: 'focus',
+                searchUrl: "/annotator/projects/<%= field.resource.project_id %>/mergeable_codes.json" + '?code_id=<%= field.resource.id %>&q=',
                 load: function (query, callback) {
                     if (!query.length) return callback();
                     var searchUrl = this.settings.searchUrl;

@@ -1,0 +1,27 @@
+<header class="main-content__header" role="banner">
+  <h1 class="main-content__page-title">
+    <%= page_title %>
+  </h1>
+
+  <div class="page-actions">
+    <%= button_to("Show", [namespace, @project, page.resource], class: "button", disabled: action == :show, method: :get) %>
+
+    <%= button_to("Edit", [:edit, namespace, @project, page.resource], class: "button", disabled: action == :edit, method: :get) %>
+
+    <%= link_to("Annotations", annotator_discourse_annotator_project_annotations_path(project_id: @project.id, code_id: page.resource.id), class: "button") %>
+
+    <%= button_to("Merge", [:merge, namespace, @project, page.resource], class: "button", disabled: action == :merge, method: :get) %>
+
+    <%= button_to("Copy", [:copy, namespace, @project, page.resource], class: "button", disabled: action == :copy, method: :get) %>
+
+    <%= button_to(
+          'Delete',
+          [namespace, @project, page.resource],
+          class: "button button-delete",
+          method: :delete,
+          title: !page.resource.is_childless? ? 'Codes with sub-codes cannot be deleted.' : nil,
+          disabled: !page.resource.is_childless?,
+          data: { confirm: "Are you sure? This code has #{page.resource.annotations_count} annotations which will also be deleted." }
+        ) %>
+  </div>
+</header>

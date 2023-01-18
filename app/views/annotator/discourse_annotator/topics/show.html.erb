@@ -1,14 +1,14 @@
 <% content_for :javascript do %>
   <%= stylesheet_link_tag "discourse-annotator/application", media: "all" %>
   <%= javascript_include_tag "discourse-annotator/application" %>
-  <%= render 'annotator/lib/annotate_js', current_user: @current_user %>
+  <%= render 'annotator/lib/annotate_js', current_user: @current_user, project_id: @project.id %>
 <% end %>
 
 <% content_for :stylesheet do %>
   <style>
-    <% annotations = DiscourseAnnotator::Annotation.where(topic_id: @topic_view.topic.id).where.not(creator_id: @current_user.id) %>
+    <% annotations = @project.annotations.where(topic_id: @topic_view.topic.id).where.not(creator_id: @current_user.id) %>
     <% if annotations.present? %>
-    <%= annotations.map {|annotation| "[data-annotation-id=\"#{annotation.id}\"]"}.join(', ').html_safe + "{ background-color: rgba(182, 223, 236, 0.3) !important; }" %>
+      <%= annotations.map {|annotation| "[data-annotation-id=\"#{annotation.id}\"]"}.join(', ').html_safe + "{ background-color: rgba(182, 223, 236, 0.3) !important; }" %>
     <% end %>
 
     .code {
@@ -54,10 +54,10 @@
   <% if @topic_view.prev_page || @topic_view.next_page %>
     <div role='navigation' itemscope itemtype='http://schema.org/SiteNavigationElement'>
       <% if @topic_view.prev_page %>
-        <span itemprop='url'><%= link_to t(:prev_page), annotator_topic_path(@topic_view.topic.id, page: @topic_view.prev_page), rel: 'prev', itemprop: 'name' %></span>
+        <span itemprop='url'><%= link_to t(:prev_page), annotator_discourse_annotator_project_topic_path(project_id: @project.id, id: @topic_view.topic.id, page: @topic_view.prev_page), rel: 'prev', itemprop: 'name' %></span>
       <% end %>
       <% if @topic_view.next_page %>
-        <span itemprop='url'><b><%= link_to t(:next_page), annotator_topic_path(@topic_view.topic.id, page: @topic_view.next_page), rel: 'next', itemprop: 'name' %></b></span>
+        <span itemprop='url'><b><%= link_to t(:next_page), annotator_discourse_annotator_project_topic_path(project_id: @project.id, id: @topic_view.topic.id, page: @topic_view.next_page), rel: 'next', itemprop: 'name' %></b></span>
       <% end %>
     </div>
   <% end %>
