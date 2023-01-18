@@ -7,8 +7,8 @@ module DiscourseAnnotator
         DiscourseAnnotator::Project.all.each { |p| p.fast_delete } if Rails.env.development?
 
         # Remove corrupted data.
-        DiscourseAnnotator::Annotation.find(13130).destroy
-        DiscourseAnnotator::Code.find(4209).destroy
+        DiscourseAnnotator::Annotation.find_by(id: 13130)&.destroy
+        DiscourseAnnotator::Code.find_by(id: 4209)&.destroy
 
         ethno_tags = Tag.where("name LIKE 'ethno-%'")
 
