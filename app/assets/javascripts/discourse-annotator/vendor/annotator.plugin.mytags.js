@@ -97,16 +97,16 @@ Annotator.Plugin.MyTags = function (element, message) {
                             {
                                 value: results[i]['localized_path'],
                                 title: results[i]['description']
-                            },
+                            }
                         );
                     }
                     // update whitelist Array in-place
                     // Causes this error https://github.com/lautis/uglifier/issues/127 but `Uglifier.new(harmony: true)`
                     // doesn't resolve it.
                     // tagify.settings.whitelist.splice(0, whitelist.length, ...whitelist)
-                    tagify.settings.whitelist = whitelist
+                    tagify.settings.whitelist = whitelist;
                     tagify.loading(false).dropdown.show.call(tagify, value); // render the suggestions dropdown
-                })
+                });
 
         }
 
@@ -114,4 +114,4 @@ Annotator.Plugin.MyTags = function (element, message) {
     };
 
     return plugin;
-}
+};
