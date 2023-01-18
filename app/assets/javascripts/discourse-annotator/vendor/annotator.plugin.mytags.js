@@ -85,7 +85,7 @@ Annotator.Plugin.MyTags = function (element, message) {
             controller = new AbortController();
             // show loading animation and hide the suggestions dropdown
             tagify.loading(true).dropdown.hide.call(tagify)
-            const projectId = window.location.href.match(/annotator\/projects\/(.+)\/topics\//i)[1]
+            var projectId = window.location.href.match(/annotator\/projects\/(.+)\/topics\//i)[1];
             fetch(`/annotator/projects/${projectId}/localized_codes.json?q=${value}`, {signal: controller.signal})
                 .then(function (result) {
                     return result.json()
