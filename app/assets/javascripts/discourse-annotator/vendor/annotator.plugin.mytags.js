@@ -60,18 +60,18 @@ Annotator.Plugin.MyTags = function (element, message) {
 
 
         this.annotator.subscribe("annotationEditorShown", function (editor, annotation) {
-                tagify.removeAllTags();
-                if (annotation.codes) {
-                    tagify.addTags(annotation.codes);
-                }
-                if (Object.keys(annotation).length === 0) { // create annotation
-                    tagify.settings.maxTags = Infinity
-                    tagify.settings.keepInvalidTags = true
-                } else { // edit annotation
-                    tagify.settings.maxTags = 1
-                    tagify.settings.keepInvalidTags = false
-                }
-            });
+            tagify.removeAllTags();
+            if (annotation.codes) {
+                tagify.addTags(annotation.codes);
+            }
+            if (Object.keys(annotation).length === 0) { // create annotation
+                tagify.settings.maxTags = Infinity
+                tagify.settings.keepInvalidTags = true
+            } else { // edit annotation
+                tagify.settings.maxTags = 1
+                tagify.settings.keepInvalidTags = false
+            }
+        });
 
 
         var controller; // for aborting the call
