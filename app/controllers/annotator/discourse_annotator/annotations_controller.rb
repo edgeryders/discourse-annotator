@@ -101,7 +101,7 @@ class Annotator::DiscourseAnnotator::AnnotationsController < Annotator::Applicat
   def update
     respond_to do |format|
       format.json {
-        format_client_input_to_rails_convention_for_update
+        format_client_input_to_rails_convention_for_update(@project)
         if @annotation.update(annotation_params)
           render :show, status: :ok, location: annotator_discourse_annotator_annotations_url(@annotation)
         else
@@ -254,8 +254,8 @@ class Annotator::DiscourseAnnotator::AnnotationsController < Annotator::Applicat
 
   # Convert the data sent by AnnotatorJS to the format that Rails expects so
   # that we are able to create a proper params object
-  def format_client_input_to_rails_convention_for_update
-    code = get_code(params[:codes].first)
+  def format_client_input_to_rails_convention_for_update(project)
+    code = get_code(params[:codes].first, project)
     format_client_input_to_rails_convention_for_create(code)
     # Annotator sends duplicate ranges when an annotation is updated which would then be saved.
     # As ranges are not allowed to be changed we can simply remove the provided attributes.
@@ -276,7 +276,7 @@ class Annotator::DiscourseAnnotator::AnnotationsController < Annotator::Applicat
   end
 
   # codes in the path can be separated by ` -> ` or ` → `
-  def get_code(path, project = nil)
+  def get_code(path, project)
     return if path.blank?
     normalized_path = path.gsub('->', DiscourseAnnotator::LocalizedCode.path_separator)
     language = DiscourseAnnotator::UserSetting.language_for_user(current_user)
@@ -285,6 +285,7 @@ class Annotator::DiscourseAnnotator::AnnotationsController < Annotator::Applicat
     normalized_path.split(DiscourseAnnotator::LocalizedCode.path_separator).map(&:strip).each do |code_name|
       path_items << code_name
       code = DiscourseAnnotator::Code.
+          where(project_id: project.id).
           joins(:localized_codes).
           where("lower(discourse_annotator_localized_codes.path) = ?", path_items.join(DiscourseAnnotator::LocalizedCode.path_separator).downcase)&.first ||
           create_code!(parent: code, name: code_name, language: language, project: project)

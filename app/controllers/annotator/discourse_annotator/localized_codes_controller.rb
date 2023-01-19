@@ -1,7 +1,6 @@
 class Annotator::DiscourseAnnotator::LocalizedCodesController < Annotator::ApplicationController
 
   def index
-    # p "👉 #{params[:project_id]}"
     codes = DiscourseAnnotator::Code
               .select('discourse_annotator_codes.id, discourse_annotator_localized_codes.path localized_path, discourse_annotator_codes.description')
               .order("LOWER(discourse_annotator_localized_codes.path) ASC")
