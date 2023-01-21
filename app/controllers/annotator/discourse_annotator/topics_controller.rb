@@ -40,7 +40,7 @@ class Annotator::DiscourseAnnotator::TopicsController < Annotator::ApplicationCo
     end
 
     if params[:with_annotations].present?
-      resources = resources.where(params[:with_annotations] === '1' ? 'tc.annotations_count > 0' : 'tc.annotations_count = 0')
+      resources = resources.where('tc.annotations_count > 0')
     end
 
     resources = if params.dig(:discourse_annotator__topic, :order).blank?
