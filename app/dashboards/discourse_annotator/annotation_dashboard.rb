@@ -15,7 +15,7 @@ module DiscourseAnnotator
       updated_at: Field::DateTime,
       topic: Annotator::TopicField,
       src: Field::String,
-      topic_id_and_post_id: Field::String,
+      topic_id_and_post_id: Field::String.with_options(searchable: false),
       # TextAnnotation
       text: Annotator::TruncatedTextField.with_options(searchable: true),
       quote: Annotator::AnnotationQuoteField.with_options(searchable: true),

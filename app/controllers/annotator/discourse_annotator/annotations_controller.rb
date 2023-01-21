@@ -6,7 +6,6 @@ class Annotator::DiscourseAnnotator::AnnotationsController < Annotator::Applicat
   before_action :set_annotation, only: [:show, :update, :destroy]
   before_action :set_current_user, only: [:create, :show, :update, :destroy]
 
-
   def index
     scope = scoped_resource
 
@@ -26,11 +25,15 @@ class Annotator::DiscourseAnnotator::AnnotationsController < Annotator::Applicat
     search_term = params[:search].to_s.strip
     resources = Administrate::Search.new(scope, DiscourseAnnotator::AnnotationDashboard, search_term).run
     resources = apply_collection_includes(resources)
-    resources = if params.dig(:discourse_annotator__annotation, :order) == 'topic_id_and_post_id'
-                  direction = params[:discourse_annotator__annotation][:direction]
-                  resources.order(topic_id: direction, post_id: direction)
+    resources = if params.dig(:discourse_annotator__annotation, :order)
+                  if params.dig(:discourse_annotator__annotation, :order) == 'topic_id_and_post_id'
+                    direction = params[:discourse_annotator__annotation][:direction]
+                    resources.order(topic_id: direction, post_id: direction)
+                  else
+                    order.apply(resources)
+                  end
                 else
-                  order.apply(resources)
+                  resources.order(created_at: :desc)
                 end
     resources = resources.page(params[:page]).per(records_per_page)
     page = Administrate::Page::Collection.new(dashboard, order: order)
@@ -38,10 +41,10 @@ class Annotator::DiscourseAnnotator::AnnotationsController < Annotator::Applicat
     respond_to do |format|
       format.html {
         render locals: {
-            resources: resources,
-            search_term: search_term,
-            page: page,
-            show_search_bar: show_search_bar?
+          resources: resources,
+          search_term: search_term,
+          page: page,
+          show_search_bar: show_search_bar?
         }
       }
       format.json {
@@ -53,11 +56,9 @@ class Annotator::DiscourseAnnotator::AnnotationsController < Annotator::Applicat
     end
   end
 
-
   def records_per_page
     params[:per_page] || 50
   end
-
 
   # POST /annotations
   def create
@@ -92,7 +93,7 @@ class Annotator::DiscourseAnnotator::AnnotationsController < Annotator::Applicat
   # GET /annotations/1
   def show
     respond_to do |format|
-      format.html { render locals: {page: Administrate::Page::Show.new(dashboard, requested_resource)} }
+      format.html { render locals: { page: Administrate::Page::Show.new(dashboard, requested_resource) } }
       format.json { render :show }
     end
   end
@@ -112,7 +113,7 @@ class Annotator::DiscourseAnnotator::AnnotationsController < Annotator::Applicat
         if @annotation.update(annotation_params)
           redirect_to([namespace, @project, @annotation], notice: translate_with_resource("update.success"))
         else
-          render :edit, locals: {page: Administrate::Page::Form.new(dashboard, requested_resource)}
+          render :edit, locals: { page: Administrate::Page::Form.new(dashboard, requested_resource) }
         end
       }
     end
@@ -162,7 +163,6 @@ class Annotator::DiscourseAnnotator::AnnotationsController < Annotator::Applicat
   def set_current_user
     @current_user = current_user
   end
-
 
   private
 
@@ -265,13 +265,13 @@ class Annotator::DiscourseAnnotator::AnnotationsController < Annotator::Applicat
   # Only allow a trusted parameter 'white list' through.
   def annotation_params
     params.require(:annotation).permit(
-        :code_id, :uri, :post_id, :topic_id,
-        # VideoAnnotation
-        :container, :src, :ext, :start, :end,
-        # Image Annotation
-        :src, :shape, :units, :geometry,
-        # TextAnnotation
-        :text, :quote, :version, ranges_attributes: [:start, :end, :start_offset, :end_offset]
+      :code_id, :uri, :post_id, :topic_id,
+      # VideoAnnotation
+      :container, :src, :ext, :start, :end,
+      # Image Annotation
+      :src, :shape, :units, :geometry,
+      # TextAnnotation
+      :text, :quote, :version, ranges_attributes: [:start, :end, :start_offset, :end_offset]
     )
   end
 
@@ -285,10 +285,10 @@ class Annotator::DiscourseAnnotator::AnnotationsController < Annotator::Applicat
     normalized_path.split(DiscourseAnnotator::LocalizedCode.path_separator).map(&:strip).each do |code_name|
       path_items << code_name
       code = DiscourseAnnotator::Code.
-          where(project_id: project.id).
-          joins(:localized_codes).
-          where("lower(discourse_annotator_localized_codes.path) = ?", path_items.join(DiscourseAnnotator::LocalizedCode.path_separator).downcase)&.first ||
-          create_code!(parent: code, name: code_name, language: language, project: project)
+        where(project_id: project.id).
+        joins(:localized_codes).
+        where("lower(discourse_annotator_localized_codes.path) = ?", path_items.join(DiscourseAnnotator::LocalizedCode.path_separator).downcase)&.first ||
+        create_code!(parent: code, name: code_name, language: language, project: project)
     end
     code
   end
@@ -317,8 +317,6 @@ class Annotator::DiscourseAnnotator::AnnotationsController < Annotator::Applicat
   end
 
 end
-
-
 
 # Only annotations where the posts topics are tagged with the given discourse tag.
 # if params[:discourse_tag].present?
