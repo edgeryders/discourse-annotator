@@ -48,10 +48,6 @@ module DiscourseAnnotator
       false
     end
 
-    def discourse_tags
-      topic.tags.where("name LIKE 'ethno-%'")&.map(&:name)
-    end
-
   end
 end
 

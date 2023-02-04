@@ -15,11 +15,6 @@
          placeholder="<%= t("administrate.search.label", resource: resource_name) %>"
          value="<%= search_term %>">
 
-
-  <% if params[:discourse_tag] %>
-    <input type="hidden" name="discourse_tag" value="<%= params[:discourse_tag] %>">
-  <% end %>
-
   <% if params[:creator_id] %>
     <input type="hidden" name="creator_id" value="<%= params[:creator_id] %>">
   <% end %>

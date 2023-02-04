@@ -55,7 +55,7 @@ class Annotator::DiscourseAnnotator::CodesController < Annotator::ApplicationCon
         render json: JSON.pretty_generate(
           JSON.parse(
             resources.to_json(
-              except: [:name_legacy], include: { names: { only: [:name], methods: [:locale] } }
+              include: { names: { only: [:name], methods: [:locale] } }
             )
           )
         )
@@ -79,7 +79,7 @@ class Annotator::DiscourseAnnotator::CodesController < Annotator::ApplicationCon
         render json: JSON.pretty_generate(
           JSON.parse(
             requested_resource.to_json(
-              except: [:name_legacy], include: { names: { only: [:name], methods: [:locale] } }
+              include: { names: { only: [:name], methods: [:locale] } }
             )
           )
         )

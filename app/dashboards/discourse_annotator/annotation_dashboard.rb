@@ -29,7 +29,6 @@ module DiscourseAnnotator
       shape: Field::String,
       units: Field::String,
       geometry: Field::String,
-      # discourse_tags: Annotator::DiscourseTagsField,
     }.freeze
 
     COLLECTION_ATTRIBUTES = [

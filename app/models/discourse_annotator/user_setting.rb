@@ -3,7 +3,6 @@ module DiscourseAnnotator
 
     # Associations
     belongs_to :discourse_user, class_name: '::User'
-    belongs_to :discourse_tag, class_name: '::Tag'
     belongs_to :language
 
     # Validations
