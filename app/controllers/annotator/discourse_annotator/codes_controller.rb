@@ -116,16 +116,40 @@ class Annotator::DiscourseAnnotator::CodesController < Annotator::ApplicationCon
   end
 
   def update_parent
-    fallback_path = annotator_discourse_annotator_project_codes_path(project_id: @project.id)
     ids = params[:selected_ids].split(',')
     redirect_back fallback_location: fallback_path, notice: 'No codes were selected.' and return if ids.blank?
     status = []
     ids.each { |id| status << DiscourseAnnotator::Code.find(id).update(parent_id: params[:parent_id]) }
     msg = []
-    msg << "#{status.count(true)} codes were successfully updated." if status.count(true) > 0
-    msg << "#{status.count(false)} codes could not be updated." if status.count(false) > 0
+    msg << "#{status.count(true)} codes were successfully moved." if status.count(true) > 0
+    msg << "#{status.count(false)} codes could not be moved." if status.count(false) > 0
     redirect_back fallback_location: fallback_path, notice: msg.join(' ')
   end
+
+  def move_to_project
+    ids = params[:selected_ids].split(',')
+    redirect_back fallback_location: fallback_path, notice: 'No codes were selected.' and return if ids.blank?
+    redirect_back fallback_location: fallback_path, notice: 'No project was selected.' and return if params[:target_project_id].blank?
+    codes = DiscourseAnnotator::Code.top_level_codes(ids)
+    project = DiscourseAnnotator::Project.find(params[:target_project_id])
+    codes.each { |code| code.move_to_project!(project) }
+    redirect_back fallback_location: fallback_path, notice: "Moved codes into project \"#{project.name}\"."
+  end
+
+  # TODO
+  # def copy_to_project
+  #   ids = params[:selected_ids].split(',')
+  #   redirect_back fallback_location: fallback_path, notice: 'No codes were selected.' and return if ids.blank?
+  #   redirect_back fallback_location: fallback_path, notice: 'No project was selected.' and return if params[:target_project_id].blank?
+  #   codes = DiscourseAnnotator::Code.top_level_codes(ids)
+  #   project = DiscourseAnnotator::Project.find(params[:target_project_id])
+  #   status = []
+  #   codes.each { |code| status << !!code.copy_to_project!(project) }
+  #   msg = []
+  #   msg << "#{status.count(true)} codes were successfully copied into project \"#{project.name}\"." if status.count(true) > 0
+  #   msg << "#{status.count(false)} codes could not be copied." if status.count(false) > 0
+  #   redirect_back fallback_location: fallback_path, notice: msg.join(' ')
+  # end
 
   def copy
     render locals: {
@@ -141,7 +165,7 @@ class Annotator::DiscourseAnnotator::CodesController < Annotator::ApplicationCon
     else
       msg = 'An error occurred while copying the code!'
     end
-    redirect_back fallback_location: annotator_discourse_annotator_project_codes_path(project_id: @project.id), notice: msg
+    redirect_back fallback_location: fallback_path, notice: msg
   end
 
   def merge
@@ -152,7 +176,7 @@ class Annotator::DiscourseAnnotator::CodesController < Annotator::ApplicationCon
 
   def merge_into
     if requested_resource.merge_into(DiscourseAnnotator::Code.find(params[:code][:merge_into_code_id]))
-      redirect_to annotator_discourse_annotator_project_codes_path(project_id: @project.id), notice: 'Codes were successfully merged.'
+      redirect_to fallback_path, notice: 'Codes were successfully merged.'
     else
       render :merge, locals: { page: Administrate::Page::Form.new(dashboard, requested_resource) }
     end
@@ -169,7 +193,7 @@ class Annotator::DiscourseAnnotator::CodesController < Annotator::ApplicationCon
     respond_to do |format|
       format.html {
         flash[:notice] = 'Code was successfully destroyed.'
-        redirect_to annotator_discourse_annotator_project_codes_path(project_id: @project.id)
+        redirect_to fallback_path
       }
       format.js
     end
@@ -180,6 +204,10 @@ class Annotator::DiscourseAnnotator::CodesController < Annotator::ApplicationCon
   end
 
   private
+
+  def fallback_path
+    annotator_discourse_annotator_project_codes_path(project_id: @project.id)
+  end
 
   def api_request?
     request.format.json? || request.format.xml?

@@ -19,6 +19,8 @@ Rails.application.routes.draw do
         resources :codes do
           collection do
             post :update_parent
+            post :move_to_project
+            post :copy_to_project
           end
           member do
             get :merge

@@ -59,7 +59,9 @@
 
           function updateSelectedIdsField() {
               let checked = Object.keys(checkboxValues).filter(k => checkboxValues[k]);
-              document.getElementById("bulk-editing-selected-ids").value = checked.join(',')
+              Array.from(document.getElementsByClassName("bulk-editing-selected-ids")).forEach(e => {
+                  e.value = checked.join(',')
+              });
           }
 
       }
@@ -68,45 +70,156 @@
 
       // $('#bulk-editing-parent-id-field').selectize();
 
-      function handleBulkEditSubmit() {
+      function handleBulkEditSubmit(form) {
+          // Prevent that checkboxes are cleared when the form values are invalid.
+          if (form.target_project_id && !form.target_project_id.value.length) {
+                alert("Please select a project");
+                return false
+          }
           localStorage.setItem("checkboxValues", null);
+      }
+
+
+      // --- Tabs ---
+      function toggleTab(event, tabName) {
+          let i, tabcontent, tablinks;
+
+          let currentTab = document.getElementById(tabName)
+          let currentTabLink = event.currentTarget
+          const currentTabIsActive = currentTabLink.classList.contains('active')
+
+          // Get all elements with class="tabcontent" and hide them
+          tabcontent = document.getElementsByClassName("tabcontent");
+          for (i = 0; i < tabcontent.length; i++) {
+              tabcontent[i].style.display = "none";
+          }
+
+          // Get all elements with class="tablinks" and remove the class "active"
+          tablinks = document.getElementsByClassName("tablinks");
+          for (i = 0; i < tablinks.length; i++) {
+              tablinks[i].className = tablinks[i].className.replace(" active", "");
+          }
+
+          if (!currentTabIsActive) {
+              currentTab.style.display = "block";
+              currentTabLink.className += " active";
+          }
       }
   </script>
 <% end %>
 
 
-<style type="text/css">
-  .selectize-control {
-    width: 500px;
-    display: inline-block;
-  }
+<style>
+    .selectize-control {
+        width: 500px;
+        display: inline-block;
+    }
 
-  .selectize-input {
-    z-index: auto;
-  }
+    .selectize-input {
+        z-index: auto;
+    }
 
-  #check-all, #uncheck-all {
-    font-size: .8em;
-  }
+    #check-all, #uncheck-all {
+        font-size: .8em;
+    }
+
+    .tabs-panel select {
+        margin-top: 5px;
+        margin-bottom: 10px;
+    }
+
+    .tabs-panel input[type=submit] {
+        vertical-align: top;
+    }
+
+
+    /* --- Tabs --- */
+    .tabs-panel {
+        /*border:1px solid #dfe0e1; */
+        background: #F6F7F7;
+        margin: 20px 35px;
+    }
+
+    .tab {
+        overflow: hidden;
+        border: 1px solid #dfe0e1;
+        background-color: #f1f1f1;
+    }
+
+    .tab span {
+        background-color: inherit;
+        float: left;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        padding: 7px 16px;
+        transition: 0.05s;
+    }
+
+    .tab span:hover {
+        background-color: #ddd;
+    }
+
+    .tab span.active {
+        background-color: #ddd;
+        font-weight: bold;
+    }
+
+    .tabcontent {
+        display: none;
+        padding: 18px;
+        border: 1px solid #dfe0e1;
+        border-top: none;
+    }
 </style>
 
 
-<%= form_tag update_parent_annotator_discourse_annotator_project_codes_path(project_id: @project.id), method: :post, remote: false, id: 'bulk-editing-form', onSubmit: 'handleBulkEditSubmit();' do %>
-  <input id="bulk-editing-selected-ids" type="hidden" name="selected_ids">
-  Assign selected to parent:
-  <div>
-    <select id="bulk-editing-parent-id-field" name="parent_id"></select>
-    <%= submit_tag("Save", style: 'vertical-align:top') %>
-  </div>
-  <div style="color:#777; font-size:.8rem;">
-    Leave blank to move selected codes to the top level.
+<% project_options = [['Select project', nil]]
+   DiscourseAnnotator::Project.order(:name).each { |u| project_options.push([u.name, u.id]) }
+%>
+
+<div class="tabs-panel">
+  <div class="tab">
+    <span class="tablinks" onclick="toggleTab(event, 'moveToCode')">Move to code</span>
+    <span class="tablinks" onclick="toggleTab(event, 'moveToProject')">Move to project</span>
+<!--    <span class="tablinks" onclick="toggleTab(event, 'copyToProject')">Copy to project</span>-->
   </div>
 
-  <div style="padding-top:2px; margin-top:4px; border-top:1px solid #DFE0E1;">
-    <a href="#" id="check-all">[Check All]</a>
-    <a href="#" id="uncheck-all">[Uncheck All]</a>
-    <div style="color:#777; font-size:.8rem;">
-      Only applied to codes on the current page.
-    </div>
+  <div id="moveToCode" class="tabcontent">
+    <%= form_tag update_parent_annotator_discourse_annotator_project_codes_path(project_id: @project.id), method: :post, remote: false, onSubmit: 'return handleBulkEditSubmit(this);' do %>
+      <input class="bulk-editing-selected-ids" type="hidden" name="selected_ids">
+      <div>
+        <select id="bulk-editing-parent-id-field" name="parent_id"></select>
+      </div>
+      <div style="color:#777; font-size:.8rem; margin-bottom:10px;">Leave blank to move selected codes to the top level.</div>
+        <%= submit_tag("Move selected codes into this code", data: { disable_with: false }) %>
+    <% end %>
   </div>
-<% end %>
+
+  <div id="moveToProject" class="tabcontent">
+    <%= form_tag move_to_project_annotator_discourse_annotator_project_codes_path(project_id: @project.id), method: :post, remote: false, onSubmit: 'return handleBulkEditSubmit(this);' do %>
+      <input class="bulk-editing-selected-ids" type="hidden" name="selected_ids">
+      <select name="target_project_id">
+        <%= options_for_select(project_options.to_h) %>
+      </select>
+      <%= submit_tag("Move selected codes to project", data: { disable_with: false }) %>
+    <% end %>
+  </div>
+
+<!--  <div id="copyToProject" class="tabcontent">-->
+    <%#= form_tag copy_to_project_annotator_discourse_annotator_project_codes_path(project_id: @project.id), method: :post, remote: false, onSubmit: 'return handleBulkEditSubmit(this);' do %>
+<!--      <input class="bulk-editing-selected-ids" type="hidden" name="selected_ids">-->
+<!--      <select name="target_project_id">-->
+        <%#= options_for_select(project_options.to_h) %>
+<!--      </select>-->
+      <%#= submit_tag("Copy selected codes to project", data: { disable_with: false }) %>
+    <%# end %>
+<!--  </div>-->
+</div>
+
+
+<div style="margin-left:60px; margin-bottom:5px;">
+  <a href="#" id="check-all">Check All</a> &nbsp;
+  <a href="#" id="uncheck-all">Uncheck All</a>
+  <span style="color:#777; font-size:.8rem;">(Only applied to codes on the current page.)</span>
+</div>

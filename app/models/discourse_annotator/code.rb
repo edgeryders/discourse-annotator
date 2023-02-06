@@ -24,6 +24,11 @@ module DiscourseAnnotator
     validates :creator, presence: true
     validates :names, length: { minimum: 1, too_short: ": One name is required" }
     validates :project_id, presence: true
+    validate if: Proc.new { |code| !!code.parent } do |code|
+      if code.parent.project_id != code.project_id
+        errors.add :project_id, "must belong to the same project as the parent code."
+      end
+    end
 
     after_save :update_localized_codes
 
@@ -58,6 +63,19 @@ module DiscourseAnnotator
           FROM discourse_annotator_annotations
           WHERE discourse_annotator_annotations.code_id = discourse_annotator_codes.id)
       SQL
+    end
+
+    # Filters out all descendant codes.
+    def self.top_level_codes(ids)
+      parent_ids = []
+      filtered_codes = []
+      where(id: ids).ordered_by_ancestry.each do |code|
+        unless parent_ids.intersection(code.ancestor_ids).any?
+          filtered_codes << code
+          parent_ids << code.id
+        end
+      end
+      filtered_codes
     end
 
     # --- Instance Methods --- #
@@ -96,6 +114,18 @@ module DiscourseAnnotator
       names.find_by(language_id: language.id)&.name ||
         names.find_by(language_id: DiscourseAnnotator::Language.english.id)&.name ||
         names.order(created_at: :asc).first&.name
+    end
+
+    def move_to_project!(project)
+      update!(parent_id: nil) if has_parent?
+      self.class.where(id: subtree_ids).update_all(project_id: project.id)
+    end
+
+    # In contrast to `create_copy()` this copies the codes entire subtree.
+    # NOTE: Not (easily) possible with ancestry. See: https://github.com/moiristo/deep_cloneable/issues/80
+    def copy_to_project!(project)
+      # TODO Could be done directly in the database: https://stackoverflow.com/questions/59860188/copying-records-in-a-table-with-self-referencing-ids
+      #   - but only if codes are not moved in the hierarchy - e.g. moved to the root level. So likely not a solution.
     end
 
     def create_copy(project_id)
