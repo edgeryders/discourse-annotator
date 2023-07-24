@@ -34,7 +34,7 @@ Rails.application.routes.draw do
         resources :text_annotations, only: [:index, :show, :edit, :update, :destroy]
         resources :video_annotations, only: [:index, :show, :edit, :update, :destroy]
         resources :image_annotations, only: [:index, :show, :edit, :update, :destroy]
-        resources :annotations, only: [:index, :show], defaults: { format: :html }, constraints: { format: :html } do
+        resources :annotations, only: [:index, :show], defaults: { format: :html } do
           collection do
             post :update_code
             delete :bulk_destroy

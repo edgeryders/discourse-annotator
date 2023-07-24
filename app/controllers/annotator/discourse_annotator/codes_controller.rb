@@ -55,6 +55,7 @@ class Annotator::DiscourseAnnotator::CodesController < Annotator::ApplicationCon
         render json: JSON.pretty_generate(
           JSON.parse(
             resources.to_json(
+              only: [:id, :description, :creator_id, :created_at, :updated_at, :ancestry, :annotations_count],
               include: { names: { only: [:name], methods: [:locale] } }
             )
           )
