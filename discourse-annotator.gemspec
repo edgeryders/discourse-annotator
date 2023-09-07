@@ -41,7 +41,7 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'administrate', '0.12.0'
   spec.add_runtime_dependency 'kaminari', '1.1.1'
 
-  spec.add_runtime_dependency 'deep_cloneable', '~> 3.1.0'
+  spec.add_runtime_dependency 'deep_cloneable', '~> 3.2.0'
 
   # spec.add_dependency 'administrate-field-belongs_to_search', '>= 0.7'
 
