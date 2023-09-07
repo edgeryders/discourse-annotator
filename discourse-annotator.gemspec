@@ -18,7 +18,7 @@ Gem::Specification.new do |spec|
   spec.required_ruby_version = '>= 1.9.3'
 
   # Database dependencies
-  spec.add_development_dependency 'mysql2'
+  # spec.add_development_dependency 'mysql2'
   spec.add_development_dependency 'pg'
 
   # Development dependencies
@@ -38,7 +38,7 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'redcarpet'
   # https://github.com/thoughtbot/administrate
   # NOTE: Frozen to 0.12 as a larger version (tested with 0.16) breaks codes/new and codes/edit pages.
-  spec.add_runtime_dependency 'administrate', '0.12.0'
+  spec.add_runtime_dependency 'administrate', '0.19.0'
   spec.add_runtime_dependency 'kaminari', '1.1.1'
 
   spec.add_runtime_dependency 'deep_cloneable', '~> 3.2.0'
