@@ -37,17 +37,10 @@ Gem::Specification.new do |spec|
   # https://github.com/vmg/redcarpet - The safe Markdown parser.
   spec.add_runtime_dependency 'redcarpet'
   # https://github.com/thoughtbot/administrate
+  # spec.add_runtime_dependency 'administrate', '0.19.0'
   # NOTE: Frozen to 0.12 as a larger version (tested with 0.16) breaks codes/new and codes/edit pages.
-  spec.add_runtime_dependency 'administrate', '0.19.0'
-  spec.add_runtime_dependency 'kaminari', '1.1.1'
+  spec.add_runtime_dependency 'kaminari', '1.2.2'
 
   spec.add_runtime_dependency 'deep_cloneable', '~> 3.2.0'
-
-  # spec.add_dependency 'administrate-field-belongs_to_search', '>= 0.7'
-
-  # @todo It is not possible to have a git branch dependency:
-  #   https://stackoverflow.com/questions/6499410/ruby-gemspec-dependency-is-possible-have-a-git-branch-dependency
-  #   Right now we specify the dependency in the Gemfile.
-  # spec.add_runtime_dependency 'administrate-field-nested_has_many', git: 'https://github.com/edgeryders/administrate-field-nested_has_many.git', branch: 'master'
 
 end

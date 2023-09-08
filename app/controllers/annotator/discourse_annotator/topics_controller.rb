@@ -59,6 +59,10 @@ class Annotator::DiscourseAnnotator::TopicsController < Annotator::ApplicationCo
     params[:per_page] || 50
   end
 
+  def resource_class
+    ::Topic
+  end
+
   private
 
   def set_project
