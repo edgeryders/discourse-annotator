@@ -206,15 +206,26 @@
     <% end %>
   </div>
 
-<!--  <div id="copyToProject" class="tabcontent">-->
-    <%#= form_tag copy_to_project_annotator_discourse_annotator_project_codes_path(project_id: @project.id), method: :post, remote: false, onSubmit: 'return handleBulkEditSubmit(this);' do %>
-<!--      <input class="bulk-editing-selected-ids" type="hidden" name="selected_ids">-->
-<!--      <select name="target_project_id">-->
-        <%#= options_for_select(project_options.to_h) %>
-<!--      </select>-->
-      <%#= submit_tag("Copy selected codes to project", data: { disable_with: false }) %>
-    <%# end %>
-<!--  </div>-->
+  <div id="copyToProject" class="tabcontent">
+    <%= form_tag copy_to_project_annotator_discourse_annotator_project_codes_path(project_id: @project.id), method: :post, remote: false, onSubmit: 'return handleBulkEditSubmit(this);' do %>
+      <input class="bulk-editing-selected-ids" type="hidden" name="selected_ids">
+      <select name="target_project_id">
+        <%= options_for_select(project_options.to_h) %>
+      </select>
+
+      <label>
+        <%= radio_button_tag "include_descendants", "0", true %>
+        Do not include descendants of selected codes
+      </label>
+      <label>
+        <%= radio_button_tag "include_descendants", "1", false %>
+        Include descendants of selected codes
+      </label>
+
+      <br/>
+      <%= submit_tag("Copy codes to project", data: { disable_with: false }) %>
+    <% end %>
+  </div>
 </div>
 
 

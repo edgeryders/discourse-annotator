@@ -121,27 +121,38 @@ module DiscourseAnnotator
       self.class.where(id: subtree_ids).update_all(project_id: project.id)
     end
 
-    # In contrast to `create_copy()` this copies the codes entire subtree.
-    # NOTE: Not (easily) possible with ancestry. See: https://github.com/moiristo/deep_cloneable/issues/80
-    def copy_to_project!(project)
-      # TODO Could be done directly in the database: https://stackoverflow.com/questions/59860188/copying-records-in-a-table-with-self-referencing-ids
-      #   - but only if codes are not moved in the hierarchy - e.g. moved to the root level. So likely not a solution.
-    end
-
-    def create_copy(project_id)
+    # @return [Object] The newly created copy of the code.
+    def create_copy(project_id:, new_parent_id: nil, include_descendants: false)
       project_id = nil if project_id.to_i == self.project_id
       # https://github.com/moiristo/deep_cloneable
-      # NOTE: localized_codes must not be included as they are created by a callback (after_save :update_localized_codes).
-      new = deep_clone include: [:names, { annotations: :ranges }],
-                       preprocessor: ->(original, kopy) {
-                         # See: https://github.com/edgeryders/discourse-annotator/issues/220
-                         kopy.annotations_count = 0 if kopy.respond_to?(:annotations_count)
-                         kopy.project_id = project_id if project_id && kopy.is_a?(DiscourseAnnotator::Code)
-                       },
-                       postprocessor: ->(original, kopy) {
-                         kopy.name = "#{original.name} (COPY)" if kopy.is_a?(DiscourseAnnotator::CodeName) && !project_id
-                       }
-      new.save
+      # NOTE: localized_codes must not be included as they are
+      # created by a callback (after_save :update_localized_codes).
+      new = deep_clone(
+        include: [:names, { annotations: :ranges }],
+        preprocessor: ->(original, kopy) do
+          # See: https://github.com/edgeryders/discourse-annotator/issues/220
+          kopy.annotations_count = 0 if kopy.respond_to?(:annotations_count)
+          if original.is_a?(DiscourseAnnotator::Code)
+            kopy.project_id = project_id if project_id
+            kopy.parent_id = new_parent_id if project_id.to_i != self.project_id
+          end
+        end,
+        postprocessor: ->(original, kopy) do
+          if original.is_a?(DiscourseAnnotator::CodeName) && !project_id
+            kopy.name = "#{original.name} (COPY)"
+          end
+        end
+      )
+      new.save!
+      if include_descendants
+        children.each { |child|
+          child.create_copy(
+            project_id: project_id,
+            new_parent_id: new.id,
+            include_descendants: true
+          )
+        }
+      end
       new
     end
 

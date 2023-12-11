@@ -33,7 +33,9 @@ class Annotator::DiscourseAnnotator::CodesController < Annotator::ApplicationCon
       # See: https://github.com/edgeryders/discourse-annotator/issues/200#issuecomment-728110668
       resources = resources.with_localized_path
     else
-      language = (current_user.present? && api_request?) ? DiscourseAnnotator::UserSetting.language_for_user(current_user) : DiscourseAnnotator::Language.english
+      language = (current_user.present? && api_request?) ?
+                   DiscourseAnnotator::UserSetting.language_for_user(current_user) :
+                   DiscourseAnnotator::Language.english
       resources = resources.with_localized_codes(language: language)
     end
     # 5. Pagination
@@ -137,20 +139,18 @@ class Annotator::DiscourseAnnotator::CodesController < Annotator::ApplicationCon
     redirect_back fallback_location: fallback_path, notice: "Moved codes into project \"#{project.name}\"."
   end
 
-  # TODO
-  # def copy_to_project
-  #   ids = params[:selected_ids].split(',')
-  #   redirect_back fallback_location: fallback_path, notice: 'No codes were selected.' and return if ids.blank?
-  #   redirect_back fallback_location: fallback_path, notice: 'No project was selected.' and return if params[:target_project_id].blank?
-  #   codes = DiscourseAnnotator::Code.top_level_codes(ids)
-  #   project = DiscourseAnnotator::Project.find(params[:target_project_id])
-  #   status = []
-  #   codes.each { |code| status << !!code.copy_to_project!(project) }
-  #   msg = []
-  #   msg << "#{status.count(true)} codes were successfully copied into project \"#{project.name}\"." if status.count(true) > 0
-  #   msg << "#{status.count(false)} codes could not be copied." if status.count(false) > 0
-  #   redirect_back fallback_location: fallback_path, notice: msg.join(' ')
-  # end
+  def copy_to_project
+    code_ids = params[:selected_ids].split(',')
+    redirect_back fallback_location: fallback_path, notice: 'No codes were selected.' and return if code_ids.blank?
+    redirect_back fallback_location: fallback_path, notice: 'No project was selected.' and return if params[:target_project_id].blank?
+    project = DiscourseAnnotator::Project.find(params[:target_project_id])
+    include_descendants = ActiveModel::Type::Boolean.new.cast(params[:include_descendants])
+    codes = include_descendants ? DiscourseAnnotator::Code.top_level_codes(code_ids) : DiscourseAnnotator::Code.where(id: code_ids)
+    codes.each do |code|
+      code.create_copy(project_id: project.id, include_descendants: include_descendants)
+    end
+    redirect_back fallback_location: fallback_path, notice: "Copied codes into project \"#{project.name}\"."
+  end
 
   def copy
     render locals: {
@@ -159,7 +159,7 @@ class Annotator::DiscourseAnnotator::CodesController < Annotator::ApplicationCon
   end
 
   def create_copy
-    copy = requested_resource.create_copy(params[:code][:project_id])
+    copy = requested_resource.create_copy(project_id: params[:code][:project_id])
     if copy
       msg = "Code was successfully copied."
       msg += ' ' + (helpers.link_to 'Show copy', annotator_discourse_annotator_project_code_path(id: copy.id, project_id: params[:code][:project_id]))

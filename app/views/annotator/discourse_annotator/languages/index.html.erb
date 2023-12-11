@@ -30,22 +30,22 @@ It renders the `_table` partial to display details about the resources.
 
   <div>
     <%= link_to(
-      'New Language',
-      [:new, namespace, :language],
-      class: "button",
-    )  %>
+          'New Language',
+          [:new, namespace, :language],
+          class: "button",
+        ) %>
   </div>
 </header>
 
 <section class="main-content__body main-content__body--flush">
   <%= render(
-    "collection",
-    collection_presenter: page,
-    collection_field_name: resource_name,
-    page: page,
-    resources: resources,
-    table_title: "page-title"
-  ) %>
+        "collection",
+        collection_presenter: page,
+        collection_field_name: resource_name,
+        page: page,
+        resources: resources,
+        table_title: "page-title"
+      ) %>
 
   <%#= paginate resources, param_name: '_page' %>
   <%= paginate resources %>
