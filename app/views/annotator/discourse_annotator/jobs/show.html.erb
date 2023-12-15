@@ -1,0 +1,63 @@
+<header class="main-content__header" role="banner">
+  <h1 class="main-content__page-title" id="page-title">Copying codes into project <%= @project.name %></h1>
+</header>
+
+<section style="margin:30px;">
+  <div class="progress-container">
+    <div class="progress-bar" id="progress-bar"></div>
+  </div>
+  <div id="progress-bar-details"></div>
+</section>
+
+
+<script>
+    const path = '/annotator/projects/<%= @project.id %>/jobs/<%= params[:id] %>/status.json';
+    const progressBar = document.getElementById('progress-bar');
+    const progressBarDetails = document.getElementById('progress-bar-details');
+    let progress = 0;
+
+    async function updateProgressBar() {
+        const data = await fetchData();
+        const percentage = Math.round(((data.progress / data.total) * 100));
+        progressBar.style.width = percentage + '%';
+        progressBarDetails.innerHTML = `${data.progress} / ${data.total} copied · status: ${data.status}`;
+        if (percentage < 100) {
+            setTimeout(updateProgressBar, 1000);
+        }
+    }
+
+    async function fetchData() {
+        try {
+            const response = await fetch(path);
+            return await response.json();
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    }
+
+    updateProgressBar();
+</script>
+
+
+<style>
+    .progress-container {
+        width: 300px;
+        background-color: #ddd;
+        border-radius: 2px;
+        overflow: hidden;
+    }
+    .progress-bar {
+        width: 0;
+        height: 10px;
+        background-color: rgb(25, 118, 210);
+        color: white;
+        text-align: center;
+        line-height: 10px;
+        transition: width 1s ease;
+    }
+    #progress-bar-details {
+        font-size:.9rem;
+        margin-top:5px;
+        font-weight:bold;
+    }
+</style>

@@ -182,11 +182,12 @@
   <div class="tab">
     <span class="tablinks" onclick="toggleTab(event, 'moveToCode')">Move to code</span>
     <span class="tablinks" onclick="toggleTab(event, 'moveToProject')">Move to project</span>
-<!--    <span class="tablinks" onclick="toggleTab(event, 'copyToProject')">Copy to project</span>-->
+    <span class="tablinks" onclick="toggleTab(event, 'copyToProject')">Copy to project</span>
   </div>
 
   <div id="moveToCode" class="tabcontent">
-    <%= form_tag update_parent_annotator_discourse_annotator_project_codes_path(project_id: @project.id), method: :post, remote: false, onSubmit: 'return handleBulkEditSubmit(this);' do %>
+    <%= form_tag update_parent_annotator_discourse_annotator_project_codes_path(project_id: @project.id),
+                 method: :post, remote: false, onSubmit: 'return handleBulkEditSubmit(this);' do %>
       <input class="bulk-editing-selected-ids" type="hidden" name="selected_ids">
       <div>
         <select id="bulk-editing-parent-id-field" name="parent_id"></select>
@@ -197,7 +198,8 @@
   </div>
 
   <div id="moveToProject" class="tabcontent">
-    <%= form_tag move_to_project_annotator_discourse_annotator_project_codes_path(project_id: @project.id), method: :post, remote: false, onSubmit: 'return handleBulkEditSubmit(this);' do %>
+    <%= form_tag move_to_project_annotator_discourse_annotator_project_codes_path(project_id: @project.id),
+                 method: :post, remote: false, onSubmit: 'return handleBulkEditSubmit(this);' do %>
       <input class="bulk-editing-selected-ids" type="hidden" name="selected_ids">
       <select name="target_project_id">
         <%= options_for_select(project_options.to_h) %>
@@ -207,7 +209,8 @@
   </div>
 
   <div id="copyToProject" class="tabcontent">
-    <%= form_tag copy_to_project_annotator_discourse_annotator_project_codes_path(project_id: @project.id), method: :post, remote: false, onSubmit: 'return handleBulkEditSubmit(this);' do %>
+    <%= form_tag copy_to_project_annotator_discourse_annotator_project_codes_path(project_id: @project.id),
+                 method: :post, remote: false, onSubmit: 'return handleBulkEditSubmit(this);' do %>
       <input class="bulk-editing-selected-ids" type="hidden" name="selected_ids">
       <select name="target_project_id">
         <%= options_for_select(project_options.to_h) %>

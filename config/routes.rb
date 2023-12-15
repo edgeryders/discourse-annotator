@@ -40,6 +40,11 @@ Rails.application.routes.draw do
             delete :bulk_destroy
           end
         end
+        resources :jobs, only: [:show]do
+          member do
+            get 'status', to: 'jobs#status', defaults: { format: 'json' }
+          end
+        end
       end
 
       match 'search', to: 'pages#search', via: [:get], defaults: { format: :json }, constraints: { format: :json }

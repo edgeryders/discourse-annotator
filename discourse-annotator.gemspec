@@ -42,5 +42,6 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'kaminari', '1.2.2'
 
   spec.add_runtime_dependency 'deep_cloneable', '~> 3.2.0'
-
+  spec.add_runtime_dependency 'activejob'
+  spec.add_runtime_dependency 'activejob-status'
 end

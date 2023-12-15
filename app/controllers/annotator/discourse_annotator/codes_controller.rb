@@ -1,15 +1,20 @@
 require_dependency 'annotator/application_controller'
+require 'activejob-status'
 
 # https://github.com/thoughtbot/administrate/blob/master/app/controllers/administrate/application_controller.rb
 #
 class Annotator::DiscourseAnnotator::CodesController < Annotator::ApplicationController
+  include ActionView::Helpers::UrlHelper
 
   include Annotator::ApplicationHelper
 
   before_action :set_project
 
   skip_before_action :ensure_logged_in, :ensure_staff_or_annotator_group_member,
-                     if: proc { |c| api_request? && c.action_name == "index" && DiscourseAnnotator::Setting.instance.public_codes_list_api_endpoint? }
+                     if: proc { |c| api_request? &&
+                       c.action_name == "index" &&
+                       DiscourseAnnotator::Setting.instance.public_codes_list_api_endpoint?
+                     }
 
   def index
     resources = scoped_resource
@@ -145,11 +150,18 @@ class Annotator::DiscourseAnnotator::CodesController < Annotator::ApplicationCon
     redirect_back fallback_location: fallback_path, notice: 'No project was selected.' and return if params[:target_project_id].blank?
     project = DiscourseAnnotator::Project.find(params[:target_project_id])
     include_descendants = ActiveModel::Type::Boolean.new.cast(params[:include_descendants])
-    codes = include_descendants ? DiscourseAnnotator::Code.top_level_codes(code_ids) : DiscourseAnnotator::Code.where(id: code_ids)
-    codes.each do |code|
-      code.create_copy(project_id: project.id, include_descendants: include_descendants)
-    end
-    redirect_back fallback_location: fallback_path, notice: "Copied codes into project \"#{project.name}\"."
+    job = DiscourseAnnotator::CopyCodesJob.perform_later(
+      code_ids: code_ids,
+      project_id: project.id,
+      include_descendants: include_descendants
+    )
+    link = link_to(
+      'here',
+      annotator_discourse_annotator_project_job_path(project, job.job_id),
+      target: '_blank',
+    )
+    redirect_back fallback_location: fallback_path,
+                  notice: "Copying codes into project \"#{project.name}\". Monitor the progress #{link}."
   end
 
   def copy
