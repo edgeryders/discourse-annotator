@@ -41,6 +41,11 @@
             }
         }
 
+        // Avoid including items previously selected in another project in a copy/move action.
+        localStorage.removeItem('checkboxValues');
+        localStorage.removeItem('annotationsCheckboxValues');
+
+
         // const inputText = event.target.value;
         // console.log(inputText);
         // setCookie('current_project', event.target.value, 10000);
