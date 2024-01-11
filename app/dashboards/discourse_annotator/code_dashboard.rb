@@ -40,8 +40,8 @@ module DiscourseAnnotator
 
     FORM_ATTRIBUTES = [
         :project,
-        :names,
-        :parent,
+        # :names, TODO
+        # :parent, TODO
         :description,
         :creator,
         :merge_into_code

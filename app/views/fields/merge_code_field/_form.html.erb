@@ -2,9 +2,7 @@
   <%= f.label 'Code to merge into' %>
 </div>
 <div class="field-unit__field">
-  <%= f.select(field.permitted_attribute, nil) do %>
-    <%= options_for_select(field.associated_resource_options, field.selected_option) %>
-  <% end %>
+  <%= select_tag 'code[merge_into_code_id]', [] %>
   <div>
     All annotations of this code will be assigned to the selected code and this code will be deleted.<br/>
     <span style="color:#f04855; margin-bottom:4px;">Warning: This action cannot be undone.</span>
