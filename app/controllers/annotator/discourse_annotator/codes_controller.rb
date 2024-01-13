@@ -101,7 +101,10 @@ class Annotator::DiscourseAnnotator::CodesController < Annotator::ApplicationCon
     resource.project = @project
 
     if resource.save
-      redirect_to [namespace, @project, resource], notice: 'Code was successfully created.'
+      redirect_to(
+        annotator_discourse_annotator_project_code_path(project_id: @project.id, id: resource.id),
+        notice: 'Code was successfully created.'
+      )
     else
       render :new, locals: { page: Administrate::Page::Form.new(dashboard, resource) }
     end
@@ -111,7 +114,9 @@ class Annotator::DiscourseAnnotator::CodesController < Annotator::ApplicationCon
     respond_to do |format|
       if requested_resource.update(resource_params)
         format.html {
-          redirect_to [namespace, @project, requested_resource], notice: 'Code was successfully updated.'
+          redirect_to(
+            annotator_discourse_annotator_project_code_path(project_id: @project.id, id: requested_resource.id),
+            notice: 'Code was successfully updated.')
         }
         format.js {}
       else
@@ -254,6 +259,6 @@ end
 # end
 
 # scope = scope.joins(:names).where(discourse_annotator_code_names: {name: params[:search] }) if params[:search].present?
-# resources = Administrate::Search.new(scope, dashboard_class, search_term).run
+# resources = Administrate::Search.new(scope, dashboard, search_term).run
 # resources = apply_collection_includes(resources)
 # resources = params[:search].present? ? order.apply(resources) : resources.order(updated_at: :desc)

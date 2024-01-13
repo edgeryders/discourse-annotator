@@ -1,4 +1,4 @@
-class Annotator::MergeCodeField < Administrate::Field::BelongsToSearch
+class Annotator::MergeCodeField < Administrate::Field::Number
 
 
 end

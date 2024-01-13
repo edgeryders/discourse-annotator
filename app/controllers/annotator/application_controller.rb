@@ -46,6 +46,10 @@ class Annotator::ApplicationController < Administrate::ApplicationController
     end
   end
 
+  def paginate_resources(resources)
+    resources.page(params[:page]).per(records_per_page)
+  end
+
   private
 
   def set_headers

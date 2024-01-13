@@ -38,7 +38,7 @@ and renders all form fields for a resource's editable attributes.
   <% end %>
 
   <% attributes = current_user.admin? ? page.attributes : page.attributes.delete_if {|a| a.name == 'creator' } %>
-  <% attributes = attributes.delete_if {|a| ['merge_into_code', 'project'].include?(a.name)} %>
+  <% attributes = attributes.delete_if {|a| ['merge_into_code_id', 'project'].include?(a.name)} %>
 
   <% attributes.each do |attribute| -%>
     <div class="field-unit field-unit--<%= attribute.html_class %>">

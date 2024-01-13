@@ -1,6 +1,4 @@
-require "administrate/field/belongs_to"
-
-class Annotator::ParentCodeField < Administrate::Field::BelongsTo
+class Annotator::ParentCodeField < Administrate::Field::Number
 
 
 end

@@ -23,7 +23,7 @@ class Annotator::DiscourseAnnotator::AnnotationsController < Annotator::Applicat
     end
 
     search_term = params[:search].to_s.strip
-    resources = Administrate::Search.new(scope, DiscourseAnnotator::AnnotationDashboard, search_term).run
+    resources = Administrate::Search.new(scope, dashboard, search_term).run
     resources = apply_collection_includes(resources)
     resources = if params.dig(:discourse_annotator__annotation, :order)
                   if params.dig(:discourse_annotator__annotation, :order) == 'topic_id_and_post_id'
@@ -35,7 +35,7 @@ class Annotator::DiscourseAnnotator::AnnotationsController < Annotator::Applicat
                 else
                   resources.order(created_at: :desc)
                 end
-    resources = resources.page(params[:page]).per(records_per_page)
+    resources = paginate_resources(resources)
     page = Administrate::Page::Collection.new(dashboard, order: order)
 
     respond_to do |format|

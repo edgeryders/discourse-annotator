@@ -5,18 +5,18 @@ module DiscourseAnnotator
 
     ATTRIBUTE_TYPES = {
         creator: Annotator::UserField,
-        project: Field::BelongsTo.with_options(class_name: 'DiscourseAnnotator::Project'),
-        parent: Annotator::ParentCodeField.with_options(class_name: 'DiscourseAnnotator::Code'),
-        merge_into_code: Annotator::MergeCodeField.with_options(class_name: 'DiscourseAnnotator::Code'),
+        project: Field::BelongsTo,
+        parent: Field::BelongsTo.with_options(class_name: 'DiscourseAnnotator::Code'),
+        parent_id: Annotator::ParentCodeField,
+        merge_into_code_id: Annotator::MergeCodeField,
         id: Field::Number,
         name: Field::String,
         description: Field::Text,
         creator_id: Field::Number,
-        parent_id: Field::Number,
         created_at: Field::DateTime,
         updated_at: Field::DateTime,
-        annotations: Annotator::HasManyAnnotationsField.with_options(class_name: 'DiscourseAnnotator::Annotation', limit: 100),
-        names: Annotator::HasManyCodeNamesField.with_options(class_name: 'DiscourseAnnotator::CodeName', association_name: 'names'),
+        annotations: Annotator::HasManyAnnotationsField.with_options(collection_attributes: [:id, :topic_id_and_post_id, :type, :text, :quote, :creator, :created_at], limit: 100),
+        names: Annotator::HasManyCodeNamesField.with_options(association_name: 'names', skip: :code),
         sub_codes: Annotator::HasManySubCodesField.with_options(class_name: 'DiscourseAnnotator::Code', association_name: 'sub_codes'),
     }.freeze
 
@@ -40,11 +40,11 @@ module DiscourseAnnotator
 
     FORM_ATTRIBUTES = [
         :project,
-        # :names, TODO
-        # :parent, TODO
+        :names,
+        :parent_id,
         :description,
         :creator,
-        :merge_into_code
+        :merge_into_code_id
     ].freeze
 
     # Overwrite this method to customize how codes are displayed

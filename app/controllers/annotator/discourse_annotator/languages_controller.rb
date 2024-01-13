@@ -6,7 +6,7 @@ class Annotator::DiscourseAnnotator::LanguagesController < Annotator::Applicatio
 
   def index
     search_term = params[:search].to_s.strip
-    resources = Administrate::Search.new(scoped_resource.with_codes_count, dashboard_class, search_term).run
+    resources = Administrate::Search.new(scoped_resource.with_codes_count, dashboard, search_term).run
     resources = apply_collection_includes(resources)
     resources = order.apply(resources)
     resources = resources.page(params[:page]).per(records_per_page)

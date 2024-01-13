@@ -4,8 +4,8 @@ module DiscourseAnnotator
   class CodeNameDashboard < Administrate::BaseDashboard
 
     ATTRIBUTE_TYPES = {
-      code: Field::BelongsTo.with_options(class_name: 'DiscourseAnnotator::Code'),
-      language: Field::BelongsTo.with_options(class_name: 'DiscourseAnnotator::Language'),
+      code: Field::BelongsTo,
+      language: Field::BelongsTo,
       id: Field::Number,
       name: Field::String,
       created_at: Field::DateTime,

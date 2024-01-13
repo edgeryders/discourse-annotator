@@ -25,7 +25,7 @@
       </div>
     <% end %>
 
-    <% attributes = page.attributes.select {|a| a.name == 'merge_into_code'} %>
+    <% attributes = page.attributes.select {|a| a.name == 'merge_into_code_id'} %>
 
     <% attributes.each do |attribute| -%>
       <div class="field-unit field-unit--<%= attribute.html_class %>">

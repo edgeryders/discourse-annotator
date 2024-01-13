@@ -10,12 +10,10 @@ module DiscourseAnnotator
     validates :language, presence: true
 
 
-
     def self.language_for_user(user)
       DiscourseAnnotator::UserSetting.find_by(discourse_user_id: user.id)&.language ||
           DiscourseAnnotator::UserSetting.create!(discourse_user_id: user.id, language_id: DiscourseAnnotator::Language.english.id)
     end
-
 
   end
 end

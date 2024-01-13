@@ -6,7 +6,7 @@ class Annotator::DiscourseAnnotator::ProjectsController < Annotator::Application
 
   def index
     search_term = params[:search].to_s.strip
-    resources = Administrate::Search.new(scoped_resource.with_codes_count, dashboard_class, search_term).run
+    resources = Administrate::Search.new(scoped_resource.with_codes_count, dashboard, search_term).run
     resources = apply_collection_includes(resources)
     resources = if params.dig(:discourse_annotator__project, :order) == 'codes_count'
                   resources.order("codes_count #{params[:discourse_annotator__project][:direction]}")

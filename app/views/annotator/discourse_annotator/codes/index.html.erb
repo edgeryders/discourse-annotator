@@ -27,8 +27,7 @@
     <% if params[:search].present? %>
       <%= render 'search_results', resources: resources, namespace: namespace %>
     <% elsif params[:view] == 'translate' %>
-      [temporarily unavailable]
-      <%# render 'translate', resources: resources, namespace: namespace %>
+      <%= render 'translate', resources: resources, namespace: namespace %>
     <% elsif params[:view] == 'list' %>
       <%= render 'list', codes: resources %>
     <% elsif params[:view] == 'table' %>

@@ -3,7 +3,6 @@ require 'deep_cloneable'
 module DiscourseAnnotator
   class Code < ActiveRecord::Base
 
-    attr_accessor :merge_into_code
     attr_accessor :merge_into_code_id
 
     # https://github.com/stefankroes/ancestry
@@ -16,7 +15,11 @@ module DiscourseAnnotator
     has_many :names, dependent: :delete_all, class_name: 'CodeName', inverse_of: :code
     has_many :localized_codes, dependent: :delete_all
 
-    accepts_nested_attributes_for :names, allow_destroy: true, reject_if: proc { |attributes| attributes['name'].blank? }
+    accepts_nested_attributes_for(
+      :names,
+      allow_destroy: true,
+      reject_if: proc { |attributes| attributes['name'].blank? }
+    )
     validates_associated :names
 
     # Validations
