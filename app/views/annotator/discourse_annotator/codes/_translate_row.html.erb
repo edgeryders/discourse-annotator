@@ -15,12 +15,12 @@
       Important: All translations must be included in the form as excluded translations are automatically deleted. (by the Cocoon plugin?)
   %>
   .code-row .code-name:nth-of-type(1n+3) {
-    display: none !important;
+      display: none !important;
   }
 </style>
 
 <div class="code-row" id="code-row-<%= resource.id %>">
-  <%= form_for(resource, url: annotator_discourse_annotator_project_code_path(project_id: @project.id, id: resource.id), html: {class: "form"}, remote: true) do |f| %>
+  <%= form_for(resource, url: annotator_discourse_annotator_project_code_path(project_id: @project.id, id: resource.id), html: { class: "form" }, remote: true) do |f| %>
     <% if resource.errors.any? %>
       <div class="error-explanation">
         <h2>
@@ -56,8 +56,10 @@
 
         <td class="submit">
           <%= f.submit 'Save' %>
-          <% if local_assigns[:saved] %>
+          <% if local_assigns[:status] == 'saved' %>
             <div class="saved-notification">Saved!</div>
+          <% elsif local_assigns[:status] == 'error' %>
+            <div class="error-notification">Server Error</div>
           <% end %>
         </td>
       </tr>
