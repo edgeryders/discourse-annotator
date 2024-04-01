@@ -11,8 +11,6 @@ module DiscourseAnnotator
     validates :version, presence: true
     validates :quote, presence: true
     validates :uri, presence: true
-    validates :post, presence: true, unless: proc {|a| a.topic.present?}
-    validates :topic, presence: true
 
 
     def text_annotation?
