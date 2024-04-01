@@ -27,7 +27,7 @@ module DiscourseAnnotator
         self.revision_number = self.post.annotations.first.revision_number
       end
 
-      self.topic = post&.topic if topic.blank?
+      self.topic = post&.topic if topic_id.blank?
     end
 
     # --- Instance Methods --- #
