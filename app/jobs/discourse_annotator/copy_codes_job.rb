@@ -3,6 +3,7 @@ require 'activejob-status'
 module DiscourseAnnotator
   class CopyCodesJob < ActiveJob::Base
     queue_as :default
+    sidekiq_options retry: false
     self.queue_adapter = :sidekiq
 
     include ActiveJob::Status
