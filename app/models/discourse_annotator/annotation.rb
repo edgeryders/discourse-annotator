@@ -5,7 +5,7 @@ module DiscourseAnnotator
     belongs_to :code, counter_cache: true
     belongs_to :creator, class_name: '::User'
     belongs_to :post, optional: true
-    belongs_to :topic
+    belongs_to :topic, optional: true
     # Note: Only text-annotations use ranges. The declaration is kept here to simplify copying codes with all associated
     # objects. This requires that all annotations respond to a `ranges` attribute.
     has_many :ranges, foreign_key: 'annotation_id', dependent: :delete_all, autosave: true
