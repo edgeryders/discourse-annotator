@@ -3,14 +3,11 @@
           'Current project',
           { style: 'text-transform:uppercase; color:gray; font-size:.75rem; font-weight:normal;' }
 %>
-<%# select :project_selector,
-           :selected_project_id,
-           DiscourseAnnotator::Project.order(:name).map { |u| [u.name, u.id] },
-           { prompt: 'Select project' },
-           { class: 'form-control', id: 'project_dropdown', style: 'margin-top:5px; margin-bottom:10px;' }
-%>
 
-<select class="form-control" id="project_dropdown" style="margin-top:5px; margin-bottom:10px;" name="project_selector[selected_project_id]">
+
+<select class="form-control" id="project_dropdown"
+        style="margin-top:5px; margin-bottom:10px;"
+        name="project_selector[selected_project_id]">
   <% options = [['Select project', nil]]
      DiscourseAnnotator::Project.order(:name).each { |u| options.push([u.name, u.id]) }
   %>
@@ -21,61 +18,34 @@
 <script type="text/javascript">
     const selectDropdown = document.getElementById('project_dropdown')
 
-    // selectDropdown.value = getCookie('current_project')
-    // selectDropdown.value = sessionStorage.getItem("current_project")
-
     selectDropdown.onchange = (event) => {
-        // sessionStorage.setItem("current_project", event.target.value)
-        // const currentURL = window.location.href;
-        // const index = currentURL.indexOf("?error=");
+        const currentURL = window.location.href;
+        const projectId = event.target.value;
+        const urlObj = new URL(currentURL);
+        if (!!projectId) {
+            // Avoid including items previously selected in another project in a copy/move action.
+            localStorage.removeItem('checkboxValues');
+            localStorage.removeItem('annotationsCheckboxValues');
 
-        const queryString = window.location.search
-        const urlParams = new URLSearchParams(queryString)
-        const topicId = urlParams.get('select_topic')
-
-        if (!!event.target.value) {
-            if (!!topicId) {
-                window.location.href = `/annotator/projects/${event.target.value}/topics/${topicId}`
+            const topicId = getTopicId(currentURL);
+            if (Boolean(topicId)) {
+                window.location.href = `/annotator/projects/${projectId}/topics/${topicId}`
             } else {
-                window.location.href = `/annotator/projects/${event.target.value}/codes`
+                let collectionName
+                if (/^\/annotator\/projects\/\d+\/topics$/.test(urlObj.pathname)) {
+                    collectionName = 'topics'
+                } else if (/^\/annotator\/projects\/\d+\/annotations$/.test(urlObj.pathname)) {
+                    collectionName = 'annotations'
+                } else {
+                    collectionName = 'codes'
+                }
+                window.location.href = `/annotator/projects/${projectId}/${collectionName}${urlObj.search}`
             }
         }
-
-        // Avoid including items previously selected in another project in a copy/move action.
-        localStorage.removeItem('checkboxValues');
-        localStorage.removeItem('annotationsCheckboxValues');
-
-
-        // const inputText = event.target.value;
-        // console.log(inputText);
-        // setCookie('current_project', event.target.value, 10000);
     }
 
-
-    // Source:  https://stackoverflow.com/questions/14573223/set-cookie-and-get-cookie-with-javascript
-    // function setCookie(name, value, days) {
-    //     let expires = "";
-    //     if (days) {
-    //         let date = new Date();
-    //         date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-    //         expires = "; expires=" + date.toUTCString();
-    //     }
-    //     document.cookie = name + "=" + (value || "") + expires + "; path=/";
-    // }
-    //
-    // function getCookie(name) {
-    //     let nameEQ = name + "=";
-    //     let ca = document.cookie.split(';');
-    //     for (let i = 0; i < ca.length; i++) {
-    //         let c = ca[i];
-    //         while (c.charAt(0) == ' ') c = c.substring(1, c.length);
-    //         if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
-    //     }
-    //     return null;
-    // }
-    //
-    // function eraseCookie(name) {
-    //     document.cookie = name + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-    // }
+    function getTopicId(url) {
+        const match = url.match(/\/annotator\/projects\/\d+\/topics\/(\d+)/);
+        return (match && match[1]) ? match[1] : null;
+    }
 </script>
-
