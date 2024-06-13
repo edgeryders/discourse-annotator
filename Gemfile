@@ -15,6 +15,7 @@ gem 'administrate', git: 'https://github.com/edgeryders/administrate'
 gem "administrate-field-nested_has_many", git: 'https://github.com/edgeryders/administrate-field-nested_has_many', branch: 'master'
 gem "administrate-field-belongs_to_search", git: 'https://github.com/edgeryders/administrate-field-belongs_to_search', branch: 'master'
 
+# source 'https://gem.fury.io/webmaster/' do
 #   gem 'annotator-administrate', '0.19.0'
 #   gem "annotator-administrate-field-nested_has_many", "1.3.0"
 #   gem "annotator-administrate-field-belongs_to_search", "0.7.0"
