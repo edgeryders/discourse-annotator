@@ -1,3 +1,7 @@
+require 'administrate/field/belongs_to_search'
+require "administrate/field/nested_has_many"
+
+
 module DiscourseAnnotator
   class Engine < ::Rails::Engine
     isolate_namespace DiscourseAnnotator

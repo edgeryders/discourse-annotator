@@ -37,8 +37,9 @@ Gem::Specification.new do |spec|
   # https://github.com/vmg/redcarpet - The safe Markdown parser.
   spec.add_runtime_dependency 'redcarpet'
   # https://github.com/thoughtbot/administrate
-  # spec.add_runtime_dependency 'administrate', '0.19.0'
-  # NOTE: Frozen to 0.12 as a larger version (tested with 0.16) breaks codes/new and codes/edit pages.
+  # spec.add_runtime_dependency 'annotator-administrate', '0.19.0'
+  # spec.add_runtime_dependency "annotator-administrate-field-nested_has_many", "1.3.0"
+  # spec.add_runtime_dependency "annotator-administrate-field-belongs_to_search", "0.7.0"
   spec.add_runtime_dependency 'kaminari', '1.2.2'
 
   spec.add_runtime_dependency 'deep_cloneable', '~> 3.2.0'
