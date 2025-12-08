@@ -7,9 +7,24 @@ but each page can define additional JS sources
 by providing a `content_for(:javascript)` block.
 %>
 
+
 <% Administrate::Engine.javascripts.each do |js_path| %>
   <%= javascript_include_tag js_path %>
 <% end %>
+
+<!-- Provide removed jQuery APIs (e.g., jQuery.sub) expected by legacy Annotator scripts -->
+<script src="https://code.jquery.com/jquery-migrate-3.4.1.min.js" integrity="sha256-Q/8H4qzS4xgqgVYg7QJNVd2cKf1GsLuwlP6VZanYvGk=" crossorigin="anonymous"></script>
+
+<script src="<%= asset_path 'discourse-annotator/vendor/annotator-full.1.2.5.modified.js' %>"></script>
+<script src="<%= asset_path 'discourse-annotator/vendor/annotorious.okfn.0.3.modified.js' %>"></script>
+<script src="<%= asset_path 'discourse-annotator/vendor/video.4.2.2.min.js' %>"></script>
+<script src="<%= asset_path 'discourse-annotator/vendor/rangeslider.min.js' %>"></script>
+<script src="<%= asset_path 'discourse-annotator/vendor/ova.min.modified.js' %>"></script>
+<script src="<%= asset_path 'discourse-annotator/vendor/annotator.plugin.mytags.js' %>"></script>
+<script src="<%= asset_path 'discourse-annotator/vendor/tagify.min.js' %>"></script>
+
+<script src="<%= asset_path 'discourse-annotator/application.js' %>"></script>
+
 
 <%= yield :javascript %>
 

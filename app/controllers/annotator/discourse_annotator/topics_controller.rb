@@ -15,7 +15,7 @@ class Annotator::DiscourseAnnotator::TopicsController < Annotator::ApplicationCo
   end
 
   # disable 'edit' and 'destroy' links
-  def valid_action?(name, resource = resource_class)
+  def accessible_action?(name, resource = resource_class)
     %w[edit destroy].exclude?(name.to_s) && super
   end
 

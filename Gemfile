@@ -11,9 +11,20 @@ source 'https://rubygems.org'
 
 # It is not possible to have a git branch dependency in a gems gemspec. See: https://stackoverflow.com/q/6499410
 # The recommended workaround is to specify these dependencies in the Gemfile.
-gem 'administrate', git: 'https://github.com/edgeryders/administrate'
-gem "administrate-field-nested_has_many", git: 'https://github.com/edgeryders/administrate-field-nested_has_many', branch: 'master'
-gem "administrate-field-belongs_to_search", git: 'https://github.com/edgeryders/administrate-field-belongs_to_search', branch: 'master'
+# ---> TMP commented out:
+# gem 'administrate', git: 'https://github.com/edgeryders/administrate'
+# gem "administrate-field-nested_has_many", git: 'https://github.com/edgeryders/administrate-field-nested_has_many', branch: 'master'
+# gem "administrate-field-belongs_to_search", git: 'https://github.com/edgeryders/administrate-field-belongs_to_search', branch: 'master'
+
+
+
+
+
+
+
+
+
+
 
 # source 'https://gem.fury.io/webmaster/' do
 #   gem 'annotator-administrate', '0.19.0'

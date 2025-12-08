@@ -1,0 +1,281 @@
+
+.app-container {
+  max-width: none;
+}
+
+tbody tr:hover {
+  background-color: transparent;
+  cursor: inherit;
+}
+
+tbody tr:focus {
+  outline: none;
+  outline-offset: -3px;
+}
+
+
+ul {
+  list-style-type: disc;
+}
+
+ol {
+  list-style-type: decimal;
+}
+
+ul, ol {
+  margin: 0 0 5px 20px;
+  padding: 0;
+}
+
+td {
+  /* moved to td.cell-data--date-time */
+}
+
+.cell-data--date-time {
+  white-space: nowrap;
+}
+
+
+.link-primary {
+  color: #1976d2 !important;
+  text-decoration: underline !important;
+}
+
+.flash-referer {
+  display: none !important;
+}
+
+.annotator-filter-nav {
+  margin: 0 0 20px 40px;
+}
+.annotator-filter-nav .dropdown {
+  position: relative;
+  display: inline-block;
+}
+.annotator-filter-nav .dropdown .dropdown-btn {
+  color: #777;
+  display: inline-block;
+  position: relative;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-right: 18px;
+  padding-left: 12px;
+  line-height: 22px;
+  cursor: pointer;
+}
+.annotator-filter-nav .dropdown .dropdown-btn-text {
+  display: inline-block;
+  padding-right: 6px;
+  white-space: nowrap;
+}
+.annotator-filter-nav .dropdown .dropdown-arrow {
+  border-color: #777 transparent;
+  border-style: solid;
+  border-width: 5px 4px 0 4px;
+  width: 0;
+  height: 0;
+  margin-left: -2px;
+  top: 50%;
+  right: 8px;
+  margin-top: -2px;
+  position: absolute;
+}
+.annotator-filter-nav .dropdown .dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #fff;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+}
+.annotator-filter-nav .dropdown .dropdown-content a {
+  color: black;
+  padding: 5px 10px;
+  text-decoration: none;
+  display: block;
+  white-space: nowrap;
+}
+.annotator-filter-nav .dropdown .dropdown-content a:hover {
+  background-color: #F7F7F7;
+}
+.annotator-filter-nav .dropdown .dropdown-content a.active {
+  font-weight: bold;
+  background-color: #F1F1F1;
+}
+.annotator-filter-nav .dropdown:hover .dropdown-content {
+  display: block;
+}
+
+
+.field-unit {
+  align-items: inherit !important;
+}
+
+.nowrap {
+  white-space: nowrap;
+}
+
+
+.tree {
+  /*background-color: #fbfbfb;*/
+}
+.tree > ul {
+  padding-left: 5px;
+}
+.tree ul {
+  padding-left: 40px;
+}
+.tree li {
+  list-style-type: none;
+  margin: 0;
+  padding: 10px 5px 0 5px;
+  position: relative;
+}
+.tree li::before,
+.tree li::after {
+  content: '';
+  left: -20px;
+  position: absolute;
+  right: auto;
+}
+.tree li::before {
+  border-left: 1px solid #999;
+  bottom: 50px;
+  height: 100%;
+  top: 0;
+  width: 1px;
+}
+.tree li::after {
+  border-top: 1px solid #999;
+  height: 20px;
+  top: 25px;
+  width: 25px;
+}
+.tree li > span {
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border: 1px solid #999;
+  background: #fff;
+  border-radius: 5px;
+  display: inline-block;
+  padding: 3px 8px;
+  text-decoration: none;
+}
+.tree li > span a {
+  color: inherit;
+  text-decoration: none;
+}
+.tree li.parent_li > span {
+  cursor: pointer;
+}
+.tree > ul > li::before,
+.tree > ul > li::after {
+  border: 0;
+}
+.tree li:last-child::before {
+  height: 30px;
+}
+.tree li.parent_li > span:hover,
+.tree li.parent_li > span:hover + ul li span {
+  background: #eee;
+  border: 1px solid #94a0b4;
+  color: #000;
+}
+.tree .item {
+  font-weight: normal;
+}
+
+#list-view {
+  margin: 0 0 30px 50px;
+}
+
+
+#translate-view td {
+  vertical-align: top;
+}
+#translate-view td:first-child,
+#translate-view th:first-child {
+  padding-left: 0;
+}
+#translate-view td.names,
+#translate-view td.description {
+  width: 40%;
+}
+#translate-view td.submit input {
+  margin-top: 35px;
+}
+#translate-view .code-row {
+  margin-left: 30px;
+}
+#translate-view .saved-notification {
+  color: #2dcf02;
+  margin-top: 10px;
+  font-weight: 500;
+}
+#translate-view .error-notification {
+  color: #d73a49;
+  margin-top: 10px;
+  font-weight: 500;
+}
+#translate-view .error-explanation {
+  margin-top: 10px;
+}
+#translate-view .error-explanation ul {
+  margin-left: 0;
+}
+
+.button-delete {
+  background: #d73a49 !important;
+}
+
+/* quickfix as pagination is not translated even when the correct translation files are provided. (2021-12-09) */
+.pagination .page.gap {
+  display: none;
+}
+
+#annotations-collection {
+  .cell-data--annotation-quote-field {
+    min-width: 20rem;
+  }
+}
+
+.navigation__link {
+  text-decoration: none;
+}
+
+.navigation {
+  padding-top: 10px;
+}
+
+div[role=navigation] > span {
+  display: inline-block;
+  padding-right: 15px;
+}
+
+.field-unit--has-many-code-names-field .nested-fields::after {
+  clear: both;
+  content: "";
+  display: block;
+}
+.field-unit--has-many-code-names-field .nested-fields {
+  margin-bottom: 15px;
+  background: #f3f3f3;
+  padding: 15px;
+}
+.field-unit--has-many-code-names-field .remove_fields,
+.field-unit--has-many-code-names-field .add_fields {
+  float: right;
+}
+
+.page-actions > * {
+  display: inline-block;
+  margin-left: 5px;
+}
+
+button, input[type="button"], input[type="reset"], input[type="submit"], .button {
+  font-weight: normal;
+}
+
+.main-content__header {
+  padding: 1rem;
+}

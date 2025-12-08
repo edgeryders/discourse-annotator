@@ -27,7 +27,7 @@ Rails.application.routes.draw do
             put :merge_into
             get :copy
             put :create_copy
-            get :tree_item, constraints: { format: :json }
+            get :tree_item, defaults: { format: :js }, constraints: { format: :js }
           end
         end
         resources :localized_codes, only: [:show]

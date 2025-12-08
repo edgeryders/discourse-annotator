@@ -7,12 +7,18 @@ but each page can define additional CSS sources
 by providing a `content_for(:stylesheet)` block.
 %>
 
+
 <% Administrate::Engine.stylesheets.each do |css_path| %>
   <%= stylesheet_link_tag css_path %>
 <% end %>
 
-  <%= stylesheet_link_tag 'administrate' %>
+<%
+base_dir = DiscourseAnnotator::Engine.root.join("app/assets/stylesheets/discourse-annotator")
+Dir.glob(base_dir.join("**/*.css")).sort.each do |full_path|
+  logical = "discourse-annotator/" + Pathname.new(full_path).relative_path_from(base_dir).to_s.sub(/\.css\z/, "")
+%>
+<%= stylesheet_link_tag logical, "data-turbo-track": "reload" %>
+<% end %>
 
-<%# render partial: "common/special_font_face" %>
 
 <%= yield :stylesheet %>

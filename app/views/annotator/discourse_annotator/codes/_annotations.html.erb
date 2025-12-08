@@ -26,8 +26,8 @@
           <% end %>
       </th>
     <% end %>
-    <% [valid_action?(:edit, collection_presenter.resource_name),
-        valid_action?(:destroy, collection_presenter.resource_name)].count(true).times do %>
+    <% [accessible_action?(:edit, collection_presenter.resource_name),
+        accessible_action?(:destroy, collection_presenter.resource_name)].count(true).times do %>
       <th scope="col"></th>
     <% end %>
   </tr>
@@ -37,13 +37,13 @@
   <% resources.each do |resource| %>
     <tr class="js-table-row"
         tabindex="0"
-        <% if valid_action? :show, collection_presenter.resource_name %>
+        <% if accessible_action? :show, collection_presenter.resource_name %>
         <%= %(role=link data-url=#{polymorphic_path([namespace, @project, resource])}) %>
         <% end %>
         >
       <% collection_presenter.attributes_for(resource).each do |attribute| %>
         <td class="cell-data cell-data--<%= attribute.html_class %>">
-          <% if show_action? :show, resource -%>
+          <% if accessible_action? :show, resource -%>
             <a href="<%= polymorphic_path([namespace, @project, resource]) -%>" class="action-show">
               <%= render_field attribute %>
             </a>
@@ -57,7 +57,7 @@
                 class: "text-color-red",
                 method: :delete,
                 data: { confirm: t("administrate.actions.confirm") }
-              ) if show_action? :destroy, resource %></td>
+              ) if accessible_action? :destroy, resource %></td>
     </tr>
   <% end %>
   </tbody>

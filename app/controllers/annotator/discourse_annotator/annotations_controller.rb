@@ -301,7 +301,7 @@ class Annotator::DiscourseAnnotator::AnnotationsController < Annotator::Applicat
     @project = DiscourseAnnotator::Project.find(params[:project_id])
   end
 
-  def valid_action?(name, resource = resource_class)
+  def accessible_action?(name, resource = resource_class)
     %w[show].exclude?(name.to_s)
   end
 
