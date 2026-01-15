@@ -43,11 +43,9 @@
         >
       <% collection_presenter.attributes_for(resource).each do |attribute| %>
         <td class="cell-data cell-data--<%= attribute.html_class %>">
-          <% if accessible_action? :show, resource -%>
             <a href="<%= polymorphic_path([namespace, @project, resource]) -%>" class="action-show">
               <%= render_field attribute %>
             </a>
-          <% end -%>
         </td>
       <% end %>
 

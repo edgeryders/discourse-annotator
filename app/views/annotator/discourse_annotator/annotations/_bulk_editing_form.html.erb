@@ -43,12 +43,21 @@
               updateStorage();
           });
 
-          $("#uncheck-all").on("click", function () {
+          // Prevent table row navigation when clicking checkboxes
+          $checkboxes.on("click", function (e) {
+              e.stopPropagation();
+          });
+
+          $("#uncheck-all").on("click", function (e) {
+              e.preventDefault();
+              e.stopPropagation();
               $checkboxes.prop("checked", false)
               updateStorage();
           });
 
-          $("#check-all").on("click", function () {
+          $("#check-all").on("click", function (e) {
+              e.preventDefault();
+              e.stopPropagation();
               $checkboxes.prop("checked", true)
               updateStorage();
           });

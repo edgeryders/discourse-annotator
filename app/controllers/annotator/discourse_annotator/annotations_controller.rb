@@ -120,7 +120,7 @@ class Annotator::DiscourseAnnotator::AnnotationsController < Annotator::Applicat
   end
 
   def update_code
-    fallback_path = annotator_discourse_annotator_annotations_path
+    fallback_path = annotator_discourse_annotator_project_annotations_path(project_id: params[:project_id])
     ids = params[:selected_ids].split(',')
     redirect_back fallback_location: fallback_path, notice: 'No annotations were selected.' and return if ids.blank?
     status = []
@@ -132,7 +132,7 @@ class Annotator::DiscourseAnnotator::AnnotationsController < Annotator::Applicat
   end
 
   def bulk_destroy
-    fallback_path = annotator_discourse_annotator_annotations_path
+    fallback_path = annotator_discourse_annotator_project_annotations_path(project_id: params[:project_id])
     ids = params[:selected_ids].split(',')
     redirect_back fallback_location: fallback_path, notice: 'No annotations were selected.' and return if ids.blank?
     status = []

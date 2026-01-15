@@ -24,7 +24,15 @@ class Annotator::ApplicationController < Administrate::ApplicationController
   end
 
   def namespace
-    :annotator_discourse_annotator
+    :annotator_discourse_annotator # Must be a symbol.
+  end
+
+  def existing_action?(resource, action_name)
+    routes.include?([resource.to_s.underscore.pluralize, action_name.to_s])
+  end
+
+  def routes
+    @routes ||= Administrate::Namespace.new("annotator/discourse_annotator").routes.to_set
   end
 
   # See: https://github.com/thoughtbot/administrate/issues/442

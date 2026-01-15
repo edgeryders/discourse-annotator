@@ -183,7 +183,12 @@ class Annotator::DiscourseAnnotator::CodesController < Annotator::ApplicationCon
     else
       msg = 'An error occurred while copying the code!'
     end
-    redirect_back fallback_location: fallback_path, notice: msg
+    # redirect_back fallback_location: fallback_path, notice: msg
+    redirect_to(
+      annotator_discourse_annotator_project_codes_path(project_id: params[:code][:project_id]),
+          notice: "Code was successfully copied.",
+          status: :see_other
+        )
   end
 
   def merge

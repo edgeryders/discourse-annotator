@@ -12,18 +12,24 @@ by providing a `content_for(:javascript)` block.
   <%= javascript_include_tag js_path %>
 <% end %>
 
-<!-- Provide removed jQuery APIs (e.g., jQuery.sub) expected by legacy Annotator scripts -->
-<script src="https://code.jquery.com/jquery-migrate-3.4.1.min.js" integrity="sha256-Q/8H4qzS4xgqgVYg7QJNVd2cKf1GsLuwlP6VZanYvGk=" crossorigin="anonymous"></script>
+<%= javascript_include_tag 'discourse-annotator/vendor/jquery-1.7.min' %>
+<%= javascript_include_tag 'discourse-annotator/vendor/jquery-ui.min' %>
+<%= javascript_include_tag 'discourse-annotator/vendor/selectize.min' %>
 
-<script src="<%= asset_path 'discourse-annotator/vendor/annotator-full.1.2.5.modified.js' %>"></script>
-<script src="<%= asset_path 'discourse-annotator/vendor/annotorious.okfn.0.3.modified.js' %>"></script>
-<script src="<%= asset_path 'discourse-annotator/vendor/video.4.2.2.min.js' %>"></script>
-<script src="<%= asset_path 'discourse-annotator/vendor/rangeslider.min.js' %>"></script>
-<script src="<%= asset_path 'discourse-annotator/vendor/ova.min.modified.js' %>"></script>
-<script src="<%= asset_path 'discourse-annotator/vendor/annotator.plugin.mytags.js' %>"></script>
-<script src="<%= asset_path 'discourse-annotator/vendor/tagify.min.js' %>"></script>
+<%= javascript_include_tag 'discourse-annotator/vendor/annotator-full.1.2.5.modified' %>
+<%# https://github.com/annotorious/annotorious
+    NOTE: All occurrences of "window.pageYOffset" were replaced with "0" as otherwise the Annotator popover is positioned
+    incorrectly when the page is scrolled down. %>
+<%= javascript_include_tag 'discourse-annotator/vendor/annotorious.okfn.0.3.modified' %>
 
-<script src="<%= asset_path 'discourse-annotator/application.js' %>"></script>
+<%= javascript_include_tag 'discourse-annotator/vendor/video.4.2.2.min' %>
+<%= javascript_include_tag 'discourse-annotator/vendor/rangeslider.min' %>
+<%= javascript_include_tag 'discourse-annotator/vendor/ova.min.modified' %>
+
+<%= javascript_include_tag 'discourse-annotator/vendor/annotator.plugin.mytags' %>
+<%= javascript_include_tag 'discourse-annotator/vendor/tagify.min' %>
+
+<%= javascript_include_tag 'discourse-annotator/application' %>
 
 
 <%= yield :javascript %>

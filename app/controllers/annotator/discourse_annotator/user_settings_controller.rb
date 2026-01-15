@@ -4,8 +4,8 @@ require_dependency 'annotator/application_controller'
 class Annotator::DiscourseAnnotator::UserSettingsController < Annotator::ApplicationController
 
 
-  def accessible_action?(name, resource = resource_class)
-    %w[destroy].exclude?(name.to_s)
+  def existing_action?(resource, action_name)
+    %w[destroy].exclude?(action_name.to_s)
   end
 
   def records_per_page
