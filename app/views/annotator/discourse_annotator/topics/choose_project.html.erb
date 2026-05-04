@@ -1,0 +1,16 @@
+<% content_for(:title) { @topic.title } %>
+
+<header class="main-content__header" role="banner">
+  <h1 class="main-content__page-title">
+    <%= @topic.title %>
+  </h1>
+</header>
+
+<section class="main-content__body">
+  <p>This topic has annotations in multiple projects. Please choose one:</p>
+  <ul>
+    <% @projects.each do |project| %>
+      <li><%= link_to project.name, annotator_discourse_annotator_project_topic_path(project_id: project.id, id: @topic.id) %></li>
+    <% end %>
+  </ul>
+</section>

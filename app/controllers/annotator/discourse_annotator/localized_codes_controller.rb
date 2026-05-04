@@ -11,7 +11,7 @@ class Annotator::DiscourseAnnotator::LocalizedCodesController < Annotator::Appli
     codes = codes.where("discourse_annotator_localized_codes.path ILIKE ?", "%#{params[:q].split.join('%')}%") if params[:q].present?
 
     respond_to do |format|
-      format.json { render json: codes.to_json(fields: %i[code_id localized_path description]) }
+      format.json { render json: codes.map { |c| { id: c.id, localized_path: c.localized_path, description: c.description } }.to_json }
     end
   end
 

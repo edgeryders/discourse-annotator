@@ -4,6 +4,21 @@ class Annotator::DiscourseAnnotator::TopicsController < Annotator::ApplicationCo
 
   before_action :set_project, only: [:index, :show]
 
+  def resolve
+    projects = DiscourseAnnotator::Project
+                 .joins(codes: :annotations)
+                 .where(discourse_annotator_annotations: { topic_id: params[:id] })
+                 .distinct
+
+    if projects.size == 1
+      redirect_to annotator_discourse_annotator_project_topic_path(project_id: projects.first.id, id: params[:id])
+    else
+      @topic = Topic.find(params[:id])
+      @projects = projects.order(:name)
+      render :choose_project
+    end
+  end
+
   def show
     opts = params.slice(:username_filters, :filter, :page, :post_number, :show_deleted)
     page = params[:page]&.to_i

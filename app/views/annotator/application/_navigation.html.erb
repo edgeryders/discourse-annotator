@@ -41,7 +41,7 @@
   <br/>
   <details <%= 'open' if current_controller?(%w[languages user_settings projects settings]) %> style="cursor:pointer">
     <summary style="padding:8px 0; color:#999;">Settings</summary>
-    <div>
+    <div style="padding-left:15px;">
       <%= link_to(
             'General',
             [:annotator_discourse_annotator, :setting],

@@ -36,15 +36,6 @@ class Annotator::DiscourseAnnotator::ProjectsController < Annotator::Application
 
 
 
-  def update
-    flash[:notice] = "Fix errors"
-      redirect_to(
-        after_resource_updated_path(requested_resource),
-        flash: { notice: "Updated!" },
-        status: :see_other
-      )
-  end
-
 
   def existing_action?(resource, action_name)
     %w[destroy].exclude?(action_name.to_s)

@@ -54,6 +54,8 @@ Rails.application.routes.draw do
         match '/', to: 'annotations#options', via: [:options], on: :member
       end
 
+      get 'topics/:id', to: 'topics#resolve', as: :topic
+
       resources :languages
       resources :user_settings
       resource :setting, only: [:show, :edit, :update], path: 'settings'

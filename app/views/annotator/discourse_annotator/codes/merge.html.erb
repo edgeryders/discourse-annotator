@@ -25,7 +25,8 @@
       </div>
     <% end %>
 
-    <% attributes = page.attributes.select {|a| a.name == 'merge_into_code_id'} %>
+    <% grouped = page.attributes(controller.action_name) %>
+    <% attributes = grouped.values.flatten.select { |a| a.name == 'merge_into_code_id' } %>
 
     <% attributes.each do |attribute| -%>
       <div class="field-unit field-unit--<%= attribute.html_class %>">
