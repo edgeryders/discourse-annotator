@@ -14,7 +14,13 @@ class Annotator::DiscourseAnnotator::TopicsController < Annotator::ApplicationCo
       redirect_to annotator_discourse_annotator_project_topic_path(project_id: projects.first.id, id: params[:id])
     else
       @topic = Topic.find(params[:id])
-      @projects = projects.order(:name)
+      if projects.exists?
+        @projects = projects.order(:name)
+        @project_chooser_message = 'This topic has annotations in multiple projects. Please choose one:'
+      else
+        @projects = DiscourseAnnotator::Project.order(:name)
+        @project_chooser_message = 'This topic has no annotations yet. Please choose a project:'
+      end
       render :choose_project
     end
   end

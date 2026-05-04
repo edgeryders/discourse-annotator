@@ -7,7 +7,7 @@
 </header>
 
 <section class="main-content__body">
-  <p>This topic has annotations in multiple projects. Please choose one:</p>
+  <p><%= @project_chooser_message %></p>
   <ul>
     <% @projects.each do |project| %>
       <li><%= link_to project.name, annotator_discourse_annotator_project_topic_path(project_id: project.id, id: @topic.id) %></li>
