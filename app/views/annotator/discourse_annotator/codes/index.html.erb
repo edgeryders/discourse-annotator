@@ -13,7 +13,7 @@
     <%= render '/lib/filter_user',
                name: 'Creator',
                filter: :creator_id,
-               users: User.where(id: DiscourseAnnotator::Code.select(:creator_id)).order('LOWER(username)') %>
+               users: User.where(id: @project.codes.select(:creator_id)).order('LOWER(username)') %>
     <%= render '/lib/sort_by', options: { path: 'Path', name: 'Name', created_at: 'Newest', updated_at: 'Updated', annotations_count: 'Number of annotations' } %>
     <%= render 'lib/codes_view_nav' %>
     <!--    <a href="<%#= request.path %>" target="_blank">Export current list</a>-->
