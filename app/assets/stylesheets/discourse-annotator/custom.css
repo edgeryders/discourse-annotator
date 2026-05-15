@@ -60,6 +60,18 @@ blockquote {
   z-index: 999 !important;
 }
 
+/* jQuery UI overrides the annotator pencil button with a blue hover background.
+   Force the button inside .annotator-adder to stay transparent at all times. */
+.annotator-adder button,
+.annotator-adder button:hover,
+.annotator-adder button:focus,
+.annotator-adder button:active {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
 
 
 

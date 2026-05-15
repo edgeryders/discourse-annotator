@@ -34,7 +34,7 @@ to display a collection of resources in an HTML table.
           <% if attr_type.sortable? %>
             <%= link_to(params: sanitized_order_params(page, collection_field_name)
               .merge(collection_presenter.order_params_for(attr_name, key: collection_field_name))
-              .merge(params.permit(:with_annotations, :annotator_id))
+              .merge(params.permit(:with_annotations, :annotator_id, :discourse_category_id))
             ) do %>
               <%= t(
                 "helpers.label.#{collection_presenter.resource_name}.#{attr_name}",

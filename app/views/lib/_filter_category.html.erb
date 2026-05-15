@@ -1,0 +1,45 @@
+<%
+  topic_cat_ids    = Topic.listable_topics.where.not(category_id: nil).distinct.pluck(:category_id)
+  needed_parent_ids = Category.where(id: topic_cat_ids)
+                               .where.not(parent_category_id: nil)
+                               .pluck(:parent_category_id).uniq
+  all_cats         = Category.where(id: (topic_cat_ids + needed_parent_ids).uniq)
+                              .order(:parent_category_id, :name)
+  topic_cat_id_set = topic_cat_ids.to_set
+  grouped          = all_cats.group_by(&:parent_category_id)
+  top_level        = grouped[nil] || []
+
+  selected_id  = params[:discourse_category_id]
+  selected_cat = selected_id.present? ? Category.find_by(id: selected_id) : nil
+%>
+
+<div class="dropdown">
+  <div class="dropdown-btn" aria-haspopup="true" role="button" tabindex="0">
+    <div class="dropdown-btn-text">
+      <%= selected_cat ? "Discourse Category: #{selected_cat.name}" : "Any Discourse Category" %>
+    </div>
+    <span class="dropdown-arrow"></span>
+  </div>
+
+  <div class="dropdown-content">
+    <%= link_to "Any Category",
+                request.query_parameters.except(:page).merge('discourse_category_id' => nil),
+                class: (selected_id.blank? ? 'active' : '') %>
+
+    <% top_level.each do |cat| %>
+      <% subs = grouped[cat.id] || [] %>
+      <% if topic_cat_id_set.include?(cat.id) %>
+        <%= link_to cat.name,
+                    request.query_parameters.except(:page).merge('discourse_category_id' => cat.id),
+                    class: (selected_id == cat.id.to_s ? 'active' : '') %>
+      <% else %>
+        <span class="category-header"><%= cat.name %></span>
+      <% end %>
+      <% subs.each do |sub| %>
+        <%= link_to sub.name,
+                    request.query_parameters.except(:page).merge('discourse_category_id' => sub.id),
+                    class: ['category-sub', (selected_id == sub.id.to_s ? 'active' : nil)].compact.join(' ') %>
+      <% end %>
+    <% end %>
+  </div>
+</div>

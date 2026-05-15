@@ -280,6 +280,22 @@ button, input[type="button"], input[type="reset"], input[type="submit"], .button
   padding: 1rem;
 }
 
+/* Category filter: non-clickable parent header when the parent itself has no topics */
+.annotator-filter-nav .dropdown .dropdown-content .category-header {
+  display: block;
+  padding: 5px 10px;
+  color: #999;
+  font-size: 0.85em;
+  font-weight: bold;
+  text-transform: uppercase;
+  white-space: nowrap;
+  cursor: default;
+}
+/* Category filter: subcategory links indented below their parent */
+.annotator-filter-nav .dropdown .dropdown-content a.category-sub {
+  padding-left: 22px;
+}
+
 /* Fix: sort indicator wrapping to new line on long column headers.
    The upstream uses float:right inside an inline-block anchor; when the
    label text fills the full line the float drops below it. Flex keeps

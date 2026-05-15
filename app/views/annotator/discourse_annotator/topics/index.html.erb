@@ -37,6 +37,8 @@ It renders the `_table` partial to display details about the resources.
                users: User.where(id: @project.annotations.select(:creator_id)).order(:username) %>
 
     <%= render '/lib/filter_with_annotations' %>
+
+    <%= render '/lib/filter_category' %>
   </div>
 
   <%= render(

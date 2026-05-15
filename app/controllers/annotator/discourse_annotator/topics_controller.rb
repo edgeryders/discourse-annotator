@@ -71,6 +71,10 @@ class Annotator::DiscourseAnnotator::TopicsController < Annotator::ApplicationCo
       resources = resources.where('tc.annotations_count > 0')
     end
 
+    if params[:discourse_category_id].present?
+      resources = resources.where(category_id: params[:discourse_category_id])
+    end
+
     resources = if params.dig(:discourse_annotator__topic, :order).blank?
                   resources.order("annotations_count DESC")
                 elsif params.dig(:discourse_annotator__topic, :order) == 'user_annotations_count'
