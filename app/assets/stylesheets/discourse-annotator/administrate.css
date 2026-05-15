@@ -279,3 +279,20 @@ button, input[type="button"], input[type="reset"], input[type="submit"], .button
 .main-content__header {
   padding: 1rem;
 }
+
+/* Fix: sort indicator wrapping to new line on long column headers.
+   The upstream uses float:right inside an inline-block anchor; when the
+   label text fills the full line the float drops below it. Flex keeps
+   text and indicator on the same line regardless of label length. */
+.cell-label a {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+.cell-label--number a {
+  justify-content: flex-end;
+}
+.cell-label__sort-indicator {
+  float: none;
+  flex-shrink: 0;
+}

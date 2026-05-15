@@ -35,6 +35,13 @@ class Annotator::DiscourseAnnotator::TopicsController < Annotator::ApplicationCo
     end
   end
 
+  def order
+    @order ||= Administrate::Order.new(
+      params.fetch(resource_name, {}).fetch(:order, 'annotations_count'),
+      params.fetch(resource_name, {}).fetch(:direction, 'desc'),
+    )
+  end
+
   # disable 'edit' and 'destroy' links
   def authorized_action?(name, resource = resource_class)
     %w[edit destroy].exclude?(name.to_s) && super

@@ -37,6 +37,13 @@ class Annotator::DiscourseAnnotator::ProjectsController < Annotator::Application
 
 
 
+  def order
+    @order ||= Administrate::Order.new(
+      params.fetch(resource_name, {}).fetch(:order, 'name'),
+      params.fetch(resource_name, {}).fetch(:direction, 'asc'),
+    )
+  end
+
   def existing_action?(resource, action_name)
     %w[destroy].exclude?(action_name.to_s)
   end
